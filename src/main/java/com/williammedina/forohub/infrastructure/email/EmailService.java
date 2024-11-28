@@ -25,7 +25,7 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private  final Environment environment;
 
-    @Value("${frontend.url}")
+    @Value("${frontend.url:http://localhost:5173}")
     private String frontendUrl;
 
     public EmailService(JavaMailSender mailSender, Environment environment) {

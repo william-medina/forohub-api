@@ -27,7 +27,7 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfigurations {
 
-    @Value("${frontend.url}")
+    @Value("${frontend.url:http://localhost:5173}")
     private String frontendUrl;
 
     public static final List<PublicEndpoint> PUBLIC_ENDPOINTS = List.of(

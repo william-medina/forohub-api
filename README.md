@@ -113,6 +113,9 @@ Asegúrate de agregar las dependencias en el archivo `pom.xml` de tu proyecto Ma
    # URL del Frontend - Habilita CORS para permitir peticiones desde esta URL
    FRONTEND_URL=http://localhost:5173
    ```
+   Reemplaza los valores de ejemplo con los detalles de tu configuración real.
+
+
 4. **Habilitar o deshabilitar el envío de email:**
 
    Si no tienes un servidor de email o las credenciales correspondientes, puedes deshabilitar el envío de emails. Esto evitará que el sistema envíe notificaciones por email, incluyendo los tokens de la confirmación de cuenta o el restablecimiento del password. Para hacerlo, sigue estos pasos:
