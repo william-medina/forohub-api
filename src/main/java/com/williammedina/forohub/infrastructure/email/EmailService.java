@@ -173,7 +173,7 @@ public class EmailService {
 
         String emailFrom = environment.getProperty("EMAIL_FROM");
 
-        helper.setFrom("william@hotmail.com");
+        helper.setFrom(emailFrom);
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(htmlContent, true);
@@ -199,7 +199,7 @@ public class EmailService {
                 .append("  display: flex; ")
                 .append("  justify-content: center; ")
                 .append("  align-items: center; ")
-                .append("  height: 100vh; ")
+                .append("  height: 60vh; ")
                 .append("}")
                 .append(".container { ")
                 .append("  max-width: 600px; ")
