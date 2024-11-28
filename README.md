@@ -67,7 +67,6 @@ Para que la API funcione correctamente, asegúrate de incluir las siguientes dep
 - **Spring Boot DevTools**: Herramienta para mejorar la experiencia de desarrollo mediante recarga automática, depuración mejorada y más.
 - **Java JWT (java-jwt)**: Biblioteca que permite trabajar con tokens JWT (JSON Web Tokens) para la autenticación y autorización de usuarios.
 - **SpringDoc OpenAPI Starter**: Integra la especificación OpenAPI para documentar automáticamente los endpoints de la API.
-- **dotenv-java**: Carga variables de entorno desde un archivo `.env` para manejar configuraciones sensibles o privadas.
 - **Spring Boot Starter Mail**: Proporciona las herramientas necesarias para enviar correos electrónicos desde la aplicación, útil para el envío de correos de confirmación y recuperación de contraseñas.
 
 Asegúrate de agregar las dependencias en el archivo `pom.xml` de tu proyecto Maven.
@@ -82,56 +81,53 @@ Asegúrate de agregar las dependencias en el archivo `pom.xml` de tu proyecto Ma
 
 ## Instalación
 
-1. Clona el repositorio:
+1. **Clona el repositorio**:
     ```bash
     git clone https://github.com/william-medina/forohub-api.git
     ```
 
-2. Accede al directorio del proyecto:
+2. **Accede al directorio del proyecto**:
     ```bash
     cd forohub-api
     ```
 
-3. **Crea un archivo `.env`:**
+3. **Agrega las variables de entorno**:  
+   A continuación, agrega las siguientes variables de entorno directamente en la configuración de tu sistema operativo o IDE.
 
-   Crea un archivo `.env` en la raíz del directorio del proyecto y complétalo con las variables de entorno necesarias. Aquí tienes una plantilla que puedes usar:
+   ```dotenv
+   # Base de Datos
+   DB_URL=jdbc:mysql://localhost:3306/your_database_name
+   DB_USERNAME=your_username
+   DB_PASSWORD=your_password
 
-    ```dotenv
-    # Configuración de la base de datos
-    DB_URL=jdbc:mysql://localhost:3306/your_database_name
-    DB_USERNAME=your_username
-    DB_PASSWORD=your_password
-    
-    # Clave secreta para JWT
-    JWT_SECRET=9a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d
-    
-    # Configuración del servidor de email
-    EMAIL_HOST=your_email_host
-    EMAIL_PORT=your_email_port
-    EMAIL_USER=your_email_user
-    EMAIL_PASS=your_email_password
-    EMAIL_FROM=your_email_from
-   
-    # URL del Frontend (Opcional) - Habilita CORS para permitir peticiones desde esta URL.
-    FRONTEND_URL=http://localhost:5173
-    
-    ```
-4. **Habilitar o deshabilitar el envío de email**
+   # Clave Secreta para JWT
+   JWT_SECRET=your_secret_jwt
+
+   # Configuración del Servidor de Email
+   EMAIL_HOST=your_email_host
+   EMAIL_PORT=your_email_port
+   EMAIL_USER=your_email_user
+   EMAIL_PASS=your_email_password
+   EMAIL_FROM=your_email_from
+
+   # URL del Frontend - Habilita CORS para permitir peticiones desde esta URL
+   FRONTEND_URL=http://localhost:5173
+   ```
+4. **Habilitar o deshabilitar el envío de email:**
 
    Si no tienes un servidor de email o las credenciales correspondientes, puedes deshabilitar el envío de emails. Esto evitará que el sistema envíe notificaciones por email, incluyendo los tokens de la confirmación de cuenta o el restablecimiento del password. Para hacerlo, sigue estos pasos:
 
-    - Abre el archivo `application.properties`.
-    - Añade o modifica la siguiente línea:
+   - Abre el archivo `application.properties`.
+   - Añade o modifica la siguiente línea:
 
-      ```properties
-      email.enabled=false
-      ```
+     ```properties
+     email.enabled=false
+     ```
 
    Con esto, el envío de emails estará deshabilitado. Si en el futuro deseas habilitarlo, cambia el valor a `true`.
 
 
-
-5. Asegúrate de que todas las dependencias estén instaladas utilizando la opción de **"Actualizar Proyecto"** o **"Importar dependencias"** en tu IDE.
+5. **Asegúrate de que todas las dependencias estén instaladas** utilizando la opción de **"Actualizar Proyecto"** o **"Importar dependencias"** en tu IDE.
 
 
 
@@ -225,13 +221,13 @@ La API cuenta con pruebas unitarias para cada repositorio y controlador. Las pru
 
 ### Configuración de la base de datos para las pruebas
 
-Antes de ejecutar las pruebas, es necesario configurar una base de datos separada que se utilizará exclusivamente para las pruebas. Esto garantiza que las pruebas no interfieran con los datos de producción. Para configurar la base de datos de pruebas, debes crear un archivo `.env.test` en la raíz del proyecto y rellenarlo con los siguientes valores:
+Antes de ejecutar las pruebas, es necesario configurar una base de datos separada que se utilizará exclusivamente para las pruebas. Esto garantiza que las pruebas no interfieran con los datos de producción. Para configurar la base de datos de pruebas, debes agrega las siguientes variables de entorno directamente en la configuración de tu sistema operativo o IDE.:
 
 ```dotenv
 # Configuración de la base de datos para test
-DB_URL=jdbc:mysql://localhost:3306/your_database_name_test?createDatabaseIfNotExist=true
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
+DB_URL_TEST=jdbc:mysql://localhost:3306/your_database_name_test?createDatabaseIfNotExist=true
+DB_USERNAME_TEST=your_username
+DB_PASSWORD_TEST=your_password
 ```
 > **Importante**: El nombre de la base de datos debe ser diferente al de la base de datos principal. Esto es crucial porque cada prueba limpia los registros de las tablas al iniciar, garantizando que los tests sean independientes y no afecten los datos de producción.
 

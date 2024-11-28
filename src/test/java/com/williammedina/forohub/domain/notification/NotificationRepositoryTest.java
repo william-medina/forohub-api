@@ -1,17 +1,13 @@
 package com.williammedina.forohub.domain.notification;
 
 import com.williammedina.forohub.domain.user.User;
-import com.williammedina.forohub.infrastructure.config.DatabaseConfig;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 
@@ -20,9 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-@EnableAutoConfiguration
-@EntityScan(basePackages = "com.williammedina.forohub.domain")
-@ContextConfiguration(classes = {DatabaseConfig.class})
 class NotificationRepositoryTest {
 
     @Autowired
@@ -53,7 +46,7 @@ class NotificationRepositoryTest {
     }
 
     private User createAndPersistUser() {
-        User user = new User("William", "william@example.com", "password");
+        User user = new User("WilliamM", "williamM@example.com", "password");
         entityManager.persist(user);
         return user;
     }

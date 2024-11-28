@@ -1,7 +1,5 @@
 package com.williammedina.forohub.controller;
 
-
-import com.williammedina.forohub.config.TestConfig;
 import com.williammedina.forohub.domain.user.User;
 import com.williammedina.forohub.domain.user.UserRepository;
 import com.williammedina.forohub.domain.user.dto.*;
@@ -12,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -24,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-@Import(TestConfig.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters

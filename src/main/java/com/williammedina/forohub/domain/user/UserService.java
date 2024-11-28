@@ -227,7 +227,6 @@ public class UserService {
     }
 
     private boolean isRecentRequest(LocalDateTime lastUpdated) {
-        System.out.println("HOLAAAAAA.. " + lastUpdated + " - " + LocalDateTime.now());
         return ChronoUnit.MINUTES.between(lastUpdated, LocalDateTime.now()) < 2;
     }
 

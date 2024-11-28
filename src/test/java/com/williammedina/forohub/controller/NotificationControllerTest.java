@@ -1,6 +1,5 @@
 package com.williammedina.forohub.controller;
 
-import com.williammedina.forohub.config.TestConfig;
 import com.williammedina.forohub.domain.course.Course;
 import com.williammedina.forohub.domain.course.CourseRepository;
 import com.williammedina.forohub.domain.notification.Notification;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,7 +27,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-@Import(TestConfig.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters

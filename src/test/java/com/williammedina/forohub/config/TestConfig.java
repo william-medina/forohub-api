@@ -1,6 +1,5 @@
 package com.williammedina.forohub.config;
 
-import com.williammedina.forohub.domain.course.CourseRepository;
 import com.williammedina.forohub.domain.profile.Profile;
 import com.williammedina.forohub.domain.response.ResponseRepository;
 import com.williammedina.forohub.domain.topic.TopicRepository;

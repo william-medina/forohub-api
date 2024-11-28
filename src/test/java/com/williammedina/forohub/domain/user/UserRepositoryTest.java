@@ -1,6 +1,5 @@
 package com.williammedina.forohub.domain.user;
 
-import com.williammedina.forohub.infrastructure.config.DatabaseConfig;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
 @EnableAutoConfiguration
-@EntityScan(basePackages = "com.williammedina.forohub.domain")
-@ContextConfiguration(classes = {DatabaseConfig.class})
 class UserRepositoryTest {
 
     @Autowired
