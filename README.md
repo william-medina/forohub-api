@@ -238,12 +238,19 @@ DB_PASSWORD_TEST=your_password
 
 
 ## Frontend
-La aplicación cuenta con un frontend desarrollado en **React** utilizando **TypeScript** y **Tailwind CSS**. Este frontend está diseñado para interactuar de manera efectiva con la API.
+La API cuenta con un frontend desarrollado en **React** utilizando **TypeScript** y **Tailwind CSS**. Este frontend está diseñado para interactuar de manera efectiva con la API.
 
 ### Acceso al Repositorio
 El código fuente está disponible en el siguiente enlace:
 
 👉 [Repositorio del Frontend en GitHub](https://github.com/william-medina/forohub-app)
+
+### Ver el Proyecto en Producción
+Puedes ver la aplicación en producción, ya conectada con la API, en el siguiente enlace:
+
+👉 [Ver Proyecto en Producción](https://forohub.william-medina.com)
+
+**Nota**: Si la API ha estado inactiva por un tiempo, puede demorar algunos momentos en iniciarse.
 
 ### Características Destacadas del Frontend
 - **Interfaz Responsiva**: Diseñada para ofrecer una experiencia de usuario fluida en dispositivos móviles y de escritorio.

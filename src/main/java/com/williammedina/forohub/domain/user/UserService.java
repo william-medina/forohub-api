@@ -81,7 +81,7 @@ public class UserService {
         User user = new User(data.username(), data.email().trim().toLowerCase(), passwordEncoder.encode(data.password()));
         User userCreated = userRepository.save(user);
 
-        emailService.sendConfirmationEmail(userCreated.getEmail(), userCreated.getToken());
+        emailService.sendConfirmationEmail(userCreated.getEmail(), userCreated.getUsername(), userCreated.getToken());
         return toUserDTO(userCreated);
     }
 
@@ -108,7 +108,7 @@ public class UserService {
         }
 
         user.generateConfirmationToken();
-        emailService.sendConfirmationEmail(user.getEmail(), user.getToken());
+        emailService.sendConfirmationEmail(user.getEmail(), user.getUsername(), user.getToken());
         return toUserDTO(user);
     }
 
@@ -122,7 +122,7 @@ public class UserService {
         }
 
         user.generateConfirmationToken();
-        emailService.sendPasswordResetEmail(user.getEmail(), user.getToken());
+        emailService.sendPasswordResetEmail(user.getEmail(), user.getUsername(), user.getToken());
         return toUserDTO(user);
     }
 
@@ -195,7 +195,7 @@ public class UserService {
         User user = (User) userRepository.findByUsername(username);
         user.generateConfirmationToken();
         userRepository.save(user);
-        emailService.sendConfirmationEmail(user.getEmail(), user.getToken());
+        emailService.sendConfirmationEmail(user.getEmail(), user.getUsername(), user.getToken());
     }
 
     private User findUserByEmail(String email) {

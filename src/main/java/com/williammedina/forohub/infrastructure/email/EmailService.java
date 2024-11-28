@@ -33,22 +33,22 @@ public class EmailService {
         this.environment = environment;
     }
 
-    public void sendConfirmationEmail(String to, String token) throws MessagingException {
+    public void sendConfirmationEmail(String to, String username, String token) throws MessagingException {
         String subject = "Confirmación de cuenta";
         String url = frontendUrl + "/confirm-account/" + token;
         String title = "¡Bienvenido a Foro Hub!";
-        String message = "Para completar tu registro, haz clic en el siguiente enlace para confirmar tu cuenta:";
+        String message = "Hola <b style='color: #03dac5;'>" + username + "</b>, para completar tu registro, haz clic en el siguiente enlace para confirmar tu cuenta:";
         String buttonLabel = "Confirmar Cuenta";
         String footer = "Si no solicitaste este email, puedes ignorarlo.";
 
         sendEmail(to, subject, title, message, buttonLabel, url, footer);
     }
 
-    public void sendPasswordResetEmail(String to, String token) throws MessagingException {
+    public void sendPasswordResetEmail(String to, String username, String token) throws MessagingException {
         String subject = "Restablecimiento de password";
         String url = frontendUrl + "/reset-password/" + token;
         String title = "Restablecimiento de Password";
-        String message = "Has solicitado restablecer tu password. Haz clic en el siguiente enlace para crear un nuevo password:";
+        String message = "Hola <b style='color: #03dac5;'>" + username + "</b>, has solicitado restablecer tu password. Haz clic en el siguiente enlace para crear un nuevo password:";
         String buttonLabel = "Restablecer Password";
         String footer = "Si no solicitaste este email, puedes ignorarlo.";
 
@@ -198,8 +198,9 @@ public class EmailService {
                 .append("  background-color: #121212; ")
                 .append("  display: flex; ")
                 .append("  justify-content: center; ")
-                .append("  align-items: center; ")
-                .append("  height: 60vh; ")
+                .append("  align-items: flex-start; ")
+                .append("  padding-top: 50px; ")
+                .append("  padding-bottom: 50px; ")
                 .append("}")
                 .append(".container { ")
                 .append("  max-width: 600px; ")
@@ -248,6 +249,7 @@ public class EmailService {
 
         return emailContent.toString();
     }
+
 
     private boolean isEmailEnabled() {
         String emailEnabled = environment.getProperty("email.enabled", "false");
