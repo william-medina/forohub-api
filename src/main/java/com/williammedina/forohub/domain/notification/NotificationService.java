@@ -149,7 +149,7 @@ public class NotificationService {
     private NotificationDTO toNotificationDTO(Notification notification) {
 
         // Long topicId = (notification.getTopic() != null) ? notification.getTopic().getId() : null;
-        Long topicId = (notification.getTopic() == null) ? null : notification.getTopic().getId();
+        Long topicId = (notification.getTopic() == null || notification.getTopic().getIsDeleted()) ? null : notification.getTopic().getId();
 
         return new NotificationDTO(
                 notification.getId(),
