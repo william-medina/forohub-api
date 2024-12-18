@@ -32,7 +32,7 @@
 12. [Autor](#autor)
 
 ## Descripción
-**ForoHub** es una API desarrollada con **Spring Boot** que permite la creación, administración y gestión de tópicos y respuestas para una plataforma de discusión basada en cursos. Los usuarios pueden registrarse, interactuar con los tópicos, responder a ellos, y gestionar sus perfiles. Los administradores, moderadores e instructores tienen permisos especiales para gestionar contenidos y marcar soluciones en los tópicos.Además se está diseñada para ser utilizada junto a un frontend en React.
+**ForoHub** es una API desarrollada con **Spring Boot** que permite la creación, administración y gestión de tópicos y respuestas para una plataforma de discusión basada en cursos. Los usuarios pueden registrarse, interactuar con los tópicos, responder a ellos, y gestionar sus perfiles. Los administradores, moderadores e instructores tienen permisos especiales para gestionar contenidos y marcar soluciones en los tópicos. Además está diseñada para ser utilizada junto a un frontend en React.
 
 ## Características
 
@@ -190,14 +190,14 @@ Estos endpoints gestionan la creación, obtención, actualización y eliminació
 ### Endpoints de Respuestas
 Los endpoints de respuestas gestionan la creación, actualización, eliminación y la posibilidad de marcar una respuesta como solución. Al igual que los tópicos, la eliminación de respuestas es lógica.
 
-| Endpoint                                 | Método      | Descripción                                                                                              |
-|------------------------------------------|-------------|----------------------------------------------------------------------------------------------------------|
-| `/response`                              | `POST`      | Crea una nueva respuesta para un tópico específico.                                                      |
-| `/response/user/responses`               | `GET`       | Obtiene todas las respuestas del usuario autenticado con paginación.                                     |
-| `/response/{responseId}`                 | `GET`       | Obtiene una respuesta específica utilizando su ID.                                                       |
-| `/response/{responseId}`                 | `PUT`       | Actualiza una respuesta específica.                                                                      |
-| `/response/{responseId}`                 | `PATCH`     | Alterna el estado de una respuesta como solución o la quita si ya estaba marcada como solución.          |
-| `/response/{responseId}`                 | `DELETE`    | Elimina una respuesta existente de manera lógica, marcándola como eliminada (no se elimina físicamente). |
+| Endpoint                                 | Método      | Descripción                                                                                                                                                                   |
+|------------------------------------------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `/response`                              | `POST`      | Crea una nueva respuesta para un tópico específico.                                                                                                                           |
+| `/response/user/responses`               | `GET`       | Obtiene todas las respuestas del usuario autenticado con paginación.                                                                                                          |
+| `/response/{responseId}`                 | `GET`       | Obtiene una respuesta específica utilizando su ID.                                                                                                                            |
+| `/response/{responseId}`                 | `PUT`       | Actualiza una respuesta específica.                                                                                                                                           |
+| `/response/{responseId}`                 | `PATCH`     | Alterna el estado de una respuesta como solución o la quita si ya estaba marcada como solución. Además, actualiza el estado del tópico, indicándole si está activo o cerrado. |
+| `/response/{responseId}`                 | `DELETE`    | Elimina una respuesta existente de manera lógica, marcándola como eliminada (no se elimina físicamente).                                                                      |
 ---
 
 ### Endpoints de Notificaciones
