@@ -22,6 +22,7 @@
     - [Ejecución de la Aplicación](#ejecución-de-la-aplicación)
     - [Acceso a la API REST](#acceso-a-la-api-rest)
     - [Documentación de la API](#documentación-de-la-api)
+    - [Colección para Postman](#colección-para-postman)
 9. [Endpoints](#endpoints)
     - [Endpoints de Autenticación](#endpoints-de-autenticación)
     - [Endpoints de Tópicos](#endpoints-de-tópicos)
@@ -170,6 +171,14 @@ Cada tabla está conectada de acuerdo con las relaciones necesarias para garanti
    ```
    http://localhost:8080/api/docs/swagger-ui/index.html
    ```
+  
+### Colección para Postman
+- Se incluye una colección de Postman con todas las solicitudes configuradas para facilitar las pruebas de la API. Esta colección permite explorar los endpoints y realizar peticiones rápidamente sin necesidad de configurarlas manualmente.
+- Importa el archivo `ForoHub.postman_collection.json` desde la carpeta `docs/postman` en Postman utilizando la opción "Importar". Una vez importado, podrás comenzar a interactuar con la API de forma inmediata.
+
+  ```
+  docs/postman/ForoHub.postman_collection.json
+  ```
   
 ## Endpoints
 A continuación, se presenta la lista completa de endpoints disponibles en la API. Todos los endpoints comienzan con el prefijo `/api`.

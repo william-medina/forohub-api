@@ -1,0 +1,918 @@
+{
+	"info": {
+		"_postman_id": "fa31122f-b490-475b-b093-d81c64788195",
+		"name": "ForoHub",
+		"description": "Esta colección describe la gestión de usuarios, tópicos, respuestas, notificaciones y cursos en la API de ForoHub. Todos los endpoints comienzan con el prefijo `/api`.\n\n- **AUTH**: Permite crear una cuenta de usuario, iniciar sesión, actualizar contraseñas y obtener los detalles del usuario autenticado.\n    \n- **TOPIC**: Facilita la creación, obtención, actualización, seguimiento y eliminación (de manera lógica) de tópicos. También permite a los usuarios seguir o dejar de seguir tópicos específicos.\n    \n- **RESPONSE**: Gestiona la creación, obtención, actualización y eliminación (de manera lógica) de respuestas a los tópicos, así como la posibilidad de marcar o desmarcar una respuesta como solución.\n    \n- **NOTIFY**: Permite obtener las notificaciones del usuario, marcarlas como leídas o eliminar notificaciones específicas.\n    \n- **COURSE**: Ofrece información sobre los cursos disponibles en la plataforma",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32430173"
+	},
+	"item": [
+		{
+			"name": "AUTH",
+			"item": [
+				{
+					"name": "AUTH - Create User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"William medina\",\r\n    \"email\": \"william@mail.com\",\r\n    \"password\": \"12345678\",\r\n    \"password_confirmation\": \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/create-account",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"create-account"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AUTH - Login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"William Medina\",\r\n    \"password\": \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AUTH - Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"william@mail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/forgot-password",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AUTH - Request code",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"william@mail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/request-code",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"request-code"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AUTH - Confirm Account",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/confirm-account/fd7024f3-2afa-4a67-b1a4-cbd4c666dcde",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"confirm-account",
+								"fd7024f3-2afa-4a67-b1a4-cbd4c666dcde"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AUTH - Update Password With Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"123456789\",\r\n    \"password_confirmation\": \"123456789\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/update-password/f91cbfaa-71e1-44c6-a042-533286cb8c2d",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"update-password",
+								"f91cbfaa-71e1-44c6-a042-533286cb8c2d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AUTH - Update Current User Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoid2lsbGlhbSIsImlkIjoxLCJleHAiOjE3MzEzMzk1ODd9.qA7ZiqK-QuZsJpV9h54CrTUrOECSVuIsrEqghFPWHSM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"current_password\": \"123456789\",\r\n    \"password\": \"123456789\",\r\n    \"password_confirmation\": \"123456789\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/update-password",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"update-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AUTH - Update Username",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiYWRtaW5uIiwiaWQiOjUsImV4cCI6MTczNDYxNDIyMH0.urlgOiyRqchxD5Aaic8kQAcu669MP3Tmn6iLpjOl9Bw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/update-username",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"update-username"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AUTH - Get Current User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiQWRtaW4iLCJpZCI6NSwiZXhwIjoxNzM0ODI4MzM0fQ.md4YHJS1J3VKShTEvUAnu4BzXuz22jdOmZXSJgYsi8o",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AUTH - Get User Statistics",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiQWRtaW4iLCJpZCI6NSwiZXhwIjoxNzM0ODEzNTE2fQ.kQROWQ2hRBPKJZUQZx-tIO3uQqc_eFT5IpNO8nlvZFI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/stats",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Estos endpoints permiten gestionar las cuentas de usuario, desde la creación hasta la actualización de password y nombres de usuario, así como la obtención de detalles y estadísticas del usuario autenticado."
+		},
+		{
+			"name": "TOPIC",
+			"item": [
+				{
+					"name": "TOPIC - Create Topic",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiV2lsbGlhbSBNZWRpbmEiLCJpZCI6MSwiZXhwIjoxNzMxODY1NzYzfQ.8B2_-VtPnWV8-8VxUs2WWri_WTI2BaebLfyBsOSvaIw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Cómo Instalar Java 23\",\r\n    \"description\": \"No he podido descargar la versión 23 de Java.\",\r\n    \"courseId\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/topic",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"topic"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TOPIC - Get All Topics",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/topic",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"topic"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TOPIC - Get Topic By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/topic/16",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"topic",
+								"16"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TOPIC - Get All Topics By User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiQWRtaW4iLCJpZCI6NSwiZXhwIjoxNzMxNjIzNDY1fQ.A4vcfGex3nwc7jL8lZflKOJpO9Abcqs7e9k87Szy7Hk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/topic/user/topics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"topic",
+								"user",
+								"topics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TOPIC - Update Topic",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiV2lsbGlhbSIsImlkIjoxLCJleHAiOjE3MzE1NDMzMzN9.wOjNlJVS1FjTcjkT0SwJ-ymvoPT9Hj8qFW_Bp_ISdEY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Cómo Instalar Java 23 - Actualización\",\r\n    \"description\": \"Ahora la versión 23 de Java está disponible, pero no puedo instalarla.\",\r\n    \"courseId\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/topic/16",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"topic",
+								"16"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TOPIC - Delete Topic",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiV2lsbGlhbSIsImlkIjoxLCJleHAiOjE3MzEzNjkyNDh9.dMtCXl3ORHmvBFdwC2H6ZrFx99dmFWI1jBgIlg1-w-c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/topic/16",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"topic",
+								"16"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TOPIC - Toggle Follow Topic",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiQWRtaW4iLCJpZCI6NSwiZXhwIjoxNzM0ODI4MzM0fQ.md4YHJS1J3VKShTEvUAnu4BzXuz22jdOmZXSJgYsi8o",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/topic/follow/16",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"topic",
+								"follow",
+								"16"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TOPIC - Get All Followed Topics By User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiQWRtaW4iLCJpZCI6NSwiZXhwIjoxNzM0ODgxODQxfQ.ElqC865kgNuiCCs1EvLaiVMP1nd3iCYo1pxmFPqGGZI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/topic/user/followed-topics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"topic",
+								"user",
+								"followed-topics"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Estos endpoints gestionan la creación, obtención, actualización y eliminación de tópicos, así como el seguimiento de los mismos por parte de los usuarios. La eliminación de un tópico es lógica, es decir, no se elimina físicamente de la base de datos, sino que se marca como eliminado."
+		},
+		{
+			"name": "RESPONSE",
+			"item": [
+				{
+					"name": "RESPONSE - Create Response",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiV2lsbGlhbSBNZWRpbmEiLCJpZCI6MSwiZXhwIjoxNzMxNTU0OTE0fQ.nh0OFNYw3fQM7SrVm7vliXL5b_3XV97FEB2UgEobOw0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"topicId\": \"16\",\r\n    \"content\": \"Puedes instalar Java 23 desde el sitio oficial o usar SDKMAN!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/response",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"response"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RESPONSE - Update Response",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiV2lsbGlhbSBNZWRpbmEiLCJpZCI6MSwiZXhwIjoxNzM1MDU5ODA5fQ.Q1FHEfYLfVg_1YkwVs0ujGYUqr_MbOhDfiX_Fq0pvx0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"content\": \"Te recomiendo verificar la versión y usar el instalador oficial.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/response/23",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"response",
+								"23"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RESPONSE - Delete Response",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiV2lsbGlhbSIsImlkIjoxLCJleHAiOjE3MzEzNzc0Mzd9.24bD8289LAyI2kRRdi2Q8PMeUzFTx-YILMI92Wt50gs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/response/23",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"response",
+								"23"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RESPONSE - Get Response By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/response/23",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"response",
+								"23"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RESPONSE - Set Correct Response",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiQWRtaW4iLCJpZCI6NSwiZXhwIjoxNzMxODE4MzE0fQ.PfZImp10Ig91lvijQ3tWnwArZUCJbHF5RRTb_5KG1l0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/response/23",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"response",
+								"23"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RESPONSE - Get All Responses By User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiV2lsbGlhbSBNZWRpbmEiLCJpZCI6MSwiZXhwIjoxNzM1MDU5ODA5fQ.Q1FHEfYLfVg_1YkwVs0ujGYUqr_MbOhDfiX_Fq0pvx0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/response/user/responses",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"response",
+								"user",
+								"responses"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Los endpoints de respuestas gestionan la creación, actualización, eliminación y la posibilidad de marcar una respuesta como solución. Al igual que los tópicos, la eliminación de respuestas es lógica."
+		},
+		{
+			"name": "COURSE",
+			"item": [
+				{
+					"name": "COURSE - Get All Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/course",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"course"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Este endpoint permite obtener información sobre los cursos disponibles en la API."
+		},
+		{
+			"name": "NOTIFY",
+			"item": [
+				{
+					"name": "NOTIFY - Get All Notifications By User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiV2lsbGlhbSBNZWRpbmEiLCJpZCI6MSwiZXhwIjoxNzM0OTY3Nzc2fQ.yj_lbVIWJuOfFIo89HstDmKgs70ZjS8_5SBSvN5QU7M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/notify",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NOTIFY - Delete Notification",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiQWRtaW4iLCJpZCI6NSwiZXhwIjoxNzM0OTA1MzE2fQ.DlhE8APwtVffJNNKUMowGGhduj_hxe7NZbbH6BPNJHY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/notify/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notify",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NOTIFY - Mark Notification As Read",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiQWRtaW4iLCJpZCI6NSwiZXhwIjoxNzM0OTA1MzE2fQ.DlhE8APwtVffJNNKUMowGGhduj_hxe7NZbbH6BPNJHY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/notify/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notify",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Estos endpoints gestionan las notificaciones del usuario, permitiendo obtenerlas, eliminarlas o marcarlas como leídas."
+		}
+	]
+}
