@@ -16,20 +16,21 @@
 3. [Tecnologías](#tecnologías)
 4. [Dependencias](#dependencias)
 5. [Requisitos](#requisitos)
-6. [Instalación](#instalación)
-7. [Guía de Uso](#guía-de-uso)
+6. [Diagrama de la Base de Datos](#diagrama-de-la-base-de-datos)
+7. [Instalación](#instalación)
+8. [Guía de Uso](#guía-de-uso)
     - [Ejecución de la Aplicación](#ejecución-de-la-aplicación)
     - [Acceso a la API REST](#acceso-a-la-api-rest)
     - [Documentación de la API](#documentación-de-la-api)
-8. [Endpoints](#endpoints)
+9. [Endpoints](#endpoints)
     - [Endpoints de Autenticación](#endpoints-de-autenticación)
     - [Endpoints de Tópicos](#endpoints-de-tópicos)
     - [Endpoints de Respuestas](#endpoints-de-respuestas)
     - [Endpoints de Notificaciones](#endpoints-de-notificaciones)
-9. [Testing](#testing)
-10. [Frontend](#frontend)
-11. [Licencia](#licencia)
-12. [Autor](#autor)
+10. [Testing](#testing)
+11. [Frontend](#frontend)
+12. [Licencia](#licencia)
+13. [Autor](#autor)
 
 ## Descripción
 **ForoHub** es una API desarrollada con **Spring Boot** que permite la creación, administración y gestión de tópicos y respuestas para una plataforma de discusión basada en cursos. Los usuarios pueden registrarse, interactuar con los tópicos, responder a ellos, y gestionar sus perfiles. Los administradores, moderadores e instructores tienen permisos especiales para gestionar contenidos y marcar soluciones en los tópicos. Además está diseñada para ser utilizada junto a un frontend en React.
@@ -78,6 +79,24 @@ Asegúrate de agregar las dependencias en el archivo `pom.xml` de tu proyecto Ma
 - MySQL o cualquier base de datos relacional configurada
 - IntelliJ IDEA (o cualquier otro IDE compatible con Java)
 - Un servidor de email para el envio de notificaciones
+
+## Diagrama de la Base de Datos
+
+A continuación se muestra el diagrama de la base de datos que representa las tablas y las relaciones entre ellas:
+
+<img src="./src/main/resources/static/images/database.png" alt="Diagrama Base de Datos" style="display: block; width: 800px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);" />
+
+Este diagrama proporciona una visión clara de la estructura de datos de la aplicación, detallando las relaciones entre las siguientes entidades principales:
+
+- **Users**: Gestiona los datos de los usuarios.
+- **Topics**: Representa los temas del foro creados por los usuarios.
+- **Responses**: Contiene las respuestas asociadas a los temas.
+- **Courses**: Relaciona los cursos con los temas.
+- **Topic Followers**: Representa los usuarios que siguen un tema.
+- **Notifications**: Administra las notificaciones generadas por actividades en el foro.
+- **Profiles**: Define los perfiles asociados a los usuarios.
+
+Cada tabla está conectada de acuerdo con las relaciones necesarias para garantizar la consistencia de los datos.
 
 ## Instalación
 
