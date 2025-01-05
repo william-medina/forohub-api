@@ -278,7 +278,7 @@ Puedes ver la aplicación en producción, ya conectada con la API, en el siguien
 
 👉 [Ver Proyecto en Producción](https://forohub.william-medina.com)
 
-**Nota**: Si la API ha estado inactiva por un tiempo, puede demorar algunos momentos en iniciarse.
+> **⚠️ Importante**: Si la API ha estado inactiva por un tiempo, es posible que debas esperar unos momentos mientras el servidor se inicia. El proceso puede tardar unos minutos.
 
 ### Características Destacadas del Frontend
 - **Interfaz Responsiva**: Diseñada para ofrecer una experiencia de usuario fluida en dispositivos móviles y de escritorio.
