@@ -90,10 +90,10 @@ A continuación se muestra el diagrama de la base de datos que representa las ta
 Este diagrama proporciona una visión clara de la estructura de datos de la aplicación, detallando las relaciones entre las siguientes entidades principales:
 
 - **Users**: Gestiona los datos de los usuarios.
-- **Topics**: Representa los temas del foro creados por los usuarios.
-- **Responses**: Contiene las respuestas asociadas a los temas.
-- **Courses**: Relaciona los cursos con los temas.
-- **Topic Followers**: Representa los usuarios que siguen un tema.
+- **Topics**: Representa los tópicos del foro creados por los usuarios.
+- **Responses**: Contiene las respuestas asociadas a los tópicos.
+- **Courses**: Relaciona los cursos con los tópicos.
+- **Topic Followers**: Representa los usuarios que siguen un tópico.
 - **Notifications**: Administra las notificaciones generadas por actividades en el foro.
 - **Profiles**: Define los perfiles asociados a los usuarios.
 
@@ -157,7 +157,7 @@ Cada tabla está conectada de acuerdo con las relaciones necesarias para garanti
 ## Guía de Uso
 
 ### Ejecución de la Aplicación
-- Para iniciar la aplicación en modo API, ejecuta la clase `ForohubApplication` desde tu IDE o en la línea de comandos. Esta clase contiene el método `main`, que inicia la aplicación.
+- Para iniciar la aplicación, ejecuta la clase `ForohubApplication` desde tu IDE o en la línea de comandos. Esta clase contiene el método `main`, que inicia la aplicación.
 
 ### Acceso a la API REST
 - Una vez que la aplicación esté en ejecución, podrás acceder a la API REST a través de la URL base:
@@ -167,7 +167,7 @@ Cada tabla está conectada de acuerdo con las relaciones necesarias para garanti
 - Asegúrate de que el puerto configurado en tu aplicación sea el correcto (por defecto, es 8080).
 
 ### Documentación de la API
-- La documentación de la API está disponible a través de [Swagger UI](http://localhost:8080/api/docs/swagger-ui/index.html) una vez que la aplicación esté en funcionamiento. Esta herramienta te permite explorar todos los endpoints disponibles y realizar pruebas directamente desde tu navegador, facilitando la interacción con la API.
+- La documentación de la API está disponible a través de [Swagger UI](http://localhost:8080/api/docs/swagger-ui/index.html) una vez que la aplicación esté ejecutándose. Esta herramienta te permite explorar todos los endpoints disponibles y realizar pruebas directamente desde tu navegador, facilitando la interacción con la API.
    ```
    http://localhost:8080/api/docs/swagger-ui/index.html
    ```
@@ -252,7 +252,7 @@ La API cuenta con pruebas unitarias para cada repositorio y controlador. Las pru
 
 ### Configuración de la base de datos para las pruebas
 
-Antes de ejecutar las pruebas, es necesario configurar una base de datos separada que se utilizará exclusivamente para las pruebas. Esto garantiza que las pruebas no interfieran con los datos de producción. Para configurar la base de datos de pruebas, debes agrega las siguientes variables de entorno directamente en la configuración de tu sistema operativo o IDE.:
+Antes de ejecutar las pruebas, es necesario configurar una base de datos separada que se utilizará exclusivamente para las pruebas. Esto garantiza que las pruebas no interfieran con los datos de producción. Para configurar la base de datos de pruebas, debes agrega las siguientes variables de entorno directamente en la configuración de tu sistema operativo o IDE.
 
 ```dotenv
 # Configuración de la base de datos para test
