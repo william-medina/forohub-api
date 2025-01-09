@@ -42,10 +42,10 @@
 - **Gestión de tópicos**: Los usuarios pueden crear, editar y eliminar sus propios tópicos.
 - **Respuestas a tópicos**: Los usuarios pueden responder a los tópicos y editar o eliminar sus respuestas.
 - **Cambio de perfil**: Los usuarios autenticados pueden modificar su nombre de usuario y password.
-- **Seguimiento de tópicos**: Los usuarios pueden seguir tópicos para recibir notificaciones sobre nuevas respuestas o cambios en el estado.
-- **Notificaciones**: Los usuarios reciben notificaciones cuando se generan nuevas respuestas en un tópico que han creado o seguido, o cuando un tópico es marcado como solucionado.
+- **Seguimiento de tópicos**: Los usuarios pueden seguir tópicos para recibir notificaciones sobre nuevas respuestas o cambios en el estado. Además, los usuarios recibirán una notificación por email cuando haya una nueva actividad en un tópico que hayan seguido.
+- **Notificaciones**: Los usuarios reciben notificaciones cuando se generan nuevas respuestas en un tópico que han creado o seguido, o cuando un tópico es marcado como solucionado. Estas notificaciones también se envían por email a los usuarios, asegurando que estén al tanto de los cambios importantes sin necesidad de estar constantemente revisando la plataforma.
 - **Paginación y filtrado**: Los tópicos pueden ser filtrados por estado, palabras clave o curso, y la API soporta paginación para una mejor gestión de los contenidos.
-
+- **Funciones de usuarios con permisos especiales**: Los moderadores, instructores y administradores tienen la capacidad de gestionar los tópicos y respuestas de otros usuarios. Pueden editar y eliminar tanto tópicos como respuestas, al igual que los usuarios que crearon dichos contenidos. Sin embargo, son los únicos que tienen la autoridad para marcar una respuesta como solución a un tópico.
 
 ## Tecnologías
 - **Spring Boot**: Framework que facilita el desarrollo ágil de aplicaciones en Java, permitiendo una configuración mínima.
@@ -138,7 +138,7 @@ Cada tabla está conectada de acuerdo con las relaciones necesarias para garanti
 
 4. **Habilitar o deshabilitar el envío de email:**
 
-   Si no tienes un servidor de email o las credenciales correspondientes, puedes deshabilitar el envío de emails. Esto evitará que el sistema envíe notificaciones por email, incluyendo los tokens de la confirmación de cuenta o el restablecimiento del password. Para hacerlo, sigue estos pasos:
+   Si no tienes un servidor de email o las credenciales correspondientes, puedes deshabilitar el envío de emails para evitar que el sistema intente enviar notificaciones por email, lo que podría generar errores de compilación debido a la falta de credenciales. Deshabilitar el envío de emails garantizará que el sistema no intente enviar los tokens para la confirmación de cuenta o el restablecimiento de password, ni las notificaciones sobre el seguimiento de tópicos o cambios en el estado de los mismos. Para hacerlo, sigue estos pasos:
 
    - Abre el archivo `application.properties`.
    - Añade o modifica la siguiente línea:
@@ -147,11 +147,12 @@ Cada tabla está conectada de acuerdo con las relaciones necesarias para garanti
      email.enabled=false
      ```
 
-   Con esto, el envío de emails estará deshabilitado. Si en el futuro deseas habilitarlo, cambia el valor a `true`.
+   Con esto, el envío de emails estará deshabilitado. Si en el futuro cuentas con un servidor de email y deseas habilitar esta funcionalidad, cambia el valor a `true`.
+
+   > **Importante:** Al deshabilitar el envío de emails, algunos procedimientos de la API, como el proceso de creación de cuentas, no podrán completarse correctamente, ya que no se enviará el email necesario para el envío del token de confirmación. Esto significa que la cuenta nunca será confirmada y no podrá ser activada.
 
 
 5. **Asegúrate de que todas las dependencias estén instaladas** utilizando la opción de **"Actualizar Proyecto"** o **"Importar dependencias"** en tu IDE.
-
 
 
 ## Guía de Uso
@@ -209,8 +210,8 @@ Estos endpoints gestionan la creación, obtención, actualización y eliminació
 | `/topic`                                      | `GET`       | Obtiene todos los tópicos con paginación y filtrado opcional por curso, palabra clave y estado.         |
 | `/topic/user/topics`                          | `GET`       | Obtiene los tópicos creados por el usuario con paginación y filtrado opcional por palabra clave.        |
 | `/topic/{topicId}`                            | `GET`       | Obtiene un tópico específico por su ID, incluyendo todas sus respuestas.                                |
-| `/topic/{topicId}`                            | `PUT`       | Actualiza los detalles de un tópico existente.                                                          |
-| `/topic/{topicId}`                            | `DELETE`    | Elimina un tópico existente de manera lógica, marcándolo como eliminado (no se elimina físicamente).                                                                |
+| `/topic/{topicId}`                            | `PUT`       | Actualiza los detalles de un tópico existente. Si el tópico es editado por un moderador, instructor o administrador, el creador recibirá una notificación y un email.|
+| `/topic/{topicId}`                            | `DELETE`    | Elimina un tópico de manera lógica. El creador recibirá una notificación y un email si el tópico es eliminado por un moderador, instructor o administrador.                                                            |
 | `/topic/follow/{topicId}`                     | `POST`      | Permite a un usuario seguir o dejar de seguir un tópico específico.                                     |
 | `/topic/user/followed-topics`                 | `GET`       | Obtiene los tópicos seguidos por el usuario con paginación y filtrado opcional por palabra clave.       |
 ---
@@ -218,14 +219,14 @@ Estos endpoints gestionan la creación, obtención, actualización y eliminació
 ### Endpoints de Respuestas
 Los endpoints de respuestas gestionan la creación, actualización, eliminación y la posibilidad de marcar una respuesta como solución. Al igual que los tópicos, la eliminación de respuestas es lógica.
 
-| Endpoint                                 | Método      | Descripción                                                                                                                                                                   |
-|------------------------------------------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `/response`                              | `POST`      | Crea una nueva respuesta para un tópico específico.                                                                                                                           |
-| `/response/user/responses`               | `GET`       | Obtiene todas las respuestas del usuario autenticado con paginación.                                                                                                          |
-| `/response/{responseId}`                 | `GET`       | Obtiene una respuesta específica utilizando su ID.                                                                                                                            |
-| `/response/{responseId}`                 | `PUT`       | Actualiza una respuesta específica.                                                                                                                                           |
-| `/response/{responseId}`                 | `PATCH`     | Alterna el estado de una respuesta como solución o la quita si ya estaba marcada como solución. Además, actualiza el estado del tópico, indicándole si está activo o cerrado. |
-| `/response/{responseId}`                 | `DELETE`    | Elimina una respuesta existente de manera lógica, marcándola como eliminada (no se elimina físicamente).                                                                      |
+| Endpoint                                 | Método      | Descripción                                                                                                                                                                                                                                                                                             |
+|------------------------------------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `/response`                              | `POST`      | Crea una respuesta para un tópico. Si se agrega una respuesta, el creador del tópico y los usuarios que lo siguen recibirán notificaciones y emails informándoles.                                                                                                                                      |
+| `/response/user/responses`               | `GET`       | Obtiene todas las respuestas del usuario autenticado con paginación.                                                                                                                                                                                                                                    |
+| `/response/{responseId}`                 | `GET`       | Obtiene una respuesta específica utilizando su ID.                                                                                                                                                                                                                                                      |
+| `/response/{responseId}`                 | `PUT`       | Actualiza una respuesta. Si la actualización la hace un moderador, instructor o administrador, solo se notifica al creador de la respuesta.                                                                                                                                                             |
+| `/response/{responseId}`                 | `PATCH`     | Alterna el estado de una respuesta como solución o la quita si ya estaba marcada como solución. Además, actualiza el estado del tópico, indicándole si está activo o cerrado. Al hacerlo, Se notificará al creador de la respuesta, al creador del tópico, y a todos los usuarios que siguen el tópico. |
+| `/response/{responseId}`                 | `DELETE`    | Elimina una respuesta de manera lógica. Si un moderador, instructor o administrador la elimina, solo se notifica al creador de la respuesta.                                                                                                                                                            |
 ---
 
 ### Endpoints de Notificaciones
@@ -248,7 +249,7 @@ Este endpoint permite obtener información sobre los cursos disponibles en la AP
 
 ## Testing
 
-La API cuenta con pruebas unitarias para cada repositorio y controlador. Las pruebas están diseñadas para garantizar que la funcionalidad de la API funcione correctamente. Cada prueba interactúa con una base de datos de pruebas, lo que permite realizar validaciones sin afectar los datos reales.
+La API cuenta con pruebas unitarias para cada repositorio y controlador. Estas pruebas están diseñadas para garantizar el correcto funcionamiento de la API. Cada prueba interactúa con una base de datos de pruebas, lo que permite realizar validaciones sin afectar los datos reales.
 
 ### Configuración de la base de datos para las pruebas
 
@@ -282,7 +283,7 @@ Puedes ver la aplicación en producción, ya conectada con la API, en el siguien
 
 ### Características Destacadas del Frontend
 - **Interfaz Responsiva**: Diseñada para ofrecer una experiencia de usuario fluida en dispositivos móviles y de escritorio.
-- **Conexión Eficiente a la API**: Permite la interacción en tiempo real con la API REST, facilitando búsquedas y visualización de datos de manera ágil.
+- **Conexión Eficiente a la API**: Conexión en tiempo real con la API REST para garantizar una comunicación fluida y la actualización dinámica de los datos mostrados en la interfaz.
 - **Componentes Reutilizables**: Estructura modular que simplifica el mantenimiento y la escalabilidad de la aplicación.
 
 ### Imágenes del Frontend
