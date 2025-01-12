@@ -234,7 +234,16 @@ La inteligencia artificial se encarga de verificar el contenido ingresado por lo
    ```
    http://localhost:8080/api/docs/swagger-ui/index.html
    ```
-  
+
+- Si deseas deshabilitar la documentación de la API en su entorno de desarrollo o producción, puedes hacerlo modificando las siguientes líneas en tu archivo `application.properties` y estableciéndolas en `false`:
+
+    ```properties
+    springdoc.api-docs.enabled=false
+    springdoc.swagger-ui.enabled=false
+    ```
+
+    Esto deshabilitará tanto la generación de la documentación de la API como la interfaz de usuario de Swagger.
+
 ### Colección para Postman
 - Se incluye una colección de Postman con todas las solicitudes configuradas para facilitar las pruebas de la API. Esta colección permite explorar los endpoints y realizar peticiones rápidamente sin necesidad de configurarlas manualmente.
 - Importa el archivo `ForoHub.postman_collection.json` desde la carpeta `docs/postman` en Postman utilizando la opción "Importar". Una vez importado, podrás comenzar a interactuar con la API de forma inmediata.
