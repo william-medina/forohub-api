@@ -169,8 +169,12 @@ public class ResponseService {
     }
 
     private void validateResponseContent(String content) {
-        if (!contentValidationService.validateContent(content)) {
-            throw new AppException("La respuesta tiene contenido inapropiado.", "FORBIDDEN");
+        String validationResponse = contentValidationService.validateContent(content);
+
+        if (validationResponse.equals("approved")) {
+            return;
+        } else {
+            throw new AppException("La respuesta " + validationResponse, "FORBIDDEN");
         }
     }
 

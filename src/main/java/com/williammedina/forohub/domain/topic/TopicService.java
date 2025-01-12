@@ -180,14 +180,24 @@ public class TopicService {
     }
 
     private void validateTitleContent(String title) {
-        if (!contentValidationService.validateContent(title)) {
-            throw new AppException("El título tiene contenido inapropiado.", "FORBIDDEN");
+        String validationResponse = contentValidationService.validateContent(title);
+
+        if (validationResponse.equals("approved")) {
+            return;
+        } else {
+            throw new AppException("El título " + validationResponse, "FORBIDDEN");
         }
     }
 
+
+
     private void validateDescriptionContent(String description) {
-        if (!contentValidationService.validateContent(description)) {
-            throw new AppException("La descripción tiene contenido inapropiado.", "FORBIDDEN");
+        String validationResponse = contentValidationService.validateContent(description);
+
+        if (validationResponse.equals("approved")) {
+            return;
+        } else {
+            throw new AppException("La descripción " + validationResponse, "FORBIDDEN");
         }
     }
 

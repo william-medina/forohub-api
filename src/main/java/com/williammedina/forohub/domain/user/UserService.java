@@ -256,10 +256,18 @@ public class UserService {
         }
     }
 
-    private void validateUsernameContent(String title) {
-        if (!contentValidationService.validateContent(title)) {
-            throw new AppException("El nombre de usuario es inapropiado.", "FORBIDDEN");
+    private void validateUsernameContent(String username) {
+        String validationResponse = contentValidationService.validateUsername(username);
+
+        if (validationResponse.equals("approved")) {
+            return;
+        } else {
+            throw new AppException("El nombre de usuario " + validationResponse, "FORBIDDEN");
         }
+    }
+
+    private void validateResponseContent(String content) {
+
     }
 
     private UserDTO toUserDTO(User user) {
