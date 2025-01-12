@@ -38,7 +38,7 @@
 
 ## Descripción
 
-**ForoHub** es una API desarrollada con **Spring Boot** que permite la creación, administración y gestión de tópicos y respuestas para una plataforma de discusión basada en cursos. Los usuarios pueden registrarse, interactuar con los tópicos, responder a ellos, y gestionar sus perfiles. Los administradores, moderadores e instructores tienen permisos especiales para gestionar contenidos y marcar soluciones en los tópicos. Además, la API incluye una implementación de inteligencia artificial (IA) para detectar y filtrar contenido inapropiado en los tópicos y respuestas, lo que mejora la experiencia de los usuarios al asegurar que el contenido compartido sea seguro y adecuado. Esta API está diseñada para ser utilizada junto a un frontend en React, permitiendo una integración fluida entre el backend y la interfaz de usuario.
+**ForoHub** es una API desarrollada con **Spring Boot** que permite la creación, administración y gestión de tópicos y respuestas para una plataforma de discusión basada en cursos. Los usuarios pueden registrarse, interactuar con los tópicos, responder a ellos, y gestionar sus perfiles. Los administradores, moderadores e instructores tienen permisos especiales para gestionar contenidos y marcar soluciones en los tópicos. Además, la API incluye una implementación de inteligencia artificial (IA) para detectar contenido inapropiado en los tópicos y respuestas, lo que mejora la experiencia de los usuarios al asegurar que el contenido compartido sea seguro y adecuado. Esta API está diseñada para ser utilizada junto a un frontend en React, permitiendo una integración fluida entre el backend y la interfaz de usuario.
 
 ## Características
 
@@ -50,7 +50,7 @@
 - **Notificaciones**: Los usuarios reciben notificaciones cuando se generan nuevas respuestas en un tópico que han creado o seguido, o cuando un tópico es marcado como solucionado. Estas notificaciones también se envían por email a los usuarios, asegurando que estén al tanto de los cambios importantes sin necesidad de estar constantemente revisando la plataforma.
 - **Paginación y filtrado**: Los tópicos pueden ser filtrados por estado, palabras clave o curso, y la API soporta paginación para una mejor gestión de los contenidos.
 - **Funciones de usuarios con permisos especiales**: Los moderadores, instructores y administradores tienen la capacidad de gestionar los tópicos y respuestas de otros usuarios. Pueden editar y eliminar tanto tópicos como respuestas, al igual que los usuarios que crearon dichos contenidos. Sin embargo, son los únicos que tienen la autoridad para marcar una respuesta como solución a un tópico.
-- **Implementación de IA para moderación de contenido**: Se ha implementado Inteligencia Artificial para la detección y filtrado de contenido inapropiado en los tópicos y respuestas, garantizando una experiencia más segura y saludable para los usuarios.
+- **Implementación de IA para moderación de contenido**: Se ha implementado Inteligencia Artificial para la detección de contenido inapropiado en los tópicos y respuestas, garantizando una experiencia más segura y saludable para los usuarios.
 
 ## Tecnologías
 - **Spring Boot**: Framework que facilita el desarrollo ágil de aplicaciones en Java, permitiendo una configuración mínima.
@@ -137,7 +137,7 @@ Para utilizar la funcionalidad de detección de contenido inapropiado, es necesa
 
 ### Detección de Contenido Inapropiado
 
-La inteligencia artificial se encarga de verificar el contenido ingresado por los usuarios, incluyendo nombres de usuario, títulos de tópicos y respuestas. Si se detecta contenido inapropiado, la API enviará un mensaje de error y evitará que el usuario cree o actualice un tópico, respuesta o nombre de usuario.
+La inteligencia artificial se encarga de verificar el contenido ingresado por los usuarios, incluyendo nombres de usuario, tópicos y respuestas. Si se detecta contenido inapropiado, la API enviará un mensaje de error y evitará que el usuario cree o actualice un tópico, respuesta o nombre de usuario.
 
 ## Instalación
 
