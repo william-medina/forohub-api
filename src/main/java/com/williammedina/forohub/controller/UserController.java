@@ -34,6 +34,7 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "Cuenta creada"),
                     @ApiResponse(responseCode = "400", description = "Datos de solicitud inválidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "403", description = "Username inapropiado detectado por la IA.", content = { @Content( schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "409", description = "El nombre de usuario o el email ya están registrados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                     @ApiResponse(responseCode = "500", description = "Error al enviar el email de confirmación de cuenta", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
@@ -148,6 +149,7 @@ public class UserController {
                     @ApiResponse(responseCode = "200", description = "Nombre de usuario actualizado correctamente"),
                     @ApiResponse(responseCode = "400", description = "Datos de solicitud inválidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                     @ApiResponse(responseCode = "401", description = "No autorizado - token bearer inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "403", description = "Username inapropiado detectado por la IA.", content = { @Content( schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "409", description = "El nombre de usuario ya están registrados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )

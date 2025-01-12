@@ -1,6 +1,7 @@
 package com.williammedina.forohub.domain.user;
 
-import com.williammedina.forohub.domain.helper.CommonHelperService;
+import com.williammedina.forohub.domain.common.CommonHelperService;
+import com.williammedina.forohub.domain.common.ContentValidationService;
 import com.williammedina.forohub.domain.response.ResponseRepository;
 import com.williammedina.forohub.domain.topic.TopicRepository;
 import com.williammedina.forohub.domain.topicfollow.TopicFollowRepository;
@@ -32,6 +33,7 @@ public class UserService {
     private final TopicRepository topicRepository;
     private final ResponseRepository responseRepository;
     private final TopicFollowRepository topicFollowRepository;
+    private final ContentValidationService contentValidationService;
 
     public UserService(
             UserRepository userRepository,
@@ -42,7 +44,8 @@ public class UserService {
             CommonHelperService commonHelperService,
             TopicRepository topicRepository,
             ResponseRepository responseRepository,
-            TopicFollowRepository topicFollowRepository
+            TopicFollowRepository topicFollowRepository,
+            ContentValidationService contentValidationService
     ) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
@@ -53,6 +56,7 @@ public class UserService {
         this.topicRepository = topicRepository;
         this.responseRepository = responseRepository;
         this.topicFollowRepository = topicFollowRepository;
+        this.contentValidationService = contentValidationService;
     }
 
     @Transactional
@@ -77,6 +81,8 @@ public class UserService {
         validatePasswordsMatch(data.password(), data.password_confirmation());
         existsByUsername(data.username());
         existsByEmail(data.email());
+
+        validateUsernameContent(data.username()); // Validar el username con IA
 
         User user = new User(data.username(), data.email().trim().toLowerCase(), passwordEncoder.encode(data.password()));
         User userCreated = userRepository.save(user);
@@ -164,6 +170,8 @@ public class UserService {
             throw new AppException("Debes ingresa un nuevo nombre.", "BAD_REQUEST");
         }
 
+        validateUsernameContent(data.username()); // Validar el nuevo username con IA
+
         existsByUsername(data.username());
         user.setUsername(data.username());
         userRepository.save(user);
@@ -245,6 +253,12 @@ public class UserService {
     private void existsByEmail(String email) {
         if (userRepository.existsByEmail(email.trim().toLowerCase())) {
             throw new AppException("El email ya está registrado.", "CONFLICT");
+        }
+    }
+
+    private void validateUsernameContent(String title) {
+        if (!contentValidationService.validateContent(title)) {
+            throw new AppException("El nombre de usuario es inapropiado.", "FORBIDDEN");
         }
     }
 

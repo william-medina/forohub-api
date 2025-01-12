@@ -1,6 +1,7 @@
 package com.williammedina.forohub.domain.response;
 
-import com.williammedina.forohub.domain.helper.CommonHelperService;
+import com.williammedina.forohub.domain.common.CommonHelperService;
+import com.williammedina.forohub.domain.common.ContentValidationService;
 import com.williammedina.forohub.domain.notification.NotificationService;
 import com.williammedina.forohub.domain.topic.Topic;
 import com.williammedina.forohub.domain.response.dto.CreateResponseDTO;
@@ -25,17 +26,20 @@ public class ResponseService {
     private final CommonHelperService commonHelperService;
     private final NotificationService notificationService;
     private final EmailService emailService;
+    private final ContentValidationService contentValidationService;
 
     public ResponseService(
             ResponseRepository responseRepository,
             CommonHelperService commonHelperService,
             NotificationService notificationService,
-            EmailService emailService
+            EmailService emailService,
+            ContentValidationService contentValidationService
     ) {
         this.responseRepository = responseRepository;
         this.commonHelperService = commonHelperService;
         this.notificationService = notificationService;
         this.emailService = emailService;
+        this.contentValidationService = contentValidationService;
     }
 
     @Transactional
@@ -43,6 +47,7 @@ public class ResponseService {
         User user = getAuthenticatedUser();
         Topic topic = findTopicById(data.topicId());
         isTopicClosed(topic);
+        validateResponseContent(data.content());// Validar el contenido de la respuesta con IA
 
         Response response = responseRepository.save(new Response(user, topic, data.content()));
 
@@ -68,6 +73,8 @@ public class ResponseService {
     public ResponseDTO updateResponse(@Valid UpdateResponseDTO data, Long responseId) throws MessagingException {
         Response response = findResponseById(responseId);
         User user = checkModificationPermission(response);
+
+        validateResponseContent(data.content()); // Validar el contenido de la respuesta actualizada con IA
 
         response.setContent(data.content());
         Response updatedResponse = responseRepository.save(response);
@@ -158,6 +165,12 @@ public class ResponseService {
     private void isTopicClosed(Topic topic) {
         if(topic.isTopicClosed()) {
             throw new AppException("No se puede crear una respuesta. El tópico está cerrado.", "FORBIDDEN");
+        }
+    }
+
+    private void validateResponseContent(String content) {
+        if (!contentValidationService.validateContent(content)) {
+            throw new AppException("La respuesta tiene contenido inapropiado.", "FORBIDDEN");
         }
     }
 

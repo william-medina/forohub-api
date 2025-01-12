@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.notification;
 
-import com.williammedina.forohub.domain.helper.CommonHelperService;
+import com.williammedina.forohub.domain.common.CommonHelperService;
 import com.williammedina.forohub.domain.notification.dto.NotificationDTO;
 import com.williammedina.forohub.domain.response.Response;
 import com.williammedina.forohub.domain.topic.Topic;

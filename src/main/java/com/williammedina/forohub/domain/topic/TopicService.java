@@ -1,9 +1,10 @@
 package com.williammedina.forohub.domain.topic;
 
+import com.williammedina.forohub.domain.common.ContentValidationService;
 import com.williammedina.forohub.domain.course.Course;
 import com.williammedina.forohub.domain.course.CourseRepository;
 import com.williammedina.forohub.domain.course.dto.CourseDTO;
-import com.williammedina.forohub.domain.helper.CommonHelperService;
+import com.williammedina.forohub.domain.common.CommonHelperService;
 import com.williammedina.forohub.domain.notification.NotificationService;
 import com.williammedina.forohub.domain.topic.dto.InputTopicDTO;
 import com.williammedina.forohub.domain.topic.dto.TopicDTO;
@@ -35,19 +36,22 @@ public class TopicService {
     private final CommonHelperService commonHelperService;
     private final NotificationService notificationService;
     private final EmailService emailService;
+    private final ContentValidationService contentValidationService;
 
     public TopicService(
             TopicRepository topicRepository,
             CourseRepository courseRepository,
             CommonHelperService commonHelperService,
             NotificationService notificationService,
-            EmailService emailService
+            EmailService emailService,
+            ContentValidationService contentValidationService
     ) {
         this.topicRepository = topicRepository;
         this.courseRepository = courseRepository;
         this.commonHelperService = commonHelperService;
         this.notificationService = notificationService;
         this.emailService = emailService;
+        this.contentValidationService = contentValidationService;
     }
 
     @Transactional
@@ -55,6 +59,11 @@ public class TopicService {
         User user = getAuthenticatedUser();
         existsByTitle(data.title());
         existsByDescription(data.description());
+
+        // Validar el contenido del título y la descripción con IA
+        validateTitleContent(data.title());
+        validateDescriptionContent(data.description());
+
         Course course = findCourseById(data.courseId());
 
         Topic topic = topicRepository.save(new Topic(user, data.title(), data.description(), course));
@@ -97,10 +106,12 @@ public class TopicService {
 
         if(!data.title().equals(topic.getTitle())) {
             existsByTitle(data.title());
+            validateTitleContent(data.title()); // Validar el contenido del nuevo título con IA
         }
 
         if(!data.description().equals(topic.getDescription())) {
             existsByDescription(data.description());
+            validateDescriptionContent(data.description()); // Validar el contenido de la nueva descripción con IA
         }
 
         topic.setTitle(data.title());
@@ -165,6 +176,18 @@ public class TopicService {
     private void existsByDescription(String description) {
         if (topicRepository.existsByDescription(description)) {
             throw new AppException("La descripción ya existe.", "CONFLICT");
+        }
+    }
+
+    private void validateTitleContent(String title) {
+        if (!contentValidationService.validateContent(title)) {
+            throw new AppException("El título tiene contenido inapropiado.", "FORBIDDEN");
+        }
+    }
+
+    private void validateDescriptionContent(String description) {
+        if (!contentValidationService.validateContent(description)) {
+            throw new AppException("La descripción tiene contenido inapropiado.", "FORBIDDEN");
         }
     }
 

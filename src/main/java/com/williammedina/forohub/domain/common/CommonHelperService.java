@@ -1,4 +1,4 @@
-package com.williammedina.forohub.domain.helper;
+package com.williammedina.forohub.domain.common;
 
 import com.williammedina.forohub.domain.response.Response;
 import com.williammedina.forohub.domain.response.dto.ResponseDTO;

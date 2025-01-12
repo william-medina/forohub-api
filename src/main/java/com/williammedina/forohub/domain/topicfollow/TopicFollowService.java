@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.topicfollow;
 
-import com.williammedina.forohub.domain.helper.CommonHelperService;
+import com.williammedina.forohub.domain.common.CommonHelperService;
 import com.williammedina.forohub.domain.topic.Topic;
 import com.williammedina.forohub.domain.topic.dto.TopicDTO;
 import com.williammedina.forohub.domain.topicfollow.dto.TopicFollowDetailsDTO;

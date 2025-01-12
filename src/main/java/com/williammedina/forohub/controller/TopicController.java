@@ -44,6 +44,7 @@ public class TopicController {
                     @ApiResponse(responseCode = "201", description = "Tópico creado exitosamente"),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "403", description = "Contenido inapropiado detectado por la IA.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "404", description = "Curso no encontrado", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "409", description = "Título o descripción ya existe en otro tópico.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             }
@@ -116,7 +117,7 @@ public class TopicController {
                     @ApiResponse(responseCode = "200", description = "Tópico actualizado exitosamente"),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para modificar este tópico.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para modificar este tópico o contenido inapropiado detectado por la IA.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "404", description = "Tópico no encontrado", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "409", description = "Título o descripción ya existe en otro tópico.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }

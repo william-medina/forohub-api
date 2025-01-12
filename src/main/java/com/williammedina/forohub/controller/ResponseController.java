@@ -39,7 +39,7 @@ public class ResponseController {
                     @ApiResponse(responseCode = "201", description = "Respuesta creada exitosamente"),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "403", description = "No se pueden agregar respuestas a un tópico cerrado", content = { @Content( schema = @Schema(implementation = ErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "403", description = "No se pueden agregar respuestas a un tópico cerrado o contenido inapropiado detectado por la IA.", content = { @Content( schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "404", description = "Tópico no encontrado", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
             }
     )
@@ -90,7 +90,7 @@ public class ResponseController {
                     @ApiResponse(responseCode = "200", description = "Respuesta actualizada exitosamente"),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para modificar esta respuesta.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para modificar esta respuesta o contenido inapropiado detectado por la IA.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
             }
     )
