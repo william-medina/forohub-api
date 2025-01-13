@@ -9,8 +9,7 @@
 ![Version](https://img.shields.io/badge/Version-1.0.0-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Testing](https://img.shields.io/badge/Testing-JUnit-orange)
-![Artificial Intelligence](https://img.shields.io/badge/Artificial%20Intelligence-Spring%20AI-blueviolet)
-
+![Artificial Intelligence](https://img.shields.io/badge/Artificial%20Intelligence-OpenAI-10A37F)
 
 # Índice
 1. [Descripción](#descripción)
@@ -126,9 +125,9 @@ Para utilizar la funcionalidad de detección de contenido inapropiado, es necesa
    - Luego, asegúrate de que la variable de entorno `AI_API_KEY` esté configurada en tu sistema operativo o IDE con la clave de API proporcionada por OpenAI.
 
 
-2. **Configura el modelo de IA para la detección de contenido inapropiado:**
+2. **Configura el modelo de IA:**
 
-   - En el archivo `application.properties`, también debes configurar el modelo que se utilizará para procesar las solicitudes de detección de contenido:
+   - En el archivo `application.properties`, también debes configurar el modelo que se utilizará para procesar las solicitudes de análisis de contenido:
 
      ```properties
      spring.ai.openai.chat.options.model=gpt-4o-mini
