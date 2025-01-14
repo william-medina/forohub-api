@@ -1,4 +1,4 @@
-# ForoHub API
+# 🌐 ForoHub API
 ![Java](https://img.shields.io/badge/Java-21-blue)
 ![Spring Boot](https://img.shields.io/badge/Framework-Spring%20Boot-brightgreen)
 ![MySQL](https://img.shields.io/badge/Database-MySQL-orange)
@@ -11,33 +11,33 @@
 ![Testing](https://img.shields.io/badge/Testing-JUnit-orange)
 ![Artificial Intelligence](https://img.shields.io/badge/Artificial%20Intelligence-OpenAI-10A37F)
 
-# Índice
-1. [Descripción](#descripción)
-2. [Características](#características)
-3. [Tecnologías](#tecnologías)
-4. [Dependencias](#dependencias)
-5. [Requisitos](#requisitos)
-6. [Diagrama de la Base de Datos](#diagrama-de-la-base-de-datos)
-7. [Notificaciones](#notificaciones)
-8. [Implementación de Inteligencia Artificial](#implementación-de-inteligencia-artificial)
-9. [Instalación](#instalación)
-10. [Guía de Uso](#guía-de-uso)
+## 📋 Índice
+1. [📝 Descripción](#-descripción)
+2. [✨ Características](#-características)
+3. [💻 Tecnologías](#-tecnologías)
+4. [📦 Dependencias](#-dependencias)
+5. [⚙️ Requisitos](#-requisitos)
+6. [📊 Base de Datos](#-base-de-datos)
+7. [🔔 Notificaciones](#-notificaciones)
+8. [🤖 Inteligencia Artificial](#-inteligencia-artificial)
+9. [📥 Instalación](#-instalación)
+10. [🚀 Guía de Uso](#-guía-de-uso)
     - [Ejecución de la Aplicación](#ejecución-de-la-aplicación)
     - [Acceso a la API REST](#acceso-a-la-api-rest)
     - [Documentación de la API](#documentación-de-la-api)
     - [Colección para Postman](#colección-para-postman)
-11. [Endpoints](#endpoints)
+11. [🔗 Endpoints](#-endpoints)
     - [Endpoints de Autenticación](#endpoints-de-autenticación)
     - [Endpoints de Tópicos](#endpoints-de-tópicos)
     - [Endpoints de Respuestas](#endpoints-de-respuestas)
     - [Endpoints de Notificaciones](#endpoints-de-notificaciones)
     - [Endpoints de Cursos](#endpoints-de-cursos)
-12. [Testing](#testing)
-13. [Frontend](#frontend)
-14. [Licencia](#licencia)
-15. [Autor](#autor)
+12. [✅ Testing](#-testing)
+13. [🎨 Frontend](#-frontend)
+14. [📜 Licencia](#-licencia)
+15. [👨‍💻 Autor](#-autor)
 
-## Descripción
+## 📝 Descripción
 
 **ForoHub** es una API desarrollada con **Spring Boot** que permite la creación, administración y gestión de tópicos y respuestas para una plataforma de discusión basada en cursos. Los usuarios pueden registrarse, interactuar con tópicos, responder a ellos y gestionar sus perfiles. Los administradores, moderadores e instructores tienen permisos especiales para gestionar contenidos y marcar soluciones en los tópicos.
 
@@ -47,19 +47,19 @@ Además, integra una implementación de **Inteligencia Artificial (IA)** para de
 
 Esta API está diseñada para ser utilizada junto a un frontend en **React**, permitiendo una integración fluida entre el backend y la interfaz de usuario.
 
-## Características
+## ✨ Características
 
-- **Registro y autenticación de usuarios**: Los usuarios pueden registrarse, confirmar su cuenta mediante un token de confirmación y recuperar su password mediante un token de olvido.
-- **Gestión de tópicos**: Los usuarios pueden crear, editar y eliminar sus propios tópicos.
-- **Respuestas a tópicos**: Los usuarios pueden responder a los tópicos y editar o eliminar sus respuestas.
-- **Cambio de perfil**: Los usuarios autenticados pueden modificar su nombre de usuario y password.
-- **Seguimiento de tópicos**: Los usuarios pueden seguir tópicos para recibir notificaciones sobre nuevas respuestas o cambios en el estado. Además, los usuarios recibirán una notificación por email cuando haya una nueva actividad en un tópico que hayan seguido.
-- **Notificaciones**: Los usuarios reciben notificaciones cuando se generan nuevas respuestas en un tópico que han creado o seguido, o cuando un tópico es marcado como solucionado. Estas notificaciones también se envían por email a los usuarios, asegurando que estén al tanto de los cambios importantes sin necesidad de estar constantemente revisando la plataforma.
-- **Paginación y filtrado**: Los tópicos pueden ser filtrados por estado, palabras clave o curso, y la API soporta paginación para una mejor gestión de los contenidos.
-- **Funciones de usuarios con permisos especiales**: Los moderadores, instructores y administradores tienen la capacidad de gestionar los tópicos y respuestas de otros usuarios. Pueden editar y eliminar tanto tópicos como respuestas, al igual que los usuarios que crearon dichos contenidos. Sin embargo, son los únicos que tienen la autoridad para marcar una respuesta como solución a un tópico.
-- **Implementación de IA para moderación de contenido**: Se ha implementado Inteligencia Artificial para la detección de contenido inapropiado en los tópicos y respuestas, garantizando una experiencia más segura y saludable para los usuarios.
+- **🔑 Registro y autenticación de usuarios**: Los usuarios pueden registrarse, confirmar su cuenta mediante un token de confirmación y recuperar su password mediante un token de olvido.
+- **📝 Gestión de tópicos**: Los usuarios pueden crear, editar y eliminar sus propios tópicos.
+- **💬  Respuestas a tópicos**: Los usuarios pueden responder a los tópicos y editar o eliminar sus respuestas.
+- **🔧 Actualización de perfil**: Los usuarios autenticados pueden modificar su nombre de usuario y password.
+- **👀 Seguimiento de tópicos**: Los usuarios pueden seguir tópicos para recibir notificaciones sobre nuevas respuestas o cambios en el estado. Además, los usuarios recibirán una notificación por email cuando haya una nueva actividad en un tópico que hayan seguido.
+- **🔔 Notificaciones**: Los usuarios reciben notificaciones cuando se generan nuevas respuestas en los tópicos que han creado o seguido, o cuando un tópico es marcado como solucionado. También se envían por email para que los usuarios estén al tanto de los cambios importantes
+- **🔍 Paginación y filtrado**: Los tópicos pueden ser filtrados por estado, palabras clave o curso, y la API soporta paginación para una mejor gestión de los contenidos.
+- **👨‍💻 Funciones de usuarios con permisos especiales**: Los moderadores, instructores y administradores tienen la capacidad de gestionar los tópicos y respuestas de otros usuarios. Pueden editar y eliminar tanto tópicos como respuestas, al igual que los usuarios que crearon dichos contenidos. Sin embargo, son los únicos que tienen la autoridad para marcar una respuesta como solución a un tópico.
+- **🤖 Implementación de IA para análisis de contenido**: Se ha integrado Inteligencia Artificial para identificar contenido inapropiado en los tópicos y respuestas, lo que garantiza un ambiente más seguro y respetuoso para todos los usuarios.
 
-## Tecnologías
+## 💻 Tecnologías
 - **Spring Boot**: Framework que facilita el desarrollo ágil de aplicaciones en Java, permitiendo una configuración mínima.
 - **MySQL**: Sistema de gestión de bases de datos relacional utilizado para almacenar la información de la API.
 - **JWT (JSON Web Token)**: Tecnología para la autenticación y autorización de usuarios mediante tokens seguros.
@@ -67,7 +67,7 @@ Esta API está diseñada para ser utilizada junto a un frontend en **React**, pe
 - **Springdoc OpenAPI**: Biblioteca para la generación automática de documentación de la API en aplicaciones Spring Boot, que utiliza **Swagger UI** para visualizar y probar los endpoints de manera interactiva.
 - **Spring AI**: Biblioteca que integra inteligencia artificial en aplicaciones Spring Boot, permitiendo el uso de modelos de IA para tareas como análisis de contenido y procesamiento de lenguaje natural.
 
-## Dependencias
+## 📦 Dependencias
 
 Para que la API funcione correctamente, asegúrate de incluir las siguientes dependencias:
 
@@ -86,7 +86,7 @@ Para que la API funcione correctamente, asegúrate de incluir las siguientes dep
 
 Asegúrate de agregar las dependencias en el archivo `pom.xml` de tu proyecto Maven.
 
-## Requisitos
+## ⚙️ Requisitos
 
 - JDK 21 o superior
 - Maven para la gestión de dependencias
@@ -96,9 +96,9 @@ Asegúrate de agregar las dependencias en el archivo `pom.xml` de tu proyecto Ma
 - Credenciales de IA: Acceso a APIs de IA (ej. OpenAI)
 
 
-## Diagrama de la Base de Datos
+## 📊 Base de Datos
 
-A continuación se muestra el diagrama de la base de datos que representa las tablas y las relaciones entre ellas:
+La base de datos utilizada en la API es MySQL, la cual almacena información relacionada con los usuarios, tópicos, respuestas, notificaciones y cursos. A continuación se muestra el diagrama de la base de datos que representa las tablas y las relaciones entre ellas:
 
 <img src="./src/main/resources/static/images/database.png" alt="Diagrama Base de Datos" style="display: block; width: 800px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);" />
 
@@ -115,7 +115,7 @@ Este diagrama proporciona una visión clara de la estructura de datos de la apli
 Cada tabla está conectada de acuerdo con las relaciones necesarias para garantizar la consistencia de los datos.
 
 
-## Notificaciones
+## 🔔 Notificaciones
 
 La API genera notificaciones internas que se almacenan en la base de datos y pueden ser consultadas por los usuarios. Además, se envían emails para mantener a los usuarios informados sobre eventos importantes, tales como:
 
@@ -140,7 +140,7 @@ La API genera notificaciones internas que se almacenan en la base de datos y pue
 
 Como se muestra en las imágenes, en el email se presenta un botón que dice 'Ver Tópico', el cual tiene como objetivo redirigir al usuario a un frontend para visualizar el tópico correspondiente.
 
-## Implementación de Inteligencia Artificial
+## 🤖 Inteligencia Artificial
 
 La API utiliza la inteligencia artificial para detectar contenido inapropiado en los tópicos, respuestas y nombres de usuario. Esta funcionalidad ayuda a garantizar que las interacciones dentro de la aplicación se mantengan dentro de los límites de respeto y seguridad. Se utiliza la API de OpenAI para procesar y verificar los datos, asegurando que el contenido generado o recibido cumpla con los estándares adecuados.
 
@@ -150,29 +150,29 @@ Para utilizar la funcionalidad de detección de contenido inapropiado, es necesa
 
 1. **Configura la clave de la API de OpenAI:**
 
-   - En tu archivo de configuración `application.properties`, añade la siguiente línea para configurar la clave de la API:
+    - En tu archivo de configuración `application.properties`, añade la siguiente línea para configurar la clave de la API:
 
-     ```properties
-     spring.ai.openai.api-key=${AI_API_KEY}
-     ```
+      ```properties
+      spring.ai.openai.api-key=${AI_API_KEY}
+      ```
 
-   - Luego, asegúrate de que la variable de entorno `AI_API_KEY` esté configurada en tu sistema operativo o IDE con la clave de API proporcionada por OpenAI.
+    - Luego, asegúrate de que la variable de entorno `AI_API_KEY` esté configurada en tu sistema operativo o IDE con la clave de API proporcionada por OpenAI.
 
 
 2. **Configura el modelo de IA:**
 
-   - En el archivo `application.properties`, también debes configurar el modelo que se utilizará para procesar las solicitudes de análisis de contenido:
+    - En el archivo `application.properties`, también debes configurar el modelo que se utilizará para procesar las solicitudes de análisis de contenido:
 
-     ```properties
-     spring.ai.openai.chat.options.model=gpt-4o-mini
-     ```
-   - El modelo de IA que se utilizará en este caso es `gpt-4o-mini`, aunque puedes ajustarlo según tus necesidades.
+      ```properties
+      spring.ai.openai.chat.options.model=gpt-4o-mini
+      ```
+    - El modelo de IA que se utilizará en este caso es `gpt-4o-mini`, aunque puedes ajustarlo según tus necesidades.
 
 ### Detección de Contenido Inapropiado
 
 La inteligencia artificial se encarga de verificar el contenido ingresado por los usuarios, incluyendo nombres de usuario, tópicos y respuestas. Si se detecta contenido inapropiado, la API enviará un mensaje de error y evitará que el usuario cree o actualice un tópico, respuesta o nombre de usuario.
 
-## Instalación
+## 📥 Instalación
 
 1. **Clona el repositorio**:
     ```bash
@@ -188,15 +188,15 @@ La inteligencia artificial se encarga de verificar el contenido ingresado por lo
    A continuación, agrega las siguientes variables de entorno directamente en la configuración de tu sistema operativo o IDE.
 
    ```dotenv
-   # Base de Datos
+   # 📊 Base de Datos
    DB_URL=jdbc:mysql://localhost:3306/your_database_name
    DB_USERNAME=your_username
    DB_PASSWORD=your_password
 
-   # Clave Secreta para JWT
+   # 🔑 Clave Secreta para JWT
    JWT_SECRET=your_secret_jwt
 
-   # Configuración del Servidor de Email
+   # 📧 Configuración del Servidor de Email
    EMAIL_HOST=your_email_host
    EMAIL_PORT=your_email_port
    EMAIL_USER=your_email_user
@@ -204,10 +204,10 @@ La inteligencia artificial se encarga de verificar el contenido ingresado por lo
    EMAIL_FROM=your_email_from
    EMAIL_ENABLED=true
 
-   # URL del Frontend - Habilita CORS para permitir peticiones desde esta URL
+   # 🌍 URL del Frontend - Habilita CORS para permitir peticiones desde esta URL
    FRONTEND_URL=http://localhost:5173
    
-   # Configuración de la Funcionalidad de IA
+   # 🤖 Configuración de la Funcionalidad de IA
    AI_API_KEY=your_openai_api_key
    AI_ENABLED=true
    ```
@@ -228,7 +228,7 @@ La inteligencia artificial se encarga de verificar el contenido ingresado por lo
 
    - Luego, configura la variable de entorno `EMAIL_ENABLED` en tu sistema operativo o IDE. Si deseas deshabilitar el envío de emails, establece la variable en `false`. Si quieres habilitarlo, configúralo en `true`.
 
-   > **Importante:** Al deshabilitar el envío de emails, algunos procedimientos de la API, como el proceso de creación de cuentas, no podrán completarse correctamente, ya que no se enviará el email necesario para el envío del token de confirmación. Esto significa que la cuenta nunca será confirmada y no podrá ser activada.
+   > **⚠️ Importante:** Al deshabilitar el envío de emails, algunos procedimientos de la API, como el proceso de creación de cuentas, no podrán completarse correctamente, ya que no se enviará el email necesario para el envío del token de confirmación. Esto significa que la cuenta nunca será confirmada y no podrá ser activada.
 
 5. **Habilitar o deshabilitar la funcionalidad de IA:**
 
@@ -244,13 +244,13 @@ La inteligencia artificial se encarga de verificar el contenido ingresado por lo
 
    - Luego, configura la variable de entorno `AI_ENABLED` en tu sistema operativo o IDE. Si deseas deshabilitar la IA, establece la variable en `false`. Si quieres habilitar la funcionalidad de IA, configúralo en `true`.
 
-   > **Importante:** Si deshabilitas la funcionalidad de IA, los contenidos no serán validados antes de ser procesados, lo que podría permitir que se envíe contenido inapropiado.
+   > **⚠️ Importante:** Si deshabilitas la funcionalidad de IA, los contenidos no serán validados antes de ser procesados, lo que podría permitir que se envíe contenido inapropiado.
 
 
 6. **Asegúrate de que todas las dependencias estén instaladas** utilizando la opción de **"Actualizar Proyecto"** o **"Importar dependencias"** en tu IDE.
 
 
-## Guía de Uso
+## 🚀 Guía de Uso
 
 ### Ejecución de la Aplicación
 - Para iniciar la aplicación, ejecuta la clase `ForohubApplication` desde tu IDE o en la línea de comandos. Esta clase contiene el método `main`, que inicia la aplicación.
@@ -285,7 +285,7 @@ La inteligencia artificial se encarga de verificar el contenido ingresado por lo
   docs/postman/ForoHub.postman_collection.json
   ```
   
-## Endpoints
+## 🔗 Endpoints
 A continuación, se presenta la lista completa de endpoints disponibles en la API. Todos los endpoints comienzan con el prefijo `/api`.
 
 ### Endpoints de Autenticación
@@ -351,7 +351,7 @@ Este endpoint permite obtener información sobre los cursos disponibles en la AP
 | `/course`           | `GET`    | Recupera todos los cursos disponibles en la API, ordenados alfabéticamente por su nombre.  |
 
 
-## Testing
+## ✅ Testing
 
 La API cuenta con pruebas unitarias para cada repositorio y controlador. Estas pruebas están diseñadas para garantizar el correcto funcionamiento de la API. Cada prueba interactúa con una base de datos de pruebas, lo que permite realizar validaciones sin afectar los datos reales.
 
@@ -365,13 +365,13 @@ DB_URL_TEST=jdbc:mysql://localhost:3306/your_database_name_test?createDatabaseIf
 DB_USERNAME_TEST=your_username
 DB_PASSWORD_TEST=your_password
 ```
-> **Importante**: El nombre de la base de datos debe ser diferente al de la base de datos principal. Esto es crucial porque cada prueba limpia los registros de las tablas al iniciar, garantizando que los tests sean independientes y no afecten los datos de producción.
+> **⚠️ Importante**: El nombre de la base de datos debe ser diferente al de la base de datos principal. Esto es crucial porque cada prueba limpia los registros de las tablas al iniciar, garantizando que los tests sean independientes y no afecten los datos de producción.
 
 - Al ejecutar las pruebas, el envío de email se deshabilitará automáticamente. Esto se hace para evitar que se envíen emails durante las pruebas, ya que no se requiere este comportamiento en este entorno.
 
 - **Sugerencia**: Si la API utiliza inteligencia artificial, es recomendable deshabilitarla temporalmente durante las pruebas unitarias para evitar el consumo innecesario de recursos. Para lograr esto, puedes configurar la variable de entorno `AI_ENABLED` a `false` en el entorno de pruebas. Así, la inteligencia artificial estará deshabilitada durante las pruebas, lo que optimiza el uso de recursos.
 
-## Frontend
+## 🎨 Frontend
 La API cuenta con un frontend desarrollado en **React** utilizando **TypeScript** y **Tailwind CSS**. Este frontend está diseñado para interactuar de manera efectiva con la API.
 
 ### Acceso al Repositorio
@@ -382,14 +382,14 @@ El código fuente está disponible en el siguiente enlace:
 ### Ver el Proyecto en Producción
 Puedes ver la aplicación en producción, ya conectada con la API, en el siguiente enlace:
 
-👉 [Ver Proyecto en Producción](https://forohub.william-medina.com)
+🌐 [Ver Proyecto en Producción](https://forohub.william-medina.com)
 
 > **⚠️ Importante**: Si la API ha estado inactiva por un tiempo, es posible que debas esperar unos momentos mientras el servidor se inicia. El proceso puede tardar unos minutos.
 
 ### Características Destacadas del Frontend
-- **Interfaz Responsiva**: Diseñada para ofrecer una experiencia de usuario fluida en dispositivos móviles y de escritorio.
-- **Conexión Eficiente a la API**: Conexión en tiempo real con la API REST para garantizar una comunicación fluida y la actualización dinámica de los datos mostrados en la interfaz.
-- **Componentes Reutilizables**: Estructura modular que simplifica el mantenimiento y la escalabilidad de la aplicación.
+- **📱 Interfaz Responsiva**: Diseñada para ofrecer una experiencia de usuario fluida en dispositivos móviles y de escritorio.
+- **🔗 Conexión Eficiente a la API**: Conexión en tiempo real con la API REST para garantizar una comunicación fluida y la actualización dinámica de los datos mostrados en la interfaz.
+- **🔄 Componentes Reutilizables**: Estructura modular que simplifica el mantenimiento y la escalabilidad de la aplicación.
 
 ### Imágenes del Frontend
 
@@ -408,11 +408,11 @@ A continuación, se presentan algunas capturas de pantalla del frontend de algun
 #### Notificaciones:
 <img src="./src/main/resources/static/images/frontend-notify.png" alt="Frontend Notify Page" width="600" style="display: block;" />
 
-## Licencia
+## 📜 Licencia
 
 Este proyecto está bajo la Licencia MIT. Para más detalles, consulta el archivo [LICENSE](./LICENSE).
 
-## Autor
+## 👨‍💻 Autor
 
 **William Medina**  
 Autor y desarrollador de **ForoHub API**. Puedes encontrarme en [GitHub](https://github.com/william-medina)
