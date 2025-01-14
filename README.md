@@ -16,7 +16,7 @@
 2. [✨ Características](#-características)
 3. [💻 Tecnologías](#-tecnologías)
 4. [📦 Dependencias](#-dependencias)
-5. [⚙️ Requisitos](#-requisitos)
+5. [🔧 Requisitos](#-requisitos)
 6. [📊 Base de Datos](#-base-de-datos)
 7. [🔔 Notificaciones](#-notificaciones)
 8. [🤖 Inteligencia Artificial](#-inteligencia-artificial)
@@ -52,7 +52,7 @@ Esta API está diseñada para ser utilizada junto a un frontend en **React**, pe
 - **🔑 Registro y autenticación de usuarios**: Los usuarios pueden registrarse, confirmar su cuenta mediante un token de confirmación y recuperar su password mediante un token de olvido.
 - **📝 Gestión de tópicos**: Los usuarios pueden crear, editar y eliminar sus propios tópicos.
 - **💬  Respuestas a tópicos**: Los usuarios pueden responder a los tópicos y editar o eliminar sus respuestas.
-- **🔧 Actualización de perfil**: Los usuarios autenticados pueden modificar su nombre de usuario y password.
+- **🛠️ Actualización de perfil**: Los usuarios autenticados pueden modificar su nombre de usuario y password.
 - **👀 Seguimiento de tópicos**: Los usuarios pueden seguir tópicos para recibir notificaciones sobre nuevas respuestas o cambios en el estado. Además, los usuarios recibirán una notificación por email cuando haya una nueva actividad en un tópico que hayan seguido.
 - **🔔 Notificaciones**: Los usuarios reciben notificaciones cuando se generan nuevas respuestas en los tópicos que han creado o seguido, o cuando un tópico es marcado como solucionado. También se envían por email para que los usuarios estén al tanto de los cambios importantes
 - **🔍 Paginación y filtrado**: Los tópicos pueden ser filtrados por estado, palabras clave o curso, y la API soporta paginación para una mejor gestión de los contenidos.
@@ -86,7 +86,7 @@ Para que la API funcione correctamente, asegúrate de incluir las siguientes dep
 
 Asegúrate de agregar las dependencias en el archivo `pom.xml` de tu proyecto Maven.
 
-## ⚙️ Requisitos
+## 🔧 Requisitos
 
 - JDK 21 o superior
 - Maven para la gestión de dependencias
