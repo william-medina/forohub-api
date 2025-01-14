@@ -58,13 +58,12 @@ public class EmailService {
     @Async
     public void notifyTopicReply(Topic topic, User user) throws MessagingException {
         String subject = "Nueva respuesta a tu tópico";
-        String actionMessage = "Tu tópico ha recibido una nueva respuesta.";
-        String highlightedMessage = "<span style='color: #03dac5;'>" + user.getUsername() + "</span> respondió al tópico ";
-        String topicDetails = "<b style='color: #03dac5;'>" + topic.getTitle() + "</b> del curso: <b>" + topic.getCourse().getName() + "</b>";
+        String actionMessage = "<b style='color: #03dac5;'>" + user.getUsername() + "</b> respondió a tu tópico ";
+        String topicDetails = "<b style='color: #03dac5;'>" + topic.getTitle() + "</b> del curso: <b>" + topic.getCourse().getName() + "</b>.";
         String url = frontendUrl + "/topic/" + topic.getId();
         String footer = "Gracias por ser parte de ForoHub.";
 
-        String htmlContent = "<p>" + actionMessage + "</p>" + "<p>" + highlightedMessage + " " + topicDetails + "</p>";
+        String htmlContent = "<p>" + actionMessage + " " + topicDetails + "</p>";
 
         sendEmail(topic.getUser().getEmail(), subject, subject, htmlContent, "Ver Tópico", url, footer);
     }
@@ -121,7 +120,7 @@ public class EmailService {
 
     @Async
     public void notifyResponseDeleted(Response response) throws MessagingException {
-        String subject = "Tu respuesta ha sido eliminado";
+        String subject = "Tu respuesta ha sido eliminada";
         String actionMessage = "Lamentamos informarte que tu respuesta del tópico <b style='color: #03dac5;'>" + response.getTopic().getTitle() + "</b> del curso: <b>" + response.getTopic().getCourse().getName() + "</b> ha sido eliminada. Si tienes alguna pregunta o inquietud, por favor contacta a nuestro equipo de soporte para más detalles.";
         String footer = "Gracias por ser parte de ForoHub.";
 
@@ -211,6 +210,7 @@ public class EmailService {
                 .append("  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); ")
                 .append("}")
                 .append(".header { text-align: center; color: #03dac5; }")
+                .append(".header img { max-width: 100px; margin-bottom: 2px; }")
                 .append(".footer { text-align: center; font-size: 12px; color: #b0b0b0; margin-top: 20px; }")
                 .append(".button-container { text-align: center; margin: 20px 0; }")
                 .append(".button { ")
@@ -229,6 +229,7 @@ public class EmailService {
                 .append("<body>")
                 .append("<div class='container'>")
                 .append("<div class='header'>")
+                .append("<img src='").append("https://forohub.william-medina.com").append("/icons/forohub-email.png' alt='Logo ForoHub' width='100' style='max-width: 100px; height: auto; display: block; margin: 0 auto; margin-bottom: 10px;'>")
                 .append("<h2>").append(title).append("</h2>")
                 .append("</div>")
                 .append("<p>").append(message).append("</p>");
@@ -236,7 +237,10 @@ public class EmailService {
         // Condicional para mostrar el botón solo si buttonLabel y url no son null
         if (buttonLabel != null && url != null) {
             emailContent.append("<div class='button-container'>")
-                    .append("<a href='").append(url).append("' class='button'>").append(buttonLabel).append("</a>")
+                    .append("<a href='").append(url)
+                    .append("' style='display: inline-block; background-color: #03dac5; color: #121212; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; max-width: 100%; text-align: center;'>")
+                    .append(buttonLabel)
+                    .append("</a>")
                     .append("</div>");
         }
 

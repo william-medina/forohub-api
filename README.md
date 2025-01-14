@@ -18,26 +18,34 @@
 4. [Dependencias](#dependencias)
 5. [Requisitos](#requisitos)
 6. [Diagrama de la Base de Datos](#diagrama-de-la-base-de-datos)
-7. [Implementación de Inteligencia Artificial](#implementación-de-inteligencia-artificial)
-8. [Instalación](#instalación)
-9. [Guía de Uso](#guía-de-uso)
+7. [Notificaciones](#notificaciones)
+8. [Implementación de Inteligencia Artificial](#implementación-de-inteligencia-artificial)
+9. [Instalación](#instalación)
+10. [Guía de Uso](#guía-de-uso)
     - [Ejecución de la Aplicación](#ejecución-de-la-aplicación)
     - [Acceso a la API REST](#acceso-a-la-api-rest)
     - [Documentación de la API](#documentación-de-la-api)
     - [Colección para Postman](#colección-para-postman)
-10. [Endpoints](#endpoints)
+11. [Endpoints](#endpoints)
     - [Endpoints de Autenticación](#endpoints-de-autenticación)
     - [Endpoints de Tópicos](#endpoints-de-tópicos)
     - [Endpoints de Respuestas](#endpoints-de-respuestas)
     - [Endpoints de Notificaciones](#endpoints-de-notificaciones)
-11. [Testing](#testing)
-12. [Frontend](#frontend)
-13. [Licencia](#licencia)
-14. [Autor](#autor)
+    - [Endpoints de Cursos](#endpoints-de-cursos)
+12. [Testing](#testing)
+13. [Frontend](#frontend)
+14. [Licencia](#licencia)
+15. [Autor](#autor)
 
 ## Descripción
 
-**ForoHub** es una API desarrollada con **Spring Boot** que permite la creación, administración y gestión de tópicos y respuestas para una plataforma de discusión basada en cursos. Los usuarios pueden registrarse, interactuar con los tópicos, responder a ellos, y gestionar sus perfiles. Los administradores, moderadores e instructores tienen permisos especiales para gestionar contenidos y marcar soluciones en los tópicos. Además, la API incluye una implementación de inteligencia artificial (IA) para detectar contenido inapropiado en los tópicos y respuestas, lo que mejora la experiencia de los usuarios al asegurar que el contenido compartido sea seguro y adecuado. Esta API está diseñada para ser utilizada junto a un frontend en React, permitiendo una integración fluida entre el backend y la interfaz de usuario.
+**ForoHub** es una API desarrollada con **Spring Boot** que permite la creación, administración y gestión de tópicos y respuestas para una plataforma de discusión basada en cursos. Los usuarios pueden registrarse, interactuar con tópicos, responder a ellos y gestionar sus perfiles. Los administradores, moderadores e instructores tienen permisos especiales para gestionar contenidos y marcar soluciones en los tópicos.
+
+La API incluye un sistema de **notificaciones automáticas** que mantiene a los usuarios informados sobre eventos importantes relacionados con los tópicos que crean o siguen, como respuestas nuevas o cambios relevantes.
+
+Además, integra una implementación de **Inteligencia Artificial (IA)** para detectar contenido inapropiado en los tópicos y respuestas, mejorando la experiencia del usuario al garantizar que el contenido compartido sea seguro y adecuado.
+
+Esta API está diseñada para ser utilizada junto a un frontend en **React**, permitiendo una integración fluida entre el backend y la interfaz de usuario.
 
 ## Características
 
@@ -105,6 +113,32 @@ Este diagrama proporciona una visión clara de la estructura de datos de la apli
 - **Profiles**: Define los perfiles asociados a los usuarios.
 
 Cada tabla está conectada de acuerdo con las relaciones necesarias para garantizar la consistencia de los datos.
+
+
+## Notificaciones
+
+La API genera notificaciones internas que se almacenan en la base de datos y pueden ser consultadas por los usuarios. Además, se envían emails para mantener a los usuarios informados sobre eventos importantes, tales como:
+
+- Nueva respuesta a tu tópico
+- Un tópico que sigues ha sido marcado como solucionado
+- Nueva respuesta en un tópico que sigues
+- Tu tópico ha sido eliminado
+- Tu respuesta ha sido eliminada
+- Tu respuesta ha sido editada
+- Tu tópico ha sido editado
+- Tu respuesta ha sido marcada como solución
+- Tu tópico ha sido marcado como solucionado
+
+### Capturas de pantalla de algunos emails:
+
+#### Email por una nueva respuesta a tu tópico.
+
+<img src="./src/main/resources/static/images/email-new-response.png" alt="Nueva respuesta a tu tópico" width="500" style="display: block;" />
+
+#### Email cuando un tópico que sigues es marcado como solucionado.
+<img src="./src/main/resources/static/images/email-topic-solved.png" alt="Tópico solucionado" width="500" style="display: block;" />
+
+Como se muestra en las imágenes, en el email se presenta un botón que dice 'Ver Tópico', el cual tiene como objetivo redirigir al usuario a un frontend para visualizar el tópico correspondiente.
 
 ## Implementación de Inteligencia Artificial
 
@@ -309,7 +343,7 @@ Estos endpoints gestionan las notificaciones del usuario, permitiendo obtenerlas
 | `/notify/{notifyId}`                 | `PATCH`      | Marca como leída una notificación específica por su ID, si pertenece al usuario autenticado.                    |
 ---
 
-### Endpoint de Cursos
+### Endpoints de Cursos
 Este endpoint permite obtener información sobre los cursos disponibles en la API.
 
 | Endpoint            | Método   | Descripción                                                                                 |
