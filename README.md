@@ -39,11 +39,11 @@
 
 ## 📝 Descripción
 
-**ForoHub** es una API desarrollada con **Spring Boot** que permite la creación, administración y gestión de tópicos y respuestas para una plataforma de discusión basada en cursos. Los usuarios pueden registrarse, interactuar con tópicos, responder a ellos y gestionar sus perfiles. Los administradores, moderadores e instructores tienen permisos especiales para gestionar contenidos y marcar soluciones en los tópicos.
+**ForoHub** es una API desarrollada con **Spring Boot** que permite la creación, administración y gestión de tópicos y respuestas para una plataforma de discusión basada en cursos. Los usuarios pueden registrarse, interactuar con tópicos, responder a ellos y gestionar sus perfiles. Los administradores, moderadores e instructores tienen permisos especiales para gestionar contenidos.
 
-La API incluye un sistema de **notificaciones automáticas** que mantiene a los usuarios informados sobre eventos importantes relacionados con los tópicos que crean o siguen, como respuestas nuevas o cambios relevantes.
+La API incluye un sistema de **notificaciones** que mantiene a los usuarios informados sobre eventos importantes relacionados con los tópicos que crean o siguen, como respuestas nuevas o cambios relevantes.
 
-Además, integra una implementación de **Inteligencia Artificial (IA)** para detectar contenido inapropiado en los tópicos y respuestas, mejorando la experiencia del usuario al garantizar que el contenido compartido sea seguro y adecuado.
+Además, integra **Inteligencia Artificial (IA)** para detectar contenido inapropiado en los tópicos y respuestas, mejorando la experiencia del usuario al garantizar que el contenido compartido sea seguro y adecuado.
 
 Esta API está diseñada para ser utilizada junto a un frontend en **React**, permitiendo una integración fluida entre el backend y la interfaz de usuario.
 
@@ -51,7 +51,7 @@ Esta API está diseñada para ser utilizada junto a un frontend en **React**, pe
 
 - **🔑 Registro y autenticación de usuarios**: Los usuarios pueden registrarse, confirmar su cuenta mediante un token de confirmación y recuperar su password mediante un token de olvido.
 - **📝 Gestión de tópicos**: Los usuarios pueden crear, editar y eliminar sus propios tópicos.
-- **💬  Respuestas a tópicos**: Los usuarios pueden responder a los tópicos y editar o eliminar sus respuestas.
+- **💬 Respuestas a tópicos**: Los usuarios pueden responder a los tópicos y editar o eliminar sus respuestas. Sin embargo, no será posible agregar respuestas a los tópicos que estén marcados como resueltos.
 - **🛠️ Actualización de perfil**: Los usuarios autenticados pueden modificar su nombre de usuario y password.
 - **👀 Seguimiento de tópicos**: Los usuarios pueden seguir tópicos para recibir notificaciones sobre nuevas respuestas o cambios en el estado. Además, los usuarios recibirán una notificación por email cuando haya una nueva actividad en un tópico que hayan seguido.
 - **🔔 Notificaciones**: Los usuarios reciben notificaciones cuando se generan nuevas respuestas en los tópicos que han creado o seguido, o cuando un tópico es marcado como solucionado. También se envían por email para que los usuarios estén al tanto de los cambios importantes
@@ -81,7 +81,7 @@ Para que la API funcione correctamente, asegúrate de incluir las siguientes dep
 - **Spring Boot DevTools**: Herramienta para mejorar la experiencia de desarrollo mediante recarga automática, depuración mejorada y más.
 - **Java JWT (java-jwt)**: Biblioteca que permite trabajar con tokens JWT (JSON Web Tokens) para la autenticación y autorización de usuarios.
 - **SpringDoc OpenAPI Starter**: Integra la especificación OpenAPI para documentar automáticamente los endpoints de la API.
-- **Spring Boot Starter Mail**: Proporciona las herramientas necesarias para enviar correos electrónicos desde la aplicación, útil para el envío de correos de confirmación y recuperación de contraseñas.
+- **Spring Boot Starter Mail**: Proporciona las herramientas necesarias para enviar emails desde la API, útil para el envío de email de confirmación y restablecimiento  de password.
 - **Spring AI**: Proporciona herramientas para incorporar capacidades de inteligencia artificial en aplicaciones Spring Boot, como análisis de texto, automatización de respuestas y tareas de procesamiento de lenguaje natural.
 
 Asegúrate de agregar las dependencias en el archivo `pom.xml` de tu proyecto Maven.
@@ -98,7 +98,7 @@ Asegúrate de agregar las dependencias en el archivo `pom.xml` de tu proyecto Ma
 
 ## 📊 Base de Datos
 
-La base de datos utilizada en la API es MySQL, la cual almacena información relacionada con los usuarios, tópicos, respuestas, notificaciones y cursos. A continuación se muestra el diagrama de la base de datos que representa las tablas y las relaciones entre ellas:
+La API utiliza MySQL como sistema de gestión de bases de datos, la cual almacena información relacionada con los usuarios, tópicos, respuestas, notificaciones, cursos y los usuarios que siguen tópicos. A continuación se muestra el diagrama de la base de datos que representa las tablas y las relaciones entre ellas:
 
 <img src="./src/main/resources/static/images/database.png" alt="Diagrama Base de Datos" style="display: block; width: 800px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);" />
 
@@ -107,10 +107,10 @@ Este diagrama proporciona una visión clara de la estructura de datos de la apli
 - **Users**: Gestiona los datos de los usuarios.
 - **Topics**: Representa los tópicos del foro creados por los usuarios.
 - **Responses**: Contiene las respuestas asociadas a los tópicos.
-- **Courses**: Relaciona los cursos con los tópicos.
+- **Courses**: Representa los cursos a los cuales los tópicos están asociados.
 - **Topic Followers**: Representa los usuarios que siguen un tópico.
 - **Notifications**: Administra las notificaciones generadas por actividades en el foro.
-- **Profiles**: Define los perfiles asociados a los usuarios.
+- **Profiles**: Define los perfiles y roles asociados a los usuarios.
 
 Cada tabla está conectada de acuerdo con las relaciones necesarias para garantizar la consistencia de los datos.
 
@@ -122,12 +122,13 @@ La API genera notificaciones internas que se almacenan en la base de datos y pue
 - Nueva respuesta a tu tópico
 - Un tópico que sigues ha sido marcado como solucionado
 - Nueva respuesta en un tópico que sigues
+- Tu tópico ha sido marcado como solucionado
+- Tu respuesta ha sido marcada como solución
+- Tu tópico ha sido editado
+- Tu respuesta ha sido editada
 - Tu tópico ha sido eliminado
 - Tu respuesta ha sido eliminada
-- Tu respuesta ha sido editada
-- Tu tópico ha sido editado
-- Tu respuesta ha sido marcada como solución
-- Tu tópico ha sido marcado como solucionado
+
 
 ### Capturas de pantalla de algunos emails:
 
@@ -146,17 +147,17 @@ La API utiliza la inteligencia artificial para detectar contenido inapropiado en
 
 ### Configuración de la API de OpenAI
 
-Para utilizar la funcionalidad de detección de contenido inapropiado, es necesario configurar la clave de la API de OpenAI y el modelo que se utilizará para procesar las solicitudes. Asegúrate de tener la clave de la API de OpenAI disponible y activa.
+Para habilitar la detección de contenido inapropiado, es necesario configurar la **API key** de OpenAI y el modelo que se utilizará para procesar las solicitudes. Asegúrate de tener la **API key** activa y accesible.
 
-1. **Configura la clave de la API de OpenAI:**
+2. **Configura la clave de la API de OpenAI:**
 
-    - En tu archivo de configuración `application.properties`, añade la siguiente línea para configurar la clave de la API:
+    - En el archivo `application.properties`, se presenta la siguiente línea para configurar la **API key**:
 
       ```properties
       spring.ai.openai.api-key=${AI_API_KEY}
       ```
 
-    - Luego, asegúrate de que la variable de entorno `AI_API_KEY` esté configurada en tu sistema operativo o IDE con la clave de API proporcionada por OpenAI.
+    - Luego, asegúrate de que la variable de entorno `AI_API_KEY` esté configurada en tu sistema operativo o IDE con la **API key** proporcionada por OpenAI.
 
 
 2. **Configura el modelo de IA:**
@@ -207,7 +208,7 @@ La inteligencia artificial se encarga de verificar el contenido ingresado por lo
    # 🌍 URL del Frontend - Habilita CORS para permitir peticiones desde esta URL
    FRONTEND_URL=http://localhost:5173
    
-   # 🤖 Configuración de la Funcionalidad de IA
+   # 🤖 Configuración de la IA
    AI_API_KEY=your_openai_api_key
    AI_ENABLED=true
    ```
@@ -216,11 +217,11 @@ La inteligencia artificial se encarga de verificar el contenido ingresado por lo
 
 4. **Habilitar o deshabilitar el envío de email:**
 
-   Si no tienes un servidor de email o las credenciales correspondientes, puedes deshabilitar el envío de emails para evitar que el sistema intente enviar notificaciones por email, lo que podría generar errores debido a la falta de credenciales. Deshabilitar el envío de emails garantizará que el sistema no intente enviar los tokens para la confirmación de cuenta o el restablecimiento de contraseña, ni las notificaciones sobre el seguimiento de tópicos o cambios en el estado de los mismos.
+   Si no tienes un servidor de email o las credenciales correspondientes, puedes deshabilitar el envío de emails para evitar que el sistema intente enviar notificaciones por email, lo que podría generar errores debido a la falta de credenciales. Deshabilitar el envío de emails garantizará que el sistema no intente enviar los tokens para la confirmación de cuenta o el restablecimiento de password, ni las notificaciones sobre el seguimiento de tópicos o cambios en el estado de los mismos.
 
    Para hacerlo, puedes utilizar la variable de entorno `EMAIL_ENABLED` y configurarla de la siguiente manera:
 
-   - En tu archivo de configuración (por ejemplo, `application.properties`), añade la siguiente línea:
+   - En el archivo `application.properties`, debes configurar la siguiente línea:
 
      ```properties
      email.enabled=${EMAIL_ENABLED:true}
@@ -236,7 +237,7 @@ La inteligencia artificial se encarga de verificar el contenido ingresado por lo
 
    Para hacerlo, puedes configurar la variable de entorno `AI_ENABLED` de la siguiente manera:
 
-   - En tu archivo de configuración (por ejemplo, `application.properties`), añade la siguiente línea:
+   - En el archivo `application.properties`, debes configurar la siguiente línea:
 
      ```properties
      ai.enabled=${AI_ENABLED:true}
@@ -360,7 +361,7 @@ La API cuenta con pruebas unitarias para cada repositorio y controlador. Estas p
 Antes de ejecutar las pruebas, es necesario configurar una base de datos separada que se utilizará exclusivamente para las pruebas. Esto garantiza que las pruebas no interfieran con los datos de producción. Para configurar la base de datos de pruebas, debes agrega las siguientes variables de entorno directamente en la configuración de tu sistema operativo o IDE.
 
 ```dotenv
-# Configuración de la base de datos para test
+# 📊 Configuración de la base de datos para test
 DB_URL_TEST=jdbc:mysql://localhost:3306/your_database_name_test?createDatabaseIfNotExist=true
 DB_USERNAME_TEST=your_username
 DB_PASSWORD_TEST=your_password
@@ -384,7 +385,7 @@ Puedes ver la aplicación en producción, ya conectada con la API, en el siguien
 
 🌐 [Ver Proyecto en Producción](https://forohub.william-medina.com)
 
-> **⚠️ Importante**: Si la API ha estado inactiva por un tiempo, es posible que debas esperar unos momentos mientras el servidor se inicia. El proceso puede tardar unos minutos.
+> **⚠️ Importante**: Si la API ha estado inactiva durante un tiempo, es posible que necesites esperar unos instantes para que el servidor se inicie. Este proceso podría tardar algunos minutos.
 
 ### Características Destacadas del Frontend
 - **📱 Interfaz Responsiva**: Diseñada para ofrecer una experiencia de usuario fluida en dispositivos móviles y de escritorio.
