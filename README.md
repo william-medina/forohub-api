@@ -39,7 +39,7 @@
 
 ## 📝 Descripción
 
-**ForoHub** es una API desarrollada con **Spring Boot** que permite la creación, administración y gestión de tópicos y respuestas para una plataforma de discusión basada en cursos. Los usuarios pueden registrarse, interactuar con tópicos, responder a ellos y gestionar sus perfiles. Los administradores, moderadores e instructores tienen permisos especiales para gestionar contenidos.
+**ForoHub** es una API desarrollada con **Spring Boot** para foros de discusión basados en cursos. Permite crear, editar y eliminar tópicos y respuestas. Los usuarios pueden seguir tópicos, interactuar con ellos, responder y gestionar sus perfiles. Los administradores, moderadores e instructores tienen permisos especiales para gestionar contenidos, como editar o eliminar tópicos y respuestas de otros usuarios.
 
 La API incluye un sistema de **notificaciones** que mantiene a los usuarios informados sobre eventos importantes relacionados con los tópicos que crean o siguen, como respuestas nuevas o cambios relevantes.
 
@@ -143,13 +143,13 @@ Como se muestra en las imágenes, en el email se presenta un botón que dice 'Ve
 
 ## 🤖 Inteligencia Artificial
 
-La API utiliza la inteligencia artificial para detectar contenido inapropiado en los tópicos, respuestas y nombres de usuario. Esta funcionalidad ayuda a garantizar que las interacciones dentro de la aplicación se mantengan dentro de los límites de respeto y seguridad. Se utiliza la API de OpenAI para procesar y verificar los datos, asegurando que el contenido generado o recibido cumpla con los estándares adecuados.
+La API utiliza **inteligencia artificial generativa**  para detectar contenido inapropiado en los tópicos, respuestas y nombres de usuario. Esta funcionalidad ayuda a garantizar que las interacciones dentro de la aplicación se mantengan dentro de los límites de respeto y seguridad. Se utiliza la API de OpenAI para procesar y verificar los datos, asegurando que el contenido generado o recibido cumpla con los estándares adecuados.
 
 ### Configuración de la API de OpenAI
 
 Para habilitar la detección de contenido inapropiado, es necesario configurar la **API key** de OpenAI y el modelo que se utilizará para procesar las solicitudes. Asegúrate de tener la **API key** activa y accesible.
 
-2. **Configura la clave de la API de OpenAI:**
+2. **Configura la API key de OpenAI:**
 
     - En el archivo `application.properties`, se presenta la siguiente línea para configurar la **API key**:
 
