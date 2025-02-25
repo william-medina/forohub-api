@@ -1,11 +1,5 @@
 package com.williammedina.forohub.infrastructure.errors;
 
-import com.williammedina.forohub.domain.response.dto.CreateResponseDTO;
-import com.williammedina.forohub.domain.topic.dto.InputTopicDTO;
-import com.williammedina.forohub.domain.user.dto.CreateUserDTO;
-import com.williammedina.forohub.domain.user.dto.EmailUserDTO;
-import com.williammedina.forohub.domain.user.dto.UpdateCurrentUserPasswordDTO;
-import com.williammedina.forohub.domain.user.dto.UpdateUsernameDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,9 +8,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -52,38 +46,36 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
 
-        // List<String> fieldPriorityOrder = List.of("email", "username", "current_password", "password", "password_confirmation", "title", "description", "courseId" ,"content");
+        // Obtiene la clase del DTO asociado a la solicitud actual
+        Class<?> dtoClass = Optional.ofNullable(exception.getBindingResult().getTarget())
+                .map(Object::getClass)
+                .orElse(null);
 
-        // Obtiene automáticamente y ordena jerárquicamente los campos de los DTOs según prioridad.
-        List<String> fieldPriorityOrder = getAllDTOFields(List.of(
-                EmailUserDTO.class,
-                UpdateUsernameDTO.class,
-                UpdateCurrentUserPasswordDTO.class,
-                InputTopicDTO.class,
-                CreateResponseDTO.class
-        ));
+        // Si no se obtiene la clase del DTO, devolver el primer error sin ordenar
+        if (dtoClass == null) {
+            return exception.getFieldErrors().stream()
+                    .findFirst()
+                    .map(fieldError -> ResponseEntity.badRequest().body(new ErrorResponse(fieldError.getDefaultMessage())))
+                    .orElseGet(() -> ResponseEntity.badRequest().build());
+        }
 
-        // Ordenar los errores según la prioridad de los campos
-        ErrorResponse error = exception.getFieldErrors()
-                .stream()
-                .sorted(Comparator.comparingInt(fieldError -> {
+        // Obtiene la lista de nombres de los campos en el orden en que fueron definidos en el DTO
+        List<String> fieldPriorityOrder = getFieldOrder(dtoClass);
+
+        // Ordena los errores de validación según el orden de los campos en el DTO y devuelve solo el primero
+        return exception.getFieldErrors().stream()
+                .min(Comparator.comparingInt(fieldError -> {
                     int index = fieldPriorityOrder.indexOf(fieldError.getField());
                     return index == -1 ? Integer.MAX_VALUE : index;
                 }))
-                .map(fieldError -> new ErrorResponse(fieldError.getDefaultMessage()))
-                .findFirst()
-                .orElse(null);
-
-        return error != null ? ResponseEntity.badRequest().body(error) : ResponseEntity.badRequest().build();
+                .map(fieldError -> ResponseEntity.badRequest().body(new ErrorResponse(fieldError.getDefaultMessage())))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-
-    // Metodo que obtiene una lista de todos los nombres de campos de los DTOs especificados.
-    private List<String> getAllDTOFields(List<Class<?>> dtoClasses) {
-        return dtoClasses.stream()
-                .flatMap(dto -> Arrays.stream(dto.getDeclaredFields()))
+    // Obtiene los nombres de los campos de un DTO en el orden en que fueron definidos.
+    private List<String> getFieldOrder(Class<?> dtoClass) {
+        return List.of(dtoClass.getDeclaredFields()).stream()
                 .map(Field::getName)
-                .distinct()
                 .collect(Collectors.toList());
     }
 }
