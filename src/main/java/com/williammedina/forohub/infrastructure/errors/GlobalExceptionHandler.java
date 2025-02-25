@@ -1,5 +1,11 @@
 package com.williammedina.forohub.infrastructure.errors;
 
+import com.williammedina.forohub.domain.response.dto.CreateResponseDTO;
+import com.williammedina.forohub.domain.topic.dto.InputTopicDTO;
+import com.williammedina.forohub.domain.user.dto.CreateUserDTO;
+import com.williammedina.forohub.domain.user.dto.EmailUserDTO;
+import com.williammedina.forohub.domain.user.dto.UpdateCurrentUserPasswordDTO;
+import com.williammedina.forohub.domain.user.dto.UpdateUsernameDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -7,8 +13,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -43,9 +52,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
 
-        //O rden jerárquico de los campos
-        List<String> fieldPriorityOrder = List.of("email", "username", "current_password", "password", "password_confirmation", "title", "description", "courseId" ,"content");
+        // List<String> fieldPriorityOrder = List.of("email", "username", "current_password", "password", "password_confirmation", "title", "description", "courseId" ,"content");
 
+        // Obtiene automáticamente y ordena jerárquicamente los campos de los DTOs según prioridad.
+        List<String> fieldPriorityOrder = getAllDTOFields(List.of(
+                EmailUserDTO.class,
+                UpdateUsernameDTO.class,
+                UpdateCurrentUserPasswordDTO.class,
+                InputTopicDTO.class,
+                CreateResponseDTO.class
+        ));
+
+        // Ordenar los errores según la prioridad de los campos
         ErrorResponse error = exception.getFieldErrors()
                 .stream()
                 .sorted(Comparator.comparingInt(fieldError -> {
@@ -56,10 +74,16 @@ public class GlobalExceptionHandler {
                 .findFirst()
                 .orElse(null);
 
-        if (error != null) {
-            return ResponseEntity.badRequest().body(error);
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+        return error != null ? ResponseEntity.badRequest().body(error) : ResponseEntity.badRequest().build();
+    }
+
+
+    // Metodo que obtiene una lista de todos los nombres de campos de los DTOs especificados.
+    private List<String> getAllDTOFields(List<Class<?>> dtoClasses) {
+        return dtoClasses.stream()
+                .flatMap(dto -> Arrays.stream(dto.getDeclaredFields()))
+                .map(Field::getName)
+                .distinct()
+                .collect(Collectors.toList());
     }
 }
