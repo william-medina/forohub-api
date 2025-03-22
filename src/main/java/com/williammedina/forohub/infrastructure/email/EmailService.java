@@ -16,7 +16,13 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -186,72 +192,32 @@ public class EmailService {
     }
 
     private String buildEmailContent(String title, String message, String buttonLabel, String url, String footer) {
-        StringBuilder emailContent = new StringBuilder("<html>")
-                .append("<head>")
-                .append("<style>")
-                .append("body { ")
-                .append("  font-family: Arial, sans-serif; ")
-                .append("  margin: 0; ")
-                .append("  padding: 0; ")
-                .append("  color: #e0e0e0; ")
-                .append("  background-color: #121212; ")
-                .append("  display: flex; ")
-                .append("  justify-content: center; ")
-                .append("  align-items: flex-start; ")
-                .append("  padding-top: 50px; ")
-                .append("  padding-bottom: 50px; ")
-                .append("}")
-                .append(".container { ")
-                .append("  max-width: 600px; ")
-                .append("  margin: 0 auto; ")
-                .append("  padding: 20px; ")
-                .append("  background-color: #1f1f1f; ")
-                .append("  border-radius: 10px; ")
-                .append("  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); ")
-                .append("}")
-                .append(".header { text-align: center; color: #03dac5; }")
-                .append(".header img { max-width: 100px; margin-bottom: 2px; }")
-                .append(".footer { text-align: center; font-size: 12px; color: #b0b0b0; margin-top: 20px; }")
-                .append(".button-container { text-align: center; margin: 20px 0; }")
-                .append(".button { ")
-                .append("  background-color: #03dac5; ")
-                .append("  color: #121212; ")
-                .append("  padding: 10px 20px; ")
-                .append("  text-decoration: none; ")
-                .append("  border-radius: 5px; ")
-                .append("  font-weight: bold; ")
-                .append("  display: inline-block; ")
-                .append("}")
-                .append("a.button:hover { background-color: #018786; }")
-                .append("p { color: #e0e0e0; }")
-                .append("</style>")
-                .append("</head>")
-                .append("<body>")
-                .append("<div class='container'>")
-                .append("<div class='header'>")
-                .append("<img src='").append("https://forohub.william-medina.com").append("/icons/forohub-email.png' alt='Logo ForoHub' width='100' style='max-width: 100px; height: auto; display: block; margin: 0 auto; margin-bottom: 10px;'>")
-                .append("<h2>").append(title).append("</h2>")
-                .append("</div>")
-                .append("<p>").append(message).append("</p>");
+        String template = loadTemplate("email_template.html")
+                .replace("{TITLE}", title)
+                .replace("{MESSAGE}", message)
+                .replace("{FOOTER}", footer);
 
-        // Condicional para mostrar el botón solo si buttonLabel y url no son null
-        if (buttonLabel != null && url != null) {
-            emailContent.append("<div class='button-container'>")
-                    .append("<a href='").append(url)
-                    .append("' style='display: inline-block; background-color: #03dac5; color: #121212; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; max-width: 100%; text-align: center;'>")
-                    .append(buttonLabel)
-                    .append("</a>")
-                    .append("</div>");
+        // Verificar si buttonLabel y url son nulos
+        String buttonSection = (buttonLabel != null && url != null)
+                ? "<a href=\"" + url + "\" style=\"display: inline-block; background-color: #03dac5; color: #121212; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; max-width: 100%; text-align: center;\">"
+                + buttonLabel + "</a>"
+                : "";
+
+        return template.replace("{BUTTON_SECTION}", buttonSection);
+    }
+
+    // Carga un archivo de plantilla desde el sistema de archivos.
+    private String loadTemplate(String fileName) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("templates/" + fileName)) {
+            if (inputStream == null) {
+                throw new RuntimeException("No se pudo encontrar la plantilla de email: " + fileName);
+            }
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                return reader.lines().collect(Collectors.joining("\n"));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error al cargar la plantilla de email: " + fileName, e);
         }
-
-        emailContent.append("<div class='footer'>")
-                .append("<p>").append(footer).append("</p>")
-                .append("</div>")
-                .append("</div>")
-                .append("</body>")
-                .append("</html>");
-
-        return emailContent.toString();
     }
 
 
