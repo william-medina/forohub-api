@@ -296,6 +296,7 @@ public class UserService {
         cookie.setPath(path);
         cookie.setMaxAge((int) maxAge);
         cookie.setAttribute("SameSite", "None");
+        cookie.setAttribute("Partitioned", "true");
         return cookie;
     }
 
@@ -306,6 +307,7 @@ public class UserService {
         cookie.setPath(path);
         cookie.setMaxAge(0);
         cookie.setAttribute("SameSite", "None");
+        cookie.setAttribute("Partitioned", "true");
         return cookie;
     }
 
