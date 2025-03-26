@@ -9,20 +9,16 @@ import com.williammedina.forohub.domain.user.User;
 import com.williammedina.forohub.domain.user.dto.AuthorDTO;
 import com.williammedina.forohub.domain.user.dto.UserDTO;
 import com.williammedina.forohub.infrastructure.errors.AppException;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class CommonHelperService {
 
     private final TopicRepository topicRepository;
-
-    public CommonHelperService(
-            TopicRepository topicRepository
-    ) {
-        this.topicRepository = topicRepository;
-    }
 
     public User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

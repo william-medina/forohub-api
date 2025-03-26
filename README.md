@@ -292,20 +292,22 @@ A continuación, se presenta la lista completa de endpoints disponibles en la AP
 ### Endpoints de Autenticación
 Estos endpoints permiten gestionar las cuentas de usuario, desde la creación hasta la actualización de password y nombres de usuario, así como la obtención de detalles y estadísticas del usuario autenticado.
 
-| Endpoint                            | Método      | Descripción                                                                      |
-|-------------------------------------|-------------|----------------------------------------------------------------------------------|
-| `/auth/create-account`              | `POST`      | Crea una cuenta de usuario en el sistema.                                        |
-| `/auth/confirm-account/{token}`     | `GET`       | Confirma la cuenta de usuario utilizando un token proporcionado.                 |
-| `/auth/login`                       | `POST`      | Inicia sesión, autenticando al usuario y generando un token JWT.                 |
-| `/auth/request-code`                | `POST`      | Solicita un nuevo código de confirmación y lo envía al email del usuario.        |
-| `/auth/forgot-password`             | `POST`      | Genera un token de restablecimiento de password y lo envía al email del usuario. |
-| `/auth/update-password/{token}`     | `POST`      | Permite actualizar el password utilizando un token de restablecimiento.          |
-| `/auth/update-password`             | `PATCH`     | Permite al usuario autenticado actualizar su password actual.                    |
-| `/auth/update-username`             | `PATCH`     | Permite al usuario autenticado actualizar su nombre de usuario.                  |
-| `/auth/stats`                       | `GET`       | Obtiene estadísticas del usuario autenticado.                                    |
-| `/auth/me`                          | `GET`       | Obtiene los detalles del usuario actualmente autenticado.                        |
----
+| Endpoint                            | Método      | Descripción                                                                                                                |
+|-------------------------------------|-------------|----------------------------------------------------------------------------------------------------------------------------|
+| `/auth/create-account`              | `POST`      | Crea una cuenta de usuario en el sistema.                                                                                  |
+| `/auth/confirm-account/{token}`     | `GET`       | Confirma la cuenta de usuario utilizando un token proporcionado.                                                           |
+| `/auth/login`                       | `POST`      | Inicia sesión, autentica al usuario y generando un JWT de acceso y uno de actualización, almacenados en cookies HTTP-only. |
+| `/auth/request-code`                | `POST`      | Solicita un nuevo código de confirmación y lo envía al email del usuario.                                                  |
+| `/auth/forgot-password`             | `POST`      | Genera un token de restablecimiento de contraseña y lo envía al email del usuario.                                         |
+| `/auth/update-password/{token}`     | `POST`      | Permite actualizar el password utilizando un token de restablecimiento.                                                    |
+| `/auth/update-password`             | `PATCH`     | Permite al usuario autenticado actualizar su password actual.                                                              |
+| `/auth/update-username`             | `PATCH`     | Permite al usuario autenticado actualizar su nombre de usuario.                                                            |
+| `/auth/stats`                       | `GET`       | Obtiene estadísticas del usuario autenticado.                                                                              |
+| `/auth/me`                          | `GET`       | Obtiene los detalles del usuario actualmente autenticado.                                                                  |
+| `/auth/refresh-token`               | `POST`      | Genera un nuevo token de acceso utilizando el token de actualización enviado en la solicitud.                                        |
+| `/auth/logout`                      | `POST`      | Cierra la sesión del usuario eliminando los tokens de acceso y actualización de las cookies.                                    |
 
+---
 ### Endpoints de Tópicos
 Estos endpoints gestionan la creación, obtención, actualización y eliminación de tópicos, así como el seguimiento de los mismos por parte de los usuarios. La eliminación de un tópico es lógica, es decir, no se elimina físicamente de la base de datos, sino que se marca como eliminado.
 

@@ -4,16 +4,20 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.williammedina.forohub.domain.user.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -37,6 +41,16 @@ public class SecurityFilter extends OncePerRequestFilter {
         });
     }
 
+    public Optional<String> getTokenFromCookies(HttpServletRequest request, String name) {
+
+        if (request.getCookies() == null) {
+            return Optional.empty();
+        }
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> name.equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .findFirst();
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -49,28 +63,40 @@ public class SecurityFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Obtener el token del header
-        var authHeader = request.getHeader("Authorization");
-        if (authHeader != null) {
-            var token = authHeader.replace("Bearer ", "");
+        // Obtener el token de las cookies
+        Optional<String> tokenOptional = getTokenFromCookies(request, "access_token");
 
-            try{
-                var username = tokenService.getSubjectFromToken(token);
-                if (username != null) {
-                    // Token valido
-                    var user = userRepository.findByUsername(username);
-                    var authentication = new UsernamePasswordAuthenticationToken(user, null,
-                            user.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
-            } catch (JWTVerificationException e) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json; charset=UTF-8");
-                String jsonErrorResponse = "{\"error\": \"Unauthorized\"}";
-                response.getWriter().write(jsonErrorResponse);
-                return;
-            }
+        if (tokenOptional.isEmpty()) {
+            sendUnauthorizedResponse(response, "Token inválido o expirado.");
+            return;
         }
+
+        try {
+            authenticateUser(tokenOptional.get());
+        } catch (JWTVerificationException e) {
+            sendUnauthorizedResponse(response, "Token inválido o expirado.");
+            return;
+        }
+
         filterChain.doFilter(request, response);
+    }
+
+    private void authenticateUser(String token) {
+        String userId = tokenService.getSubjectFromToken(token);
+        if (userId == null) {
+            throw new JWTVerificationException("Token inválido.");
+        }
+
+        var user = userRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private void sendUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json; charset=UTF-8");
+        response.getWriter().write(String.format("{\"error\": \"%s\"}", message));
     }
 }

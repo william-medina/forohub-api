@@ -4,13 +4,10 @@ import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Optional;
 
@@ -19,7 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-@EnableAutoConfiguration
 class UserRepositoryTest {
 
     @Autowired
@@ -32,8 +28,8 @@ class UserRepositoryTest {
     @DisplayName("Debe devolver un usuario por nombre de usuario")
     void findByUsername_ReturnsUser() {
         // Arrange
-        String username = "William";
-        createAndPersistUser(username, "william@example.com");
+        String username = "User";
+        createAndPersistUser(username, "user@example.com");
 
         // Act
         UserDetails userDetails = userRepository.findByUsername(username);
@@ -47,8 +43,8 @@ class UserRepositoryTest {
     @DisplayName("Debe devolver un usuario por email")
     void findByEmail_ReturnsUser() {
         // Arrange
-        String email = "william@example.com";
-        createAndPersistUser("William", email);
+        String email = "user@example.com";
+        createAndPersistUser("User", email);
 
         // Act
         Optional<User> user = userRepository.findByEmail(email);
@@ -62,8 +58,8 @@ class UserRepositoryTest {
     @DisplayName("Debe verificar si un nombre de usuario ya existe")
     void existsByUsername_ReturnsTrueIfUsernameExists() {
         // Arrange
-        String username = "William";
-        createAndPersistUser(username, "william@example.com");
+        String username = "User";
+        createAndPersistUser(username, "user@example.com");
 
         // Act
         boolean exists = userRepository.existsByUsername(username);
@@ -76,8 +72,8 @@ class UserRepositoryTest {
     @DisplayName("Debe verificar si un email ya existe")
     void existsByEmail_ReturnsTrueIfEmailExists() {
         // Arrange
-        String email = "william@example.com";
-        createAndPersistUser("William", email);
+        String email = "user@example.com";
+        createAndPersistUser("User", email);
 
         // Act
         boolean exists = userRepository.existsByEmail(email);
@@ -91,7 +87,7 @@ class UserRepositoryTest {
     void findByToken_ReturnsUser() {
         // Arrange
         String token = "123456";
-        createAndPersistUserWithToken("William", "william@example.com", token);
+        createAndPersistUserWithToken("User", "user@example.com", token);
 
         // Act
         Optional<User> user = userRepository.findByToken(token);

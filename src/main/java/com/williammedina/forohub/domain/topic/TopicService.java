@@ -19,6 +19,7 @@ import com.williammedina.forohub.infrastructure.email.EmailService;
 import com.williammedina.forohub.infrastructure.errors.AppException;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ import java.util.List;
 
 
 @Service
+@AllArgsConstructor
 public class TopicService {
 
     private final TopicRepository topicRepository;
@@ -37,22 +39,6 @@ public class TopicService {
     private final NotificationService notificationService;
     private final EmailService emailService;
     private final ContentValidationService contentValidationService;
-
-    public TopicService(
-            TopicRepository topicRepository,
-            CourseRepository courseRepository,
-            CommonHelperService commonHelperService,
-            NotificationService notificationService,
-            EmailService emailService,
-            ContentValidationService contentValidationService
-    ) {
-        this.topicRepository = topicRepository;
-        this.courseRepository = courseRepository;
-        this.commonHelperService = commonHelperService;
-        this.notificationService = notificationService;
-        this.emailService = emailService;
-        this.contentValidationService = contentValidationService;
-    }
 
     @Transactional
     public TopicDTO createTopic(InputTopicDTO data) {

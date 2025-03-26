@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,18 +24,15 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/response", produces = "application/json")
 @Tag(name = "Response", description = "Endpoints para la gestión de respuestas en los tópicos del foro.")
+@AllArgsConstructor
 public class ResponseController {
 
     private final ResponseService responseService;
 
-    public ResponseController(ResponseService responseService) {
-        this.responseService = responseService;
-    }
-
     @Operation(
             summary = "Crear una nueva respuesta",
             description = "Permite a un usuario crear una respuesta para un tópico específico.",
-            security = @SecurityRequirement(name = "bearer-key"),
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Respuesta creada exitosamente"),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
@@ -52,7 +50,7 @@ public class ResponseController {
     @Operation(
             summary = "Obtener todas las respuestas del usuario autenticado",
             description = "Recupera todas las respuestas creadas por el usuario actualmente autenticado con paginación.",
-            security = @SecurityRequirement(name = "bearer-key"),
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Respuestas recuperadas exitosamente"),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
@@ -85,7 +83,7 @@ public class ResponseController {
     @Operation(
             summary = "Actualizar una respuesta",
             description = "Permite a un usuario actualizar el contenido de una respuesta específica.",
-            security = @SecurityRequirement(name = "bearer-key"),
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Respuesta actualizada exitosamente"),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
@@ -103,7 +101,7 @@ public class ResponseController {
     @Operation(
             summary = "Alternar el estado de una respuesta como solución",
             description = "Permite marcar una respuesta como la solución correcta de un tópico o quitarla como solución si ya estaba marcada.",
-            security = @SecurityRequirement(name = "bearer-key"),
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Estado de solución actualizado exitosamente"),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
@@ -120,7 +118,7 @@ public class ResponseController {
     @Operation(
             summary = "Eliminar una respuesta",
             description = "Permite a un usuario eliminar una respuesta específica.",
-            security = @SecurityRequirement(name = "bearer-key"),
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(responseCode = "204", description = "Respuesta eliminada exitosamente"),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),

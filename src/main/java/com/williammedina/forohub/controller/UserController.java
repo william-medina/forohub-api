@@ -11,7 +11,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,18 +22,15 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/auth", produces = "application/json")
 @Tag(name = "Auth", description = "Endpoints para la autenticación de usuarios, gestión de cuentas y operaciones relacionadas con los usuarios.")
+@AllArgsConstructor
 public class UserController {
 
     //@Autowired
     private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
     @Operation(
             summary = "Crear una cuenta de usuario",
-            description = "Permite registrar una nueva cuenta de usuario en el sistema.El usuario debe proporcionar un nombre de usuario, email y password válidos. Si el registro es exitoso, se enviará un token de confirmación al email registrado.",
+            description = "Permite registrar una nueva cuenta de usuario en el sistema. El usuario debe proporcionar un nombre de usuario, email y password válidos. Si el registro es exitoso, se enviará un token de confirmación al email registrado.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Cuenta creada"),
                     @ApiResponse(responseCode = "400", description = "Datos de solicitud inválidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
@@ -62,7 +62,7 @@ public class UserController {
 
     @Operation(
             summary = "Iniciar sesión",
-            description = "Autentica al usuario y genera un token JWT para sesiones autenticadas.",
+            description = "Autentica al usuario, genera un token de acceso y un token de actualización, y los almacena en cookies HTTP-only.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Autenticación exitosa"),
                     @ApiResponse(responseCode = "400", description = "Datos de solicitud inválidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
@@ -72,8 +72,8 @@ public class UserController {
             }
     )
     @PostMapping("/login")
-    public ResponseEntity<JwtTokenResponse> login(@RequestBody @Valid LoginUserDTO data) throws MessagingException {
-        JwtTokenResponse responseToken = userService.authenticateAndGenerateToken(data);
+    public ResponseEntity<JwtTokenResponse> login(@RequestBody @Valid LoginUserDTO data, HttpServletResponse response) throws MessagingException {
+        JwtTokenResponse responseToken = userService.authenticateAndGenerateToken(data, response);
         return ResponseEntity.ok(responseToken);
     }
 
@@ -128,11 +128,11 @@ public class UserController {
     @Operation(
             summary = "Actualizar password actual del usuario autenticado",
             description = "Permite al usuario autenticado cambiar su password actual.",
-            security = @SecurityRequirement(name = "bearer-key"),
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Password actualizada"),
                     @ApiResponse(responseCode = "400", description = "Datos de solicitud inválidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-                    @ApiResponse(responseCode = "401", description = "Password actual incorrecta o no autorizado - token bearer inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "401", description = "Password actual incorrecta o no autorizado - token inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PatchMapping("/update-password")
@@ -144,28 +144,28 @@ public class UserController {
     @Operation(
             summary = "Actualizar el nombre de usuario del usuario autenticado",
             description = "Permite al usuario autenticado actualizar su nombre de usuario en el sistema.",
-            security = @SecurityRequirement(name = "bearer-key"),
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Nombre de usuario actualizado correctamente"),
                     @ApiResponse(responseCode = "400", description = "Datos de solicitud inválidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-                    @ApiResponse(responseCode = "401", description = "No autorizado - token bearer inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "No autorizado - token inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                     @ApiResponse(responseCode = "403", description = "Username inapropiado detectado por la IA.", content = { @Content( schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "409", description = "El nombre de usuario ya están registrados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PatchMapping("/update-username")
-    public ResponseEntity<UserWithTokenDTO> updateUsername(@RequestBody @Valid UpdateUsernameDTO data) {
-        UserWithTokenDTO user = userService.updateUsername(data);
+    public ResponseEntity<UserDTO> updateUsername(@RequestBody @Valid UpdateUsernameDTO data) {
+        UserDTO user = userService.updateUsername(data);
         return ResponseEntity.ok(user);
     }
 
     @Operation(
             summary = "Obtener estadísticas del usuario autenticado",
             description = "Recupera las estadísticas del usuario, que incluyen la cantidad de tópicos creados y seguidos, así como el número de respuestas publicadas por el usuario.",
-            security = @SecurityRequirement(name = "bearer-key"),
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Estadísticas del usuario obtenidas correctamente"),
-                    @ApiResponse(responseCode = "401", description = "No autorizado - token bearer inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "401", description = "No autorizado - token inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @GetMapping("/stats")
@@ -177,16 +177,45 @@ public class UserController {
     @Operation(
             summary = "Obtener información del usuario autenticado",
             description = "Obtiene los detalles del usuario actualmente autenticado.",
-            security = @SecurityRequirement(name = "bearer-key"),
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Detalles del usuario obtenidos correctamente"),
-                    @ApiResponse(responseCode = "401", description = "No autorizado - token bearer inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "401", description = "No autorizado - token inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getCurrentUser() {
         UserDTO user = userService.getCurrentUser();
         return ResponseEntity.ok(user);
+    }
+
+    @Operation(
+            summary = "Actualizar token de acceso",
+            description = "Renueva el token de acceso del usuario utilizando el token de actualización almacenado en las cookies.",
+            security = @SecurityRequirement(name = "cookieAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Token de acceso actualizado correctamente."),
+                    @ApiResponse(responseCode = "401", description = "No autorizado - token inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @PostMapping("/refresh-token")
+    public ResponseEntity<JwtTokenResponse> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        JwtTokenResponse TokenResponse = userService.refreshAccessToken(request, response);
+        return ResponseEntity.ok(TokenResponse);
+    }
+
+    @Operation(
+            summary = "Cerrar sesión",
+            description = "Finaliza la sesión del usuario eliminando las cookies que almacenan el token de acceso y el token de actualización.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Sesión cerrada exitosamente."),
+                    @ApiResponse(responseCode = "401", description = "No autorizado - token inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @PostMapping("/logout")
+    public ResponseEntity<JwtTokenResponse> logout(HttpServletResponse response) {
+        JwtTokenResponse TokenResponse = userService.logout(response);
+        return ResponseEntity.ok(TokenResponse);
     }
 
 }

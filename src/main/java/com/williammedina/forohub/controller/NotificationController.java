@@ -9,22 +9,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@SecurityRequirement(name = "bearer-key")
 @RestController
 @RequestMapping(value = "/notify", produces = "application/json")
+@SecurityRequirement(name = "cookieAuth")
 @Tag(name = "Notify", description = "Endpoints para la gestión de notificaciones de los usuarios.")
+@AllArgsConstructor
 public class NotificationController {
 
     private final NotificationService notificationService;
-
-    public NotificationController(NotificationService notificationService) {
-        this.notificationService = notificationService;
-    }
 
     @Operation(
             summary = "Obtener todas las notificaciones del usuario",

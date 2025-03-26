@@ -6,24 +6,18 @@ import com.williammedina.forohub.domain.topic.dto.TopicDTO;
 import com.williammedina.forohub.domain.topicfollow.dto.TopicFollowDetailsDTO;
 import com.williammedina.forohub.domain.user.User;
 import com.williammedina.forohub.infrastructure.errors.AppException;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@AllArgsConstructor
 public class TopicFollowService {
 
     private final TopicFollowRepository topicFollowRepository;
     private final CommonHelperService commonHelperService;
-
-    public TopicFollowService(
-            TopicFollowRepository topicFollowRepository,
-            CommonHelperService commonHelperService
-    ) {
-        this.topicFollowRepository = topicFollowRepository;
-        this.commonHelperService = commonHelperService;
-    }
 
     @Transactional
     public TopicFollowDetailsDTO toggleFollowTopic(Long topicId) {

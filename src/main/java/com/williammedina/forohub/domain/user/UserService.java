@@ -1,5 +1,6 @@
 package com.williammedina.forohub.domain.user;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.williammedina.forohub.domain.common.CommonHelperService;
 import com.williammedina.forohub.domain.common.ContentValidationService;
 import com.williammedina.forohub.domain.response.ResponseRepository;
@@ -9,8 +10,13 @@ import com.williammedina.forohub.domain.user.dto.*;
 import com.williammedina.forohub.infrastructure.email.EmailService;
 import com.williammedina.forohub.infrastructure.errors.*;
 import com.williammedina.forohub.infrastructure.security.JwtTokenResponse;
+import com.williammedina.forohub.infrastructure.security.SecurityFilter;
 import com.williammedina.forohub.infrastructure.security.TokenService;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
@@ -34,33 +41,10 @@ public class UserService {
     private final ResponseRepository responseRepository;
     private final TopicFollowRepository topicFollowRepository;
     private final ContentValidationService contentValidationService;
-
-    public UserService(
-            UserRepository userRepository,
-            TokenService tokenService,
-            AuthenticationManager authenticationManager,
-            BCryptPasswordEncoder passwordEncoder,
-            EmailService emailService,
-            CommonHelperService commonHelperService,
-            TopicRepository topicRepository,
-            ResponseRepository responseRepository,
-            TopicFollowRepository topicFollowRepository,
-            ContentValidationService contentValidationService
-    ) {
-        this.userRepository = userRepository;
-        this.tokenService = tokenService;
-        this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
-        this.emailService = emailService;
-        this.commonHelperService = commonHelperService;
-        this.topicRepository = topicRepository;
-        this.responseRepository = responseRepository;
-        this.topicFollowRepository = topicFollowRepository;
-        this.contentValidationService = contentValidationService;
-    }
+    private final SecurityFilter securityFilter;
 
     @Transactional
-    public JwtTokenResponse authenticateAndGenerateToken(LoginUserDTO data) throws MessagingException {
+    public JwtTokenResponse authenticateAndGenerateToken(LoginUserDTO data, HttpServletResponse response) throws MessagingException {
 
         Authentication authenticationToken = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         Authentication authenticatedUser = authenticationManager.authenticate(authenticationToken);
@@ -72,8 +56,14 @@ public class UserService {
             throw new AppException("La cuenta no está confirmada. Por favor, verifique su email.", "ACCOUNT_NOT_CONFIRMED");
         }
 
-        String jwtToken = tokenService.generateToken((User) authenticatedUser.getPrincipal());
-        return new JwtTokenResponse(jwtToken);
+        // Generar tokens
+        String accessToken = tokenService.generateAccessToken(user);
+        String refreshToken = tokenService.generateRefreshToken(user);
+
+        response.addCookie(createCookie("access_token", accessToken, "/", TokenService.ACCESS_TOKEN_EXPIRATION));
+        response.addCookie(createCookie("refresh_token", refreshToken, "/api/auth/refresh-token", TokenService.REFRESH_TOKEN_EXPIRATION));
+
+        return new JwtTokenResponse("Autenticación exitosa.");
     }
 
     @Transactional
@@ -163,7 +153,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserWithTokenDTO updateUsername(UpdateUsernameDTO data) {
+    public UserDTO updateUsername(UpdateUsernameDTO data) {
         User user = getAuthenticatedUser();
 
         if (user.getUsername().equals(data.username())) {
@@ -176,8 +166,7 @@ public class UserService {
         user.setUsername(data.username());
         userRepository.save(user);
 
-        String newJwtToken = tokenService.generateToken(user);
-        return new UserWithTokenDTO(user.getId(), user.getUsername(), user.getProfile().getName(), newJwtToken);
+        return new UserDTO(user.getId(), user.getUsername(), user.getProfile().getName());
     }
 
     @Transactional(readOnly = true)
@@ -195,6 +184,31 @@ public class UserService {
         return toUserDTO(user);
     }
 
+    @Transactional
+    public JwtTokenResponse refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = securityFilter.getTokenFromCookies(request, "refresh_token")
+                .orElseThrow(() -> new AppException("Unauthorized", "UNAUTHORIZED"));
+
+        try {
+            String userId = tokenService.getSubjectFromToken(refreshToken);
+            String newAccessToken = tokenService.generateAccessToken(findUserById(Long.valueOf(userId)));
+
+            response.addCookie(createCookie("access_token", newAccessToken, "/", TokenService.ACCESS_TOKEN_EXPIRATION));
+
+            return new JwtTokenResponse("Token de acceso actualizado correctamente.");
+
+        } catch (TokenExpiredException e) {
+            throw new AppException("Unauthorized", "UNAUTHORIZED");
+        }
+    }
+
+    @Transactional
+    public JwtTokenResponse logout(HttpServletResponse response) {
+        response.addCookie(deleteCookie("access_token", "/"));
+        response.addCookie(deleteCookie("refresh_token", "/api/auth/refresh-token"));
+        return new JwtTokenResponse("Sesión cerrada exitosamente.");
+    }
+
     private User getAuthenticatedUser() {
         return commonHelperService.getAuthenticatedUser();
     }
@@ -204,6 +218,11 @@ public class UserService {
         user.generateConfirmationToken();
         userRepository.save(user);
         emailService.sendConfirmationEmail(user.getEmail(), user.getUsername(), user.getToken());
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new AppException("Usuario no encontrado.", "NOT_FOUND"));
     }
 
     private User findUserByEmail(String email) {
@@ -266,11 +285,28 @@ public class UserService {
         }
     }
 
-    private void validateResponseContent(String content) {
-
-    }
-
     private UserDTO toUserDTO(User user) {
         return commonHelperService.toUserDTO(user);
     }
+
+    private Cookie createCookie(String name, String value, String path, long maxAge) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath(path);
+        cookie.setMaxAge((int) maxAge);
+        cookie.setAttribute("SameSite", "Strict");
+        return cookie;
+    }
+
+    private Cookie deleteCookie(String name, String path) {
+        Cookie cookie = new Cookie(name, null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath(path);
+        cookie.setMaxAge(0);
+        cookie.setAttribute("SameSite", "Strict");
+        return cookie;
+    }
+
 }

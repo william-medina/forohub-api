@@ -1,5 +1,6 @@
 package com.williammedina.forohub.controller;
 
+import com.williammedina.forohub.config.TestUtil;
 import com.williammedina.forohub.domain.user.User;
 import com.williammedina.forohub.domain.user.UserRepository;
 import com.williammedina.forohub.domain.user.dto.*;
@@ -53,7 +54,10 @@ class UserControllerTest {
     private UserRepository userRepository;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private TestUtil testUtil;
 
     @Test
     @DisplayName("Debería devolver HTTP 201 cuando la cuenta de usuario se crea exitosamente")
@@ -80,7 +84,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 409 cuando el nombre de usuario o el email ya están registrados")
     void createAccount_UsernameOrEmailConflict() throws Exception {
-        createUser("newuser@example.com", "newuser");
+        testUtil.createUser("newuser@example.com", "newuser");
         CreateUserDTO createUserDTO = new CreateUserDTO("newuser@example.com", "newuser", "password", "password");
         var mvcResponse = mvc.perform(post("/api/auth/create-account")
                         .contentType("application/json")
@@ -92,7 +96,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 200 cuando la cuenta es confirmada exitosamente")
     void confirmAccount_Success() throws Exception {
-        User user = createUser("newuser@example.com", "newuser");
+        User user = testUtil.createUser("newuser@example.com", "newuser");
         var mvcResponse = mvc.perform(get("/api/auth/confirm-account/" + user.getToken()))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
@@ -110,7 +114,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 410 cuando el token ha expirado")
     void confirmAccount_ExpiredToken() throws Exception {
-        User user = createUser("newuser@example.com", "newuser");
+        User user = testUtil.createUser("newuser@example.com", "newuser");
         user.setTokenExpiration(user.getTokenExpiration().minusDays(1));
         var mvcResponse = mvc.perform(get("/api/auth/confirm-account/" + user.getToken()))
                 .andReturn().getResponse();
@@ -120,7 +124,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 200 cuando el inicio de sesión es exitoso")
     void login_Success() throws Exception {
-        User user = createUser("user@example.com", "user");
+        User user = testUtil.createUser("user@example.com", "user");
         user.setAccountConfirmed(true);
         LoginUserDTO loginData = new LoginUserDTO("user", "password");
         var mvcResponse = mvc.perform(post("/api/auth/login")
@@ -144,7 +148,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 401 cuando las credenciales son inválidas")
     void login_InvalidCredentials() throws Exception {
-        User user = createUser("user@example.com", "user");
+        User user = testUtil.createUser("user@example.com", "user");
         user.setAccountConfirmed(true);
         LoginUserDTO loginData = new LoginUserDTO("user", "wrongpassword");
         var mvcResponse = mvc.perform(post("/api/auth/login")
@@ -157,7 +161,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 403 cuando la cuenta no está confirmada")
     void login_UnconfirmedAccount() throws Exception {
-        createUser("user@example.com", "user");
+        testUtil.createUser("user@example.com", "user");
         LoginUserDTO loginData = new LoginUserDTO("user", "password");
         var mvcResponse = mvc.perform(post("/api/auth/login")
                         .contentType("application/json")
@@ -169,7 +173,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 200 cuando el email es válido y el código de confirmación se envía exitosamente")
     void requestConfirmationCode_Success() throws Exception {
-        User user = createUser("user@example.com", "user");
+        User user = testUtil.createUser("user@example.com", "user");
         user.clearTokenData();
         EmailUserDTO emailUserDTO = new EmailUserDTO("user@example.com");
         var mvcResponse = mvc.perform(post("/api/auth/request-code")
@@ -182,7 +186,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 400 cuando hay demasiadas solicitudes recientes o el token es inválido")
     void requestConfirmationCode_TooManyRequestsOrInvalidToken() throws Exception {
-        createUser("user@example.com", "user");
+        testUtil.createUser("user@example.com", "user");
         EmailUserDTO emailUserDTO = new EmailUserDTO("user@example.com");
         var mvcResponse = mvc.perform(post("/api/auth/request-code")
                         .contentType("application/json")
@@ -194,7 +198,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 409 cuando la cuenta ya está confirmada")
     void requestConfirmationCode_AlreadyConfirmed() throws Exception {
-        User user = createUser("user@example.com", "user");
+        User user = testUtil.createUser("user@example.com", "user");
         user.setAccountConfirmed(true);
         EmailUserDTO emailUserDTO = new EmailUserDTO("user@example.com");
         var mvcResponse = mvc.perform(post("/api/auth/request-code")
@@ -218,7 +222,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 200 cuando el email se envía exitosamente")
     void forgotPassword_Success() throws Exception {
-        User user = createUser("user@example.com", "user");
+        User user = testUtil.createUser("user@example.com", "user");
         user.clearTokenData();
         user.setAccountConfirmed(true);
         EmailUserDTO request = new EmailUserDTO("user@example.com");
@@ -232,7 +236,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 400 cuando se realizan demasiadas solicitudes recientes o el token es inválido")
     void forgotPassword_TooManyRequestsOrInvalidToken() throws Exception {
-        User user = createUser("user@example.com", "user");
+        User user = testUtil.createUser("user@example.com", "user");
         user.setAccountConfirmed(true);
         EmailUserDTO request = new EmailUserDTO("user@example.com");
         var mvcResponse = mvc.perform(post("/api/auth/forgot-password")
@@ -257,7 +261,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 409 cuando la cuenta no está confirmada")
     void forgotPassword_UnconfirmedAccount() throws Exception {
-        User user = createUser("user@example.com", "user");
+        User user = testUtil.createUser("user@example.com", "user");
         EmailUserDTO request = new EmailUserDTO("user@example.com");
         var mvcResponse = mvc.perform(post("/api/auth/forgot-password")
                         .contentType("application/json")
@@ -269,7 +273,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 200 cuando el password se actualiza exitosamente")
     void updatePasswordWithToken_Success() throws Exception {
-        User user = createUser("user@example.com", "user");
+        User user = testUtil.createUser("user@example.com", "user");
         user.setAccountConfirmed(true);
         UpdatePasswordWithTokenDTO request = new UpdatePasswordWithTokenDTO("newPassword", "newPassword");
         var mvcResponse = mvc.perform(post("/api/auth/update-password/" + user.getToken())
@@ -282,7 +286,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 400 cuando el token o los datos son inválidos")
     void updatePasswordWithToken_InvalidTokenOrData() throws Exception {
-        User user = createUser("user@example.com", "user");
+        User user = testUtil.createUser("user@example.com", "user");
         user.setAccountConfirmed(true);
         UpdatePasswordWithTokenDTO request = new UpdatePasswordWithTokenDTO("", "");
         var mvcResponse = mvc.perform(post("/api/auth/update-password/" + user.getToken())
@@ -295,7 +299,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 403 cuando la cuenta no está confirmada")
     void updatePasswordWithToken_UnconfirmedAccount() throws Exception {
-        User user = createUser("user@example.com", "user");
+        User user = testUtil.createUser("user@example.com", "user");
         UpdatePasswordWithTokenDTO request = new UpdatePasswordWithTokenDTO("newPassword", "newPassword");
         var mvcResponse = mvc.perform(post("/api/auth/update-password/" + user.getToken())
                         .contentType("application/json")
@@ -307,7 +311,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 410 cuando el token ha expirado")
     void updatePasswordWithToken_ExpiredToken() throws Exception {
-        User user = createUser("user@example.com", "user");
+        User user = testUtil.createUser("user@example.com", "user");
         user.setAccountConfirmed(true);
         user.setTokenExpiration(user.getTokenExpiration().minusDays(1));
         UpdatePasswordWithTokenDTO request = new UpdatePasswordWithTokenDTO("newPassword", "newPassword");
@@ -322,10 +326,12 @@ class UserControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando el password se actualiza exitosamente")
     void updateCurrentUserPassword_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         UpdateCurrentUserPasswordDTO request = new UpdateCurrentUserPasswordDTO("password", "newPassword", "newPassword");
         var mvcResponse = mvc.perform(patch("/api/auth/update-password")
                         .contentType("application/json")
-                        .content(updateCurrentUserPasswordDTOJacksonTester.write(request).getJson()))
+                        .content(updateCurrentUserPasswordDTOJacksonTester.write(request).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
@@ -334,10 +340,12 @@ class UserControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 400 cuando los datos de la solicitud son inválidos")
     void updateCurrentUserPassword_InvalidData() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         UpdateCurrentUserPasswordDTO request = new UpdateCurrentUserPasswordDTO("", "" , "");
         var mvcResponse = mvc.perform(patch("/api/auth/update-password")
                         .contentType("application/json")
-                        .content(updateCurrentUserPasswordDTOJacksonTester.write(request).getJson()))
+                        .content(updateCurrentUserPasswordDTOJacksonTester.write(request).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
@@ -346,10 +354,12 @@ class UserControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 401 cuando el password actual es incorrecto o el token es inválido")
     void updateCurrentUserPassword_Unauthorized() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         UpdateCurrentUserPasswordDTO request = new UpdateCurrentUserPasswordDTO("wrongpassword", "newPassword", "newPassword");
         var mvcResponse = mvc.perform(patch("/api/auth/update-password")
                         .contentType("application/json")
-                        .content(updateCurrentUserPasswordDTOJacksonTester.write(request).getJson()))
+                        .content(updateCurrentUserPasswordDTOJacksonTester.write(request).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
@@ -358,10 +368,12 @@ class UserControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando el nombre de usuario se actualiza exitosamente")
     void updateUsername_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         UpdateUsernameDTO request = new UpdateUsernameDTO("newUsername");
         var mvcResponse = mvc.perform(patch("/api/auth/update-username")
                         .contentType("application/json")
-                        .content(updateUsernameDTOJacksonTester.write(request).getJson()))
+                        .content(updateUsernameDTOJacksonTester.write(request).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
@@ -370,10 +382,12 @@ class UserControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 400 cuando los datos de la solicitud son inválidos")
     void updateUsername_InvalidData() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         UpdateUsernameDTO request = new UpdateUsernameDTO("");
         var mvcResponse = mvc.perform(patch("/api/auth/update-username")
                         .contentType("application/json")
-                        .content(updateUsernameDTOJacksonTester.write(request).getJson()))
+                        .content(updateUsernameDTOJacksonTester.write(request).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
@@ -382,11 +396,14 @@ class UserControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 409 cuando el nombre de usuario ya están registrados")
     void updateUsername_UsernameConflict() throws Exception {
-        createUser("user@example.com", "user");
+        User user = testUtil.getAuthenticatedUser("William");
+        testUtil.createUser("user@example.com", "user");
+
         UpdateUsernameDTO request = new UpdateUsernameDTO("user");
         var mvcResponse = mvc.perform(patch("/api/auth/update-username")
                         .contentType("application/json")
-                        .content(updateUsernameDTOJacksonTester.write(request).getJson()))
+                        .content(updateUsernameDTOJacksonTester.write(request).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
     }
@@ -395,8 +412,10 @@ class UserControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando se obtienen las estadísticas del usuario correctamente")
     void getUserStats_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         var mvcResponse = mvc.perform(get("/api/auth/stats")
-                        .contentType("application/json"))
+                        .contentType("application/json")
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
@@ -405,23 +424,21 @@ class UserControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando se obtienen los detalles del usuario correctamente")
     void getCurrentUser_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         var mvcResponse = mvc.perform(get("/api/auth/me")
-                        .contentType("application/json"))
+                        .contentType("application/json")
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
     @Test
-    @DisplayName("Debería devolver HTTP 403 si el usuario no está autenticado")
+    @DisplayName("Debería devolver HTTP 401 si el usuario no está autenticado")
     void getCurrentUser_Unauthorized() throws Exception {
         var mvcResponse = mvc.perform(get("/api/auth/me")
                         .contentType("application/json"))
                 .andReturn().getResponse();
-        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
-    }
-
-    private User createUser(String email, String username) {
-        return userRepository.save(new User(username, email, passwordEncoder.encode("password")));
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
 }

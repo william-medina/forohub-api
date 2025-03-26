@@ -7,21 +7,18 @@ import com.williammedina.forohub.domain.topic.Topic;
 import com.williammedina.forohub.domain.topicfollow.TopicFollow;
 import com.williammedina.forohub.domain.user.User;
 import com.williammedina.forohub.infrastructure.errors.AppException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final CommonHelperService commonHelperService;
-
-    public NotificationService(NotificationRepository notificationRepository, CommonHelperService commonHelperService) {
-        this.notificationRepository = notificationRepository;
-        this.commonHelperService = commonHelperService;
-    }
 
     @Transactional(readOnly = true)
     public List<NotificationDTO> getAllNotificationsByUser() {

@@ -12,6 +12,7 @@ import com.williammedina.forohub.infrastructure.email.EmailService;
 import com.williammedina.forohub.infrastructure.errors.AppException;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,26 +22,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ResponseService {
+
     private final ResponseRepository responseRepository;
     private final CommonHelperService commonHelperService;
     private final NotificationService notificationService;
     private final EmailService emailService;
     private final ContentValidationService contentValidationService;
 
-    public ResponseService(
-            ResponseRepository responseRepository,
-            CommonHelperService commonHelperService,
-            NotificationService notificationService,
-            EmailService emailService,
-            ContentValidationService contentValidationService
-    ) {
-        this.responseRepository = responseRepository;
-        this.commonHelperService = commonHelperService;
-        this.notificationService = notificationService;
-        this.emailService = emailService;
-        this.contentValidationService = contentValidationService;
-    }
 
     @Transactional
     public ResponseDTO createResponse(@Valid CreateResponseDTO data) throws MessagingException {

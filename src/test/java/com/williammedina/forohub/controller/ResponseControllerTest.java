@@ -1,5 +1,6 @@
 package com.williammedina.forohub.controller;
 
+import com.williammedina.forohub.config.TestUtil;
 import com.williammedina.forohub.domain.course.Course;
 import com.williammedina.forohub.domain.course.CourseRepository;
 import com.williammedina.forohub.domain.response.Response;
@@ -45,29 +46,32 @@ class ResponseControllerTest {
     @Autowired
     private JacksonTester<UpdateResponseDTO> updateResponseDTOJacksonTester;
 
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private TopicRepository topicRepository;
 
     @Autowired
-    TopicRepository topicRepository;
+    private CourseRepository courseRepository;
 
     @Autowired
-    CourseRepository courseRepository;
+    private ResponseRepository responseRepository;
 
     @Autowired
-    ResponseRepository responseRepository;
-
+    private TestUtil testUtil;
 
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 201 cuando se crea una respuesta exitosamente")
     void createResponse_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
         CreateResponseDTO createResponseDTO = new CreateResponseDTO(topic.getId(), "This is a test response.");
         var mvcResponse  = mvc.perform(post("/api/response")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(createResponseDTOJacksonTester.write(createResponseDTO).getJson()))
+                        .content(createResponseDTOJacksonTester.write(createResponseDTO).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.CREATED.value());
     }
@@ -76,11 +80,13 @@ class ResponseControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 400 cuando los datos de entrada son inválidos")
     void createResponse_InvalidData() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
         CreateResponseDTO createResponseDTO = new CreateResponseDTO(topic.getId(), "");
         var mvcResponse = mvc.perform(post("/api/response")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(createResponseDTOJacksonTester.write(createResponseDTO).getJson()))
+                        .content(createResponseDTOJacksonTester.write(createResponseDTO).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
@@ -89,12 +95,14 @@ class ResponseControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando se intenta agregar una respuesta a un tópico cerrado")
     void createResponse_ClosedTopic() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
         topic.setStatus(Topic.Status.CLOSED);
         CreateResponseDTO createResponseDTO = new CreateResponseDTO(topic.getId(), "This is a test response.");
         var mvcResponse = mvc.perform(post("/api/response")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(createResponseDTOJacksonTester.write(createResponseDTO).getJson()))
+                        .content(createResponseDTOJacksonTester.write(createResponseDTO).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
     }
@@ -103,11 +111,13 @@ class ResponseControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando el tópico no existe")
     void createResponse_TopicNotFound() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
         CreateResponseDTO createResponseDTO = new CreateResponseDTO(0L, "This is a test response.");
         var mvcResponse = mvc.perform(post("/api/response")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(createResponseDTOJacksonTester.write(createResponseDTO).getJson()))
+                        .content(createResponseDTOJacksonTester.write(createResponseDTO).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
@@ -116,11 +126,13 @@ class ResponseControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 y las respuestas del usuario autenticado")
     void getAllResponsesByUser_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
         createResponse("William", topic, "First response");
         createResponse("William", topic, "Second response");
         var mvcResponse = mvc.perform(get("/api/response/user/responses")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
@@ -152,12 +164,14 @@ class ResponseControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando se actualiza una respuesta exitosamente")
     void updateResponse_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
         Response response = createResponse("William", topic, "Original response message");
-        UpdateResponseDTO updateResponseDTO = new UpdateResponseDTO("Updated response message");
+        UpdateResponseDTO updateResponseDTO = new UpdateResponseDTO("This is a updated response.");
         var mvcResponse = mvc.perform(put("/api/response/{responseId}", response.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(updateResponseDTOJacksonTester.write(updateResponseDTO).getJson()))
+                        .content(updateResponseDTOJacksonTester.write(updateResponseDTO).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
@@ -166,12 +180,14 @@ class ResponseControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 400 cuando los datos de entrada son inválidos")
     void updateResponse_InvalidData() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
         Response response = createResponse("William", topic, "Original response message");
         UpdateResponseDTO updateResponseDTO = new UpdateResponseDTO("");
         var mvcResponse = mvc.perform(put("/api/response/{responseId}", response.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(updateResponseDTOJacksonTester.write(updateResponseDTO).getJson()))
+                        .content(updateResponseDTOJacksonTester.write(updateResponseDTO).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
@@ -180,12 +196,14 @@ class ResponseControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario no tiene permiso para modificar la respuesta")
     void updateResponse_Forbidden() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
         Response response = createResponse("Admin", topic, "Original response message");
         UpdateResponseDTO updateResponseDTO = new UpdateResponseDTO("Updated response message");
         var mvcResponse = mvc.perform(put("/api/response/{responseId}", response.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(updateResponseDTOJacksonTester.write(updateResponseDTO).getJson()))
+                        .content(updateResponseDTOJacksonTester.write(updateResponseDTO).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
     }
@@ -194,11 +212,13 @@ class ResponseControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando la respuesta no existe")
     void updateResponse_NotFound() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Long nonExistentResponseId = 0L;
         UpdateResponseDTO updateResponseDTO = new UpdateResponseDTO("Updated response message");
         var mvcResponse = mvc.perform(put("/api/response/{responseId}", nonExistentResponseId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(updateResponseDTOJacksonTester.write(updateResponseDTO).getJson()))
+                        .content(updateResponseDTOJacksonTester.write(updateResponseDTO).getJson())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
@@ -207,9 +227,11 @@ class ResponseControllerTest {
     @WithUserDetails("Admin")
     @DisplayName("Debería devolver HTTP 200 cuando el estado de solución se actualiza correctamente")
     void setCorrectResponse_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("Admin");
         Topic topic = createTopic("William", 1L, "Topic for Solution", "Topic Description");
         Response response = createResponse("William", topic, "Sample response");
-        var mvcResponse = mvc.perform(patch("/api/response/{responseId}", response.getId()))
+        var mvcResponse = mvc.perform(patch("/api/response/{responseId}", response.getId())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
@@ -218,9 +240,11 @@ class ResponseControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario no tiene permiso para modificar la respuesta")
     void setCorrectResponse_Forbidden() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("William", 1L, "Topic for Solution", "Topic Description");
         Response response = createResponse("William", topic, "Sample response");
-        var mvcResponse = mvc.perform(patch("/api/response/{responseId}", response.getId()))
+        var mvcResponse = mvc.perform(patch("/api/response/{responseId}", response.getId())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
     }
@@ -229,8 +253,10 @@ class ResponseControllerTest {
     @WithUserDetails("Admin")
     @DisplayName("Debería devolver HTTP 404 cuando la respuesta no existe")
     void setCorrectResponse_NotFound() throws Exception {
+        User user = testUtil.getAuthenticatedUser("Admin");
         Long nonExistentResponseId = 0L;
-        var mvcResponse = mvc.perform(patch("/api/response/{responseId}", nonExistentResponseId))
+        var mvcResponse = mvc.perform(patch("/api/response/{responseId}", nonExistentResponseId)
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
@@ -239,9 +265,11 @@ class ResponseControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 204 cuando la respuesta se elimina exitosamente")
     void deleteResponse_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("William", 1L, "Topic to delete", "Topic Description");
         Response response = createResponse("William", topic, "Sample response");
-        var mvcResponse = mvc.perform(delete("/api/response/{responseId}", response.getId()))
+        var mvcResponse = mvc.perform(delete("/api/response/{responseId}", response.getId())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
@@ -250,9 +278,11 @@ class ResponseControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario no tiene permiso para eliminar la respuesta")
     void deleteResponse_Forbidden() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("Admin", 1L, "Topic to delete", "Topic Description");
         Response response = createResponse("Admin", topic, "Sample response");
-        var mvcResponse = mvc.perform(delete("/api/response/{responseId}", response.getId()))
+        var mvcResponse = mvc.perform(delete("/api/response/{responseId}", response.getId())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
     }
@@ -261,8 +291,10 @@ class ResponseControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando la respuesta no existe")
     void deleteResponse_NotFound() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Long nonExistentResponseId = 0L;
-        var mvcResponse = mvc.perform(delete("/api/response/{responseId}", nonExistentResponseId))
+        var mvcResponse = mvc.perform(delete("/api/response/{responseId}", nonExistentResponseId)
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }

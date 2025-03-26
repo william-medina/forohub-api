@@ -1,5 +1,6 @@
 package com.williammedina.forohub.controller;
 
+import com.williammedina.forohub.config.TestUtil;
 import com.williammedina.forohub.domain.course.Course;
 import com.williammedina.forohub.domain.course.CourseRepository;
 import com.williammedina.forohub.domain.notification.Notification;
@@ -38,24 +39,29 @@ class NotificationControllerTest {
     private MockMvc mvc;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    TopicRepository topicRepository;
+    private TopicRepository topicRepository;
 
     @Autowired
-    CourseRepository courseRepository;
+    private CourseRepository courseRepository;
 
     @Autowired
-    NotificationRepository notificationRepository;
+    private NotificationRepository notificationRepository;
+
+    @Autowired
+    private TestUtil testUtil;
 
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando las notificaciones se recuperan exitosamente")
     void getAllNotificationsByUser_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         createNotification("William", "Notification 1");
         createNotification("William", "Notification 2");
-        var mvcResponse = mvc.perform(get("/api/notify"))
+        var mvcResponse = mvc.perform(get("/api/notify")
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
@@ -64,8 +70,10 @@ class NotificationControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 204 cuando la notificación se elimina exitosamente")
     void deleteNotification_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Notification notification = createNotification("William", "Notification to Delete");
-        var mvcResponse = mvc.perform(delete("/api/notify/{notifyId}", notification.getId()))
+        var mvcResponse = mvc.perform(delete("/api/notify/{notifyId}", notification.getId())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
         Optional<Notification> deletedNotification = notificationRepository.findById(notification.getId());
@@ -76,8 +84,10 @@ class NotificationControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario intenta eliminar una notificación que no le pertenece")
     void deleteNotification_Forbidden() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Notification notification = createNotification("Admin", "Notification to Delete");
-        var mvcResponse = mvc.perform(delete("/api/notify/{notifyId}", notification.getId()))
+        var mvcResponse = mvc.perform(delete("/api/notify/{notifyId}", notification.getId())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
     }
@@ -86,7 +96,9 @@ class NotificationControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando la notificación no existe")
     void deleteNotification_NotFound() throws Exception {
-        var mvcResponse = mvc.perform(delete("/api/notify/{notifyId}", 0L))
+        User user = testUtil.getAuthenticatedUser("William");
+        var mvcResponse = mvc.perform(delete("/api/notify/{notifyId}", 0L)
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
@@ -95,8 +107,10 @@ class NotificationControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando la notificación se marca como leída exitosamente")
     void markNotificationAsRead_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Notification notification = createNotification("William", "Notification to Mark as Read");
-        var mvcResponse = mvc.perform(patch("/api/notify/{notifyId}", notification.getId()))
+        var mvcResponse = mvc.perform(patch("/api/notify/{notifyId}", notification.getId())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
         Notification updatedNotification = notificationRepository.findById(notification.getId()).orElseThrow();
@@ -108,8 +122,10 @@ class NotificationControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario intenta marcar como leída una notificación que no le pertenece")
     void markNotificationAsRead_Forbidden() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
         Notification notification = createNotification("Admin", "Notification to Mark as Read");
-        var mvcResponse = mvc.perform(patch("/api/notify/{notifyId}", notification.getId()))
+        var mvcResponse = mvc.perform(patch("/api/notify/{notifyId}", notification.getId())
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
     }
@@ -118,7 +134,9 @@ class NotificationControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando la notificación no existe")
     void markNotificationAsRead_NotFound() throws Exception {
-        var mvcResponse = mvc.perform(patch("/api/notify/{notifyId}", 0L))
+        User user = testUtil.getAuthenticatedUser("William");
+        var mvcResponse = mvc.perform(patch("/api/notify/{notifyId}", 0L)
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
                 .andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
