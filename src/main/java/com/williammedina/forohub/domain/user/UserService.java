@@ -295,7 +295,7 @@ public class UserService {
         cookie.setSecure(true);
         cookie.setPath(path);
         cookie.setMaxAge((int) maxAge);
-        cookie.setAttribute("SameSite", "Strict");
+        cookie.setAttribute("SameSite", "None");
         return cookie;
     }
 
@@ -305,7 +305,7 @@ public class UserService {
         cookie.setSecure(true);
         cookie.setPath(path);
         cookie.setMaxAge(0);
-        cookie.setAttribute("SameSite", "Strict");
+        cookie.setAttribute("SameSite", "None");
         return cookie;
     }
 
