@@ -2,7 +2,7 @@ package com.williammedina.forohub.controller;
 
 import com.williammedina.forohub.domain.user.UserService;
 import com.williammedina.forohub.domain.user.dto.*;
-import com.williammedina.forohub.infrastructure.errors.ErrorResponse;
+import com.williammedina.forohub.infrastructure.exception.ErrorResponse;
 import com.williammedina.forohub.infrastructure.security.JwtTokenResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,7 +36,7 @@ public class UserController {
                     @ApiResponse(responseCode = "400", description = "Datos de solicitud inválidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                     @ApiResponse(responseCode = "403", description = "Username inapropiado detectado por la IA.", content = { @Content( schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "409", description = "El nombre de usuario o el email ya están registrados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-                    @ApiResponse(responseCode = "500", description = "Error al enviar el email de confirmación de cuenta", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "503", description = "Error al enviar el email de confirmación de cuenta", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PostMapping("/create-account")
@@ -68,7 +68,7 @@ public class UserController {
                     @ApiResponse(responseCode = "400", description = "Datos de solicitud inválidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                     @ApiResponse(responseCode = "401", description = "Credenciales inválidas", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                     @ApiResponse(responseCode = "403", description = "La cuenta no está confirmada", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-                    @ApiResponse(responseCode = "500", description = "Error al reenviar el email de confirmación de cuenta", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "503", description = "Error al reenviar el email de confirmación de cuenta", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PostMapping("/login")
@@ -150,7 +150,8 @@ public class UserController {
                     @ApiResponse(responseCode = "400", description = "Datos de solicitud inválidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                     @ApiResponse(responseCode = "401", description = "No autorizado - token inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                     @ApiResponse(responseCode = "403", description = "Username inapropiado detectado por la IA.", content = { @Content( schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "409", description = "El nombre de usuario ya están registrados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "409", description = "El nombre de usuario ya están registrados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "503", description = "Error al validar el nombre de usuario con el servicio de IA.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PatchMapping("/update-username")

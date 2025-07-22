@@ -5,10 +5,11 @@ import com.williammedina.forohub.domain.topic.Topic;
 import com.williammedina.forohub.domain.topic.dto.TopicDTO;
 import com.williammedina.forohub.domain.topicfollow.dto.TopicFollowDetailsDTO;
 import com.williammedina.forohub.domain.user.User;
-import com.williammedina.forohub.infrastructure.errors.AppException;
+import com.williammedina.forohub.infrastructure.exception.AppException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,7 @@ public class TopicFollowService {
         Topic topic = findTopicById(topicId);
 
         if (user.getUsername().equals(topic.getUser().getUsername())) {
-            throw new AppException("No puedes seguir un tópico que has creado." , "CONFLICT");
+            throw new AppException("No puedes seguir un tópico que has creado." , HttpStatus.CONFLICT);
         }
 
         boolean isFollowing = topicFollowRepository.existsByUserIdAndTopicId(user.getId(), topic.getId());

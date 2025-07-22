@@ -8,7 +8,7 @@ import com.williammedina.forohub.domain.topic.TopicRepository;
 import com.williammedina.forohub.domain.topicfollow.TopicFollowRepository;
 import com.williammedina.forohub.domain.user.dto.*;
 import com.williammedina.forohub.infrastructure.email.EmailService;
-import com.williammedina.forohub.infrastructure.errors.*;
+import com.williammedina.forohub.infrastructure.exception.*;
 import com.williammedina.forohub.infrastructure.security.JwtTokenResponse;
 import com.williammedina.forohub.infrastructure.security.SecurityFilter;
 import com.williammedina.forohub.infrastructure.security.TokenService;
@@ -17,6 +17,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -53,7 +54,7 @@ public class UserService {
 
         if (!user.isAccountConfirmed()) {
             handleAccountDisabled(data.username());
-            throw new AppException("La cuenta no está confirmada. Por favor, verifique su email.", "ACCOUNT_NOT_CONFIRMED");
+            throw new AppException("La cuenta no está confirmada. Por favor, verifique su email.", HttpStatus.FORBIDDEN);
         }
 
         // Generar tokens
@@ -100,7 +101,7 @@ public class UserService {
         checkIfAccountConfirmed(user);
 
         if (isRecentRequest(user.getUpdatedAt()) && user.getToken() != null) {
-            throw new AppException("Debe esperar 2 minutos para solicitar otro código de confirmación.", "BAD_REQUEST");
+            throw new AppException("Debe esperar 2 minutos para solicitar otro código de confirmación.", HttpStatus.BAD_REQUEST);
         }
 
         user.generateConfirmationToken();
@@ -114,7 +115,7 @@ public class UserService {
         checkIfAccountNotConfirmed(user);
 
         if (isRecentRequest(user.getUpdatedAt()) && user.getToken() != null) {
-            throw new AppException("Debe esperar 2 minutos para solicitar otro código de restablecimiento de password.", "BAD_REQUEST");
+            throw new AppException("Debe esperar 2 minutos para solicitar otro código de restablecimiento de password.", HttpStatus.BAD_REQUEST);
         }
 
         user.generateConfirmationToken();
@@ -143,7 +144,7 @@ public class UserService {
 
         User user = getAuthenticatedUser();
         if (!passwordEncoder.matches(data.current_password(), user.getPassword())) {
-            throw new AppException("El password actual es incorrecto.", "UNAUTHORIZED");
+            throw new AppException("El password actual es incorrecto.", HttpStatus.UNAUTHORIZED);
         }
 
         user.setPassword(passwordEncoder.encode(data.password()));
@@ -157,7 +158,7 @@ public class UserService {
         User user = getAuthenticatedUser();
 
         if (user.getUsername().equals(data.username())) {
-            throw new AppException("Debes ingresa un nuevo nombre.", "BAD_REQUEST");
+            throw new AppException("Debes ingresa un nuevo nombre.", HttpStatus.BAD_REQUEST);
         }
 
         validateUsernameContent(data.username()); // Validar el nuevo username con IA
@@ -187,7 +188,7 @@ public class UserService {
     @Transactional
     public JwtTokenResponse refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = securityFilter.getTokenFromCookies(request, "refresh_token")
-                .orElseThrow(() -> new AppException("Unauthorized", "UNAUTHORIZED"));
+                .orElseThrow(() -> new AppException("Unauthorized", HttpStatus.UNAUTHORIZED));
 
         try {
             String userId = tokenService.getSubjectFromToken(refreshToken);
@@ -198,7 +199,7 @@ public class UserService {
             return new JwtTokenResponse("Token de acceso actualizado correctamente.");
 
         } catch (TokenExpiredException e) {
-            throw new AppException("Unauthorized", "UNAUTHORIZED");
+            throw new AppException("Unauthorized", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -222,34 +223,34 @@ public class UserService {
 
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new AppException("Usuario no encontrado.", "NOT_FOUND"));
+                .orElseThrow(() -> new AppException("Usuario no encontrado.", HttpStatus.NOT_FOUND));
     }
 
     private User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException("El email no está registrado.", "NOT_FOUND"));
+                .orElseThrow(() -> new AppException("El email no está registrado.", HttpStatus.NOT_FOUND));
     }
 
     private User findUserByToken(String token) {
         return userRepository.findByToken(token)
-                .orElseThrow(() -> new AppException("Token de confirmación inválido o expirado.", "BAD_REQUEST"));
+                .orElseThrow(() -> new AppException("Token de confirmación inválido o expirado.", HttpStatus.BAD_REQUEST));
     }
 
     private void validateTokenExpiration(User user) {
         if (user.getTokenExpiration() == null || user.getTokenExpiration().isBefore(LocalDateTime.now())) {
-            throw new AppException("El token de confirmación ha expirado.", "TOKEN_EXPIRED");
+            throw new AppException("El token de confirmación ha expirado.", HttpStatus.GONE);
         }
     }
 
     private void checkIfAccountConfirmed(User user) {
         if (user.isAccountConfirmed()) {
-            throw new AppException("La cuenta ya está confirmada.", "CONFLICT");
+            throw new AppException("La cuenta ya está confirmada.", HttpStatus.CONFLICT);
         }
     }
 
     private void checkIfAccountNotConfirmed(User user) {
         if (!user.isAccountConfirmed()) {
-            throw new AppException("La cuenta no está confirmada.", "CONFLICT");
+            throw new AppException("La cuenta no está confirmada.", HttpStatus.CONFLICT);
         }
     }
 
@@ -259,19 +260,19 @@ public class UserService {
 
     private void validatePasswordsMatch(String password, String passwordConfirmation) {
         if (!password.equals(passwordConfirmation)) {
-            throw new AppException("Los passwords no coinciden.", "BAD_REQUEST");
+            throw new AppException("Los passwords no coinciden.", HttpStatus.BAD_REQUEST);
         }
     }
 
     private void existsByUsername(String username) {
         if (userRepository.existsByUsername(username)) {
-            throw new AppException("El nombre de usuario ya está registrado.", "CONFLICT");
+            throw new AppException("El nombre de usuario ya está registrado.", HttpStatus.CONFLICT);
         }
     }
 
     private void existsByEmail(String email) {
         if (userRepository.existsByEmail(email.trim().toLowerCase())) {
-            throw new AppException("El email ya está registrado.", "CONFLICT");
+            throw new AppException("El email ya está registrado.", HttpStatus.CONFLICT);
         }
     }
 
@@ -281,7 +282,7 @@ public class UserService {
         if (validationResponse.equals("approved")) {
             return;
         } else {
-            throw new AppException("El nombre de usuario " + validationResponse, "FORBIDDEN");
+            throw new AppException("El nombre de usuario " + validationResponse, HttpStatus.FORBIDDEN);
         }
     }
 

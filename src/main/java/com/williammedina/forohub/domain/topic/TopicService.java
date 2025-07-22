@@ -16,12 +16,13 @@ import com.williammedina.forohub.domain.user.User;
 import com.williammedina.forohub.domain.user.dto.AuthorDTO;
 import com.williammedina.forohub.domain.user.dto.UserDTO;
 import com.williammedina.forohub.infrastructure.email.EmailService;
-import com.williammedina.forohub.infrastructure.errors.AppException;
+import com.williammedina.forohub.infrastructure.exception.AppException;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -142,26 +143,26 @@ public class TopicService {
 
     private Course findCourseById(Long courseId) {
         return courseRepository.findById(courseId)
-                .orElseThrow(() -> new AppException("Curso no encontrado.", "NOT_FOUND"));
+                .orElseThrow(() -> new AppException("Curso no encontrado.", HttpStatus.NOT_FOUND));
     }
 
     private User checkModificationPermission(Topic topic) {
         // Si el usuario es el propietario O tiene permisos elevados, puede modificar el topic
         if (!topic.getUser().equals(getAuthenticatedUser()) && !getAuthenticatedUser().hasElevatedPermissions()) {
-            throw new AppException("No tienes permiso para realizar cambios en este tópico", "FORBIDDEN");
+            throw new AppException("No tienes permiso para realizar cambios en este tópico", HttpStatus.FORBIDDEN);
         }
         return getAuthenticatedUser();
     }
 
     private void existsByTitle(String title) {
         if (topicRepository.existsByTitle(title)) {
-            throw new AppException("El titulo ya existe.", "CONFLICT");
+            throw new AppException("El titulo ya existe.", HttpStatus.CONFLICT);
         }
     }
 
     private void existsByDescription(String description) {
         if (topicRepository.existsByDescription(description)) {
-            throw new AppException("La descripción ya existe.", "CONFLICT");
+            throw new AppException("La descripción ya existe.", HttpStatus.CONFLICT);
         }
     }
 
@@ -171,7 +172,7 @@ public class TopicService {
         if (validationResponse.equals("approved")) {
             return;
         } else {
-            throw new AppException("El título " + validationResponse, "FORBIDDEN");
+            throw new AppException("El título " + validationResponse, HttpStatus.FORBIDDEN);
         }
     }
 
@@ -183,7 +184,7 @@ public class TopicService {
         if (validationResponse.equals("approved")) {
             return;
         } else {
-            throw new AppException("La descripción " + validationResponse, "FORBIDDEN");
+            throw new AppException("La descripción " + validationResponse, HttpStatus.FORBIDDEN);
         }
     }
 

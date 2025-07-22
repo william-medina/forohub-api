@@ -4,11 +4,12 @@ import com.williammedina.forohub.domain.response.Response;
 import com.williammedina.forohub.domain.topic.Topic;
 import com.williammedina.forohub.domain.topicfollow.TopicFollow;
 import com.williammedina.forohub.domain.user.User;
-import com.williammedina.forohub.infrastructure.errors.AppException;
+import com.williammedina.forohub.infrastructure.exception.AppException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailException;
 
 import org.springframework.mail.javamail.JavaMailSender;
@@ -187,7 +188,7 @@ public class EmailService {
             mailSender.send(mimeMessage);
         } catch (MailException e) {
             System.out.println(e.getMessage());
-            throw new AppException("Error al enviar el email. Intenta más tarde.", "SERVICE_UNAVAILABLE");
+            throw new AppException("Error al enviar el email. Intenta más tarde.", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 

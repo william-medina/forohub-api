@@ -1,8 +1,9 @@
 package com.williammedina.forohub.domain.common;
 
-import com.williammedina.forohub.infrastructure.errors.AppException;
+import com.williammedina.forohub.infrastructure.exception.AppException;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -64,7 +65,7 @@ public class ContentValidationService {
             return aiResponse.trim();
 
         } catch (Exception e) {
-            throw new AppException("Error al validar el contenido con la IA", "SERVICE_UNAVAILABLE");
+            throw new AppException("Error al validar el contenido con la IA", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -117,7 +118,7 @@ public class ContentValidationService {
             return aiResponse.trim();
 
         } catch (Exception e) {
-            throw new AppException("Error al validar el nombre de usuario con la IA", "SERVICE_UNAVAILABLE");
+            throw new AppException("Error al validar el nombre de usuario con la IA", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 }

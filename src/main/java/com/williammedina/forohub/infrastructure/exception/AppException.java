@@ -1,11 +1,12 @@
-package com.williammedina.forohub.infrastructure.errors;
+package com.williammedina.forohub.infrastructure.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 @Getter
 public class AppException extends RuntimeException{
     private final String message;
-    private final String errorCode;
+    private final HttpStatus httpStatus;
 }

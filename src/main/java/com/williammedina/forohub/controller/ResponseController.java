@@ -4,7 +4,7 @@ import com.williammedina.forohub.domain.response.ResponseService;
 import com.williammedina.forohub.domain.response.dto.CreateResponseDTO;
 import com.williammedina.forohub.domain.response.dto.ResponseDTO;
 import com.williammedina.forohub.domain.response.dto.UpdateResponseDTO;
-import com.williammedina.forohub.infrastructure.errors.ErrorResponse;
+import com.williammedina.forohub.infrastructure.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,7 +38,8 @@ public class ResponseController {
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "403", description = "No se pueden agregar respuestas a un tópico cerrado o contenido inapropiado detectado por la IA.", content = { @Content( schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "404", description = "Tópico no encontrado", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
+                    @ApiResponse(responseCode = "404", description = "Tópico no encontrado", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "503", description = "Error al validar el contenido con el servicio de IA.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PostMapping
@@ -89,7 +90,8 @@ public class ResponseController {
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para modificar esta respuesta o contenido inapropiado detectado por la IA.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
+                    @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "503", description = "Error al validar el contenido con el servicio de IA.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PutMapping("/{responseId}")

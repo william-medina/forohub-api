@@ -9,13 +9,14 @@ import com.williammedina.forohub.domain.response.dto.ResponseDTO;
 import com.williammedina.forohub.domain.response.dto.UpdateResponseDTO;
 import com.williammedina.forohub.domain.user.User;
 import com.williammedina.forohub.infrastructure.email.EmailService;
-import com.williammedina.forohub.infrastructure.errors.AppException;
+import com.williammedina.forohub.infrastructure.exception.AppException;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,7 +102,7 @@ public class ResponseService {
     public ResponseDTO setCorrectResponse(Long responseId) throws MessagingException {
         User user = getAuthenticatedUser();
         if (!user.hasElevatedPermissions()) {
-            throw new AppException("No tienes permiso para modificar el estado del tópico", "FORBIDDEN");
+            throw new AppException("No tienes permiso para modificar el estado del tópico", HttpStatus.FORBIDDEN);
         }
 
         Response response = findResponseById(responseId);
@@ -140,13 +141,13 @@ public class ResponseService {
 
     private Response findResponseById(Long responseId) {
         return responseRepository.findByIdAndIsDeletedFalse(responseId)
-                .orElseThrow(() -> new AppException("Respuesta no encontrada", "NOT_FOUND"));
+                .orElseThrow(() -> new AppException("Respuesta no encontrada", HttpStatus.NOT_FOUND));
     }
 
     private User checkModificationPermission(Response response) {
         // Si el usuario es el propietario O tiene permisos elevados, puede modificar la respuesta
         if (!response.getUser().equals(getAuthenticatedUser()) && !getAuthenticatedUser().hasElevatedPermissions()) {
-            throw new AppException("No tienes permiso para realizar cambios en esta respuesta", "FORBIDDEN");
+            throw new AppException("No tienes permiso para realizar cambios en esta respuesta", HttpStatus.FORBIDDEN);
         }
 
         return getAuthenticatedUser();
@@ -154,7 +155,7 @@ public class ResponseService {
 
     private void isTopicClosed(Topic topic) {
         if(topic.isTopicClosed()) {
-            throw new AppException("No se puede crear una respuesta. El tópico está cerrado.", "FORBIDDEN");
+            throw new AppException("No se puede crear una respuesta. El tópico está cerrado.", HttpStatus.FORBIDDEN);
         }
     }
 
@@ -164,7 +165,7 @@ public class ResponseService {
         if (validationResponse.equals("approved")) {
             return;
         } else {
-            throw new AppException("La respuesta " + validationResponse, "FORBIDDEN");
+            throw new AppException("La respuesta " + validationResponse, HttpStatus.FORBIDDEN);
         }
     }
 

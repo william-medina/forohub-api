@@ -6,8 +6,9 @@ import com.williammedina.forohub.domain.response.Response;
 import com.williammedina.forohub.domain.topic.Topic;
 import com.williammedina.forohub.domain.topicfollow.TopicFollow;
 import com.williammedina.forohub.domain.user.User;
-import com.williammedina.forohub.infrastructure.errors.AppException;
+import com.williammedina.forohub.infrastructure.exception.AppException;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -134,13 +135,13 @@ public class NotificationService {
 
     private void checkModificationPermission(Notification notification) {
         if (!notification.getUser().equals(getAuthenticatedUser())) {
-            throw new AppException("No tienes permiso para eliminar esta notificación", "FORBIDDEN");
+            throw new AppException("No tienes permiso para eliminar esta notificación", HttpStatus.FORBIDDEN);
         }
     }
 
     private Notification findNotificationById(Long notifyId) {
         return notificationRepository.findById(notifyId)
-                .orElseThrow(() -> new AppException("Notificación no encontrada", "NOT_FOUND"));
+                .orElseThrow(() -> new AppException("Notificación no encontrada", HttpStatus.NOT_FOUND));
     }
 
     private NotificationDTO toNotificationDTO(Notification notification) {

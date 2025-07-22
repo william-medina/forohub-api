@@ -7,7 +7,7 @@ import com.williammedina.forohub.domain.topic.dto.TopicDTO;
 import com.williammedina.forohub.domain.topic.dto.TopicDetailsDTO;
 import com.williammedina.forohub.domain.topicfollow.TopicFollowService;
 import com.williammedina.forohub.domain.topicfollow.dto.TopicFollowDetailsDTO;
-import com.williammedina.forohub.infrastructure.errors.ErrorResponse;
+import com.williammedina.forohub.infrastructure.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -44,6 +44,7 @@ public class TopicController {
                     @ApiResponse(responseCode = "403", description = "Contenido inapropiado detectado por la IA.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "404", description = "Curso no encontrado", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "409", description = "Título o descripción ya existe en otro tópico.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "503", description = "Error al validar el contenido con el servicio de IA.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PostMapping
@@ -116,7 +117,8 @@ public class TopicController {
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para modificar este tópico o contenido inapropiado detectado por la IA.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "404", description = "Tópico no encontrado", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "409", description = "Título o descripción ya existe en otro tópico.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "409", description = "Título o descripción ya existe en otro tópico.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "503", description = "Error al validar el contenido con el servicio de IA.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PutMapping("/{topicId}")

@@ -1,4 +1,4 @@
-package com.williammedina.forohub.infrastructure.errors;
+package com.williammedina.forohub.infrastructure.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
