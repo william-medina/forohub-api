@@ -28,14 +28,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/auth/create-account",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/auth/create-account",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"auth",
 								"create-account"
 							]
@@ -61,14 +58,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/auth/login",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/auth/login",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"auth",
 								"login"
 							]
@@ -91,14 +85,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/auth/forgot-password",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/auth/forgot-password",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"auth",
 								"forgot-password"
 							]
@@ -121,14 +112,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/auth/request-code",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/auth/request-code",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"auth",
 								"request-code"
 							]
@@ -145,14 +133,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/auth/confirm-account/fd7024f3-2afa-4a67-b1a4-cbd4c666dcde",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/auth/confirm-account/fd7024f3-2afa-4a67-b1a4-cbd4c666dcde",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"auth",
 								"confirm-account",
 								"fd7024f3-2afa-4a67-b1a4-cbd4c666dcde"
@@ -176,14 +161,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/auth/update-password/f91cbfaa-71e1-44c6-a042-533286cb8c2d",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/auth/update-password/f91cbfaa-71e1-44c6-a042-533286cb8c2d",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"auth",
 								"update-password",
 								"f91cbfaa-71e1-44c6-a042-533286cb8c2d"
@@ -210,14 +192,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/auth/update-password",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/auth/update-password",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"auth",
 								"update-password"
 							]
@@ -243,14 +222,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/auth/update-username",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/auth/update-username",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"auth",
 								"update-username"
 							]
@@ -267,14 +243,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/auth/me",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/auth/me",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"auth",
 								"me"
 							]
@@ -291,14 +264,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/auth/stats",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/auth/stats",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"auth",
 								"stats"
 							]
@@ -315,14 +285,11 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/auth/refresh-token",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/auth/refresh-token",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"auth",
 								"refresh-token"
 							]
@@ -339,14 +306,11 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/auth/logout",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/auth/logout",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"auth",
 								"logout"
 							]
@@ -378,14 +342,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/topic",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/topic",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"topic"
 							]
 						}
@@ -401,14 +362,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/topic",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/topic",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"topic"
 							]
 						}
@@ -424,14 +382,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/topic/16",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/topic/16",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"topic",
 								"16"
 							]
@@ -448,14 +403,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/topic/user/topics",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/topic/user/topics",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"topic",
 								"user",
 								"topics"
@@ -482,14 +434,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/topic/16",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/topic/16",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"topic",
 								"16"
 							]
@@ -506,14 +455,11 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/topic/16",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/topic/16",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"topic",
 								"16"
 							]
@@ -530,14 +476,11 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/topic/follow/16",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/topic/follow/16",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"topic",
 								"follow",
 								"16"
@@ -555,14 +498,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/topic/user/followed-topics",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/topic/user/followed-topics",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"topic",
 								"user",
 								"followed-topics"
@@ -595,14 +535,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/response",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/response",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"response"
 							]
 						}
@@ -627,14 +564,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/response/23",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/response/23",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"response",
 								"23"
 							]
@@ -651,14 +585,11 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/response/23",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/response/23",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"response",
 								"23"
 							]
@@ -675,14 +606,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/response/23",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/response/23",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"response",
 								"23"
 							]
@@ -699,14 +627,11 @@
 						"method": "PATCH",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/response/23",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/response/23",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"response",
 								"23"
 							]
@@ -723,14 +648,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/response/user/responses",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/response/user/responses",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"response",
 								"user",
 								"responses"
@@ -754,14 +676,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/course",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/course",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"course"
 							]
 						}
@@ -783,14 +702,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/notify",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/notify",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"notify"
 							]
 						}
@@ -806,14 +722,11 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/notify/1",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/notify/1",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"notify",
 								"1"
 							]
@@ -830,14 +743,11 @@
 						"method": "PATCH",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/notify/1",
-							"protocol": "http",
+							"raw": "{{forohub_api_url}}/notify/1",
 							"host": [
-								"localhost"
+								"{{forohub_api_url}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"notify",
 								"1"
 							]
@@ -847,6 +757,35 @@
 				}
 			],
 			"description": "Estos endpoints gestionan las notificaciones del usuario, permitiendo obtenerlas, eliminarlas o marcarlas como leídas."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "forohub_api_url",
+			"value": "http://localhost:8080/api",
+			"type": "string"
 		}
 	]
 }
