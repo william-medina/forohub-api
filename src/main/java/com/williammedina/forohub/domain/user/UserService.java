@@ -60,7 +60,6 @@ public class UserService {
             handleAccountDisabled(data.username());
             throw new AppException("La cuenta no está confirmada. Por favor, verifique su email.", HttpStatus.FORBIDDEN);
         }
-        log.info("Usuario autenticado correctamente ID: {}", user.getId());
 
         // Generar tokens
         String accessToken = tokenService.generateAccessToken(user);
@@ -68,6 +67,7 @@ public class UserService {
 
         response.addCookie(createCookie("access_token", accessToken, "/", TokenService.ACCESS_TOKEN_EXPIRATION));
         response.addCookie(createCookie("refresh_token", refreshToken, "/api/auth/refresh-token", TokenService.REFRESH_TOKEN_EXPIRATION));
+        log.info("Usuario autenticado correctamente ID: {}", user.getId());
 
         return new JwtTokenResponse("Autenticación exitosa.");
     }
@@ -85,9 +85,9 @@ public class UserService {
         User user = new User(data.username(), data.email().trim().toLowerCase(), passwordEncoder.encode(data.password()));
         User userCreated = userRepository.save(user);
 
+        emailService.sendConfirmationEmail(userCreated.getEmail(), userCreated);
         log.info("Usuario creado con ID: {}", userCreated.getId());
 
-        emailService.sendConfirmationEmail(userCreated.getEmail(), userCreated);
         return UserDTO.fromEntity(userCreated);
     }
 
@@ -121,6 +121,8 @@ public class UserService {
 
         user.generateConfirmationToken();
         emailService.sendConfirmationEmail(user.getEmail(), user);
+        log.info("Código de confirmación generado y enviado para usuario ID: {}", user.getId());
+
         return UserDTO.fromEntity(user);
     }
 
@@ -138,6 +140,8 @@ public class UserService {
 
         user.generateConfirmationToken();
         emailService.sendPasswordResetEmail(user.getEmail(), user);
+        log.info("Código de restablecimiento de contraseña generado y enviado para usuario ID: {}", user.getId());
+
         return UserDTO.fromEntity(user);
     }
 
@@ -154,7 +158,6 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(data.password()));
         user.clearTokenData();
         userRepository.save(user);
-
         log.info("Password actualizado para usuario ID: {}", user.getId());
 
         return UserDTO.fromEntity(user);
@@ -191,7 +194,6 @@ public class UserService {
         existsByUsername(data.username());
         user.setUsername(data.username());
         userRepository.save(user);
-
         log.info("Username actualizado a '{}' para usuario ID: {}", data.username(), user.getId());
 
         return new UserDTO(user.getId(), user.getUsername(), user.getProfile().getName());
