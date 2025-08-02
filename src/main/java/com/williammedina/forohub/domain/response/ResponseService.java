@@ -58,14 +58,14 @@ public class ResponseService {
         notificationService.notifyFollowersTopicReply(topic, user);
         emailService.notifyFollowersTopicReply(topic, user);
 
-        return toResponseDTO(response);
+        return ResponseDTO.fromEntity(response);
     }
 
     @Transactional(readOnly = true)
     public Page<ResponseDTO> getAllResponsesByUser(Pageable pageable) {
         User user = getAuthenticatedUser();
         log.debug("Obteniendo respuestas del usuario con ID: {}", user.getId());
-        return responseRepository.findByUserSortedByCreationDate(user, pageable).map(this::toResponseDTO);
+        return responseRepository.findByUserSortedByCreationDate(user, pageable).map(ResponseDTO::fromEntity);
     }
 
     @Transactional
@@ -84,7 +84,7 @@ public class ResponseService {
             notificationService.notifyResponseEdited(response);
             emailService.notifyResponseEdited(response);
         }
-        return toResponseDTO(updatedResponse);
+        return ResponseDTO.fromEntity(updatedResponse);
     }
 
     @Transactional
@@ -108,7 +108,7 @@ public class ResponseService {
     public ResponseDTO getResponseById(Long responseId) {
         log.debug("Obteniendo respuesta con ID: {}", responseId);
         Response response = findResponseById(responseId);
-        return toResponseDTO(response);
+        return ResponseDTO.fromEntity(response);
     }
 
     @Transactional
@@ -145,7 +145,7 @@ public class ResponseService {
             emailService.notifyFollowersTopicSolved(response.getTopic());
         }
 
-        return toResponseDTO(response);
+        return ResponseDTO.fromEntity(response);
     }
 
     private User getAuthenticatedUser() {
@@ -188,10 +188,6 @@ public class ResponseService {
             log.warn("Contenido no aprobado en respuesta: {}", validationResponse);
             throw new AppException("La respuesta " + validationResponse, HttpStatus.FORBIDDEN);
         }
-    }
-
-    private ResponseDTO toResponseDTO(Response response) {
-        return commonHelperService.toResponseDTO(response);
     }
 
 }

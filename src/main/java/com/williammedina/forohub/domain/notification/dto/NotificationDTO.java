@@ -35,4 +35,22 @@ public record NotificationDTO(
         @Schema(description = "Fecha de creación de la notificación", example = "2025-07-31T14:45:00")
         LocalDateTime createdAt
 ) {
+
+        public static NotificationDTO fromEntity(Notification notification) {
+
+                // Long topicId = (notification.getTopic() != null) ? notification.getTopic().getId() : null;
+                Long topicId = (notification.getTopic() == null || notification.getTopic().getIsDeleted()) ? null : notification.getTopic().getId();
+
+                return new NotificationDTO(
+                        notification.getId(),
+                        notification.getUser().getUsername(),
+                        topicId,
+                        notification.getType(),
+                        notification.getSubtype(),
+                        notification.getTitle(),
+                        notification.getMessage(),
+                        notification.getIsRead(),
+                        notification.getCreatedAt()
+                );
+        }
 }

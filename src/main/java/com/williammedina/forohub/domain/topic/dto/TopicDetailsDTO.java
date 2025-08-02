@@ -5,6 +5,7 @@ import com.williammedina.forohub.domain.response.dto.ResponseDTO;
 import com.williammedina.forohub.domain.topic.Topic;
 import com.williammedina.forohub.domain.topicfollow.dto.TopicFollowerDTO;
 import com.williammedina.forohub.domain.user.dto.AuthorDTO;
+import com.williammedina.forohub.domain.user.dto.UserDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
@@ -43,4 +44,42 @@ public record TopicDetailsDTO(
         @Schema(description = "Lista de seguidores del tópico")
         List<TopicFollowerDTO> followers
 ) {
+        public static TopicDetailsDTO fromEntity(Topic topic, List<ResponseDTO> responses) {
+
+                AuthorDTO author = new AuthorDTO(
+                        topic.getUser().getUsername(),
+                        topic.getUser().getProfile().getName()
+                );
+
+                CourseDTO course = new CourseDTO(
+                        topic.getCourse().getId(),
+                        topic.getCourse().getName(),
+                        topic.getCourse().getCategory()
+                );
+
+                List<TopicFollowerDTO> followers = topic.getFollowedTopics().stream()
+                        .map(topicFollow -> new TopicFollowerDTO(
+                                new UserDTO(
+                                        topicFollow.getUser().getId(),
+                                        topicFollow.getUser().getUsername(),
+                                        topicFollow.getUser().getProfile().getName()
+                                ),
+                                topicFollow.getFollowedAt()
+                        ))
+                        .toList();
+
+
+                return new TopicDetailsDTO(
+                        topic.getId(),
+                        topic.getTitle(),
+                        topic.getDescription(),
+                        course,
+                        author,
+                        responses,
+                        topic.getStatus(),
+                        topic.getCreatedAt(),
+                        topic.getUpdatedAt(),
+                        followers
+                );
+        }
 }

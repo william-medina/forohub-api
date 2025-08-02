@@ -27,7 +27,7 @@ public class NotificationService {
     public List<NotificationDTO> getAllNotificationsByUser() {
         User user = getAuthenticatedUser();
         log.debug("Consultando todas las notificaciones del usuario con ID: {}", user.getId());
-        return notificationRepository.findAllByUserOrderByCreatedAtDesc(user).stream().map(this::toNotificationDTO).toList();
+        return notificationRepository.findAllByUserOrderByCreatedAtDesc(user).stream().map(NotificationDTO::fromEntity).toList();
     }
 
     @Transactional
@@ -47,7 +47,7 @@ public class NotificationService {
         notification.setIsRead(true);
         log.debug("Notificación con ID: {} marcada como leída por el usuario con ID: {}", notifyId, getAuthenticatedUser().getId());
 
-        return toNotificationDTO(notification);
+        return NotificationDTO.fromEntity(notification);
     }
 
     @Transactional
@@ -162,22 +162,6 @@ public class NotificationService {
                 });
     }
 
-    private NotificationDTO toNotificationDTO(Notification notification) {
 
-        // Long topicId = (notification.getTopic() != null) ? notification.getTopic().getId() : null;
-        Long topicId = (notification.getTopic() == null || notification.getTopic().getIsDeleted()) ? null : notification.getTopic().getId();
-
-        return new NotificationDTO(
-                notification.getId(),
-                notification.getUser().getUsername(),
-                topicId,
-                notification.getType(),
-                notification.getSubtype(),
-                notification.getTitle(),
-                notification.getMessage(),
-                notification.getIsRead(),
-                notification.getCreatedAt()
-        );
-    }
 
 }

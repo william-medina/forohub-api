@@ -15,6 +15,6 @@ public class CourseService {
     @Transactional(readOnly = true)
     public List<CourseDTO> getAllCourses() {
         List<Course> courses = courseRepository.findAllByOrderByNameAsc();
-        return courses.stream().map(course -> new CourseDTO(course.getId(), course.getName(), course.getCategory())).toList();
+        return courses.stream().map(CourseDTO::fromEntity).toList();
     }
 }

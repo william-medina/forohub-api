@@ -38,4 +38,19 @@ public record TopicDTO(
         @Schema(description = "Fecha de última actualización del tópico", example = "2025-07-01T10:15:00")
         LocalDateTime updateAt
 ) {
+        public static TopicDTO fromEntity(Topic topic) {
+                return new TopicDTO(
+                        topic.getId(),
+                        topic.getTitle(),
+                        topic.getDescription(),
+                        topic.getCourse().getName(),
+                        topic.getCourse().getCategory(),
+                        topic.getUser().getUsername(),
+                        topic.getResponses().size(),
+                        topic.getStatus(),
+                        topic.getCreatedAt(),
+                        topic.getUpdatedAt()
+                );
+        }
+
 }

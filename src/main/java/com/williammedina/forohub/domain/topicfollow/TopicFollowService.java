@@ -37,11 +37,11 @@ public class TopicFollowService {
         if (isFollowing) {
             topicFollowRepository.deleteByUserIdAndTopicId(user.getId(), topicId);
             log.info("Usuario ID: {} dejó de seguir el tópico con ID {}", user.getId(), topicId);
-            return new TopicFollowDetailsDTO(toTopicDTO(topic), null);
+            return new TopicFollowDetailsDTO(TopicDTO.fromEntity(topic), null);
         } else {
             TopicFollow newFollow = topicFollowRepository.save(new TopicFollow(user, topic));
             log.info("Usuario ID: {} comenzó a seguir el tópico con ID {}", user.getId(), topicId);
-            return new TopicFollowDetailsDTO(toTopicDTO(newFollow.getTopic()), newFollow.getFollowedAt());
+            return new TopicFollowDetailsDTO(TopicDTO.fromEntity(newFollow.getTopic()), newFollow.getFollowedAt());
         }
 
     }
@@ -66,11 +66,7 @@ public class TopicFollowService {
         return commonHelperService.findTopicById(topicId);
     }
 
-    private TopicDTO toTopicDTO(Topic topic) {
-        return commonHelperService.toTopicDTO(topic);
-    }
-
     private TopicFollowDetailsDTO toTopicFollowDetailsDTO(TopicFollow topicFollow) {
-        return new TopicFollowDetailsDTO(toTopicDTO(topicFollow.getTopic()), topicFollow.getFollowedAt());
+        return new TopicFollowDetailsDTO(TopicDTO.fromEntity(topicFollow.getTopic()), topicFollow.getFollowedAt());
     }
 }

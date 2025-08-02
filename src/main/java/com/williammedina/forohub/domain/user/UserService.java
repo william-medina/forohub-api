@@ -88,7 +88,7 @@ public class UserService {
         log.info("Usuario creado con ID: {}", userCreated.getId());
 
         emailService.sendConfirmationEmail(userCreated.getEmail(), userCreated);
-        return toUserDTO(userCreated);
+        return UserDTO.fromEntity(userCreated);
     }
 
     @Transactional
@@ -104,7 +104,7 @@ public class UserService {
         userRepository.save(user);
         log.info("Cuenta confirmada para usuario ID: {}", user.getId());
 
-        return toUserDTO(user);
+        return UserDTO.fromEntity(user);
     }
 
     @Transactional
@@ -121,7 +121,7 @@ public class UserService {
 
         user.generateConfirmationToken();
         emailService.sendConfirmationEmail(user.getEmail(), user);
-        return toUserDTO(user);
+        return UserDTO.fromEntity(user);
     }
 
     @Transactional
@@ -138,7 +138,7 @@ public class UserService {
 
         user.generateConfirmationToken();
         emailService.sendPasswordResetEmail(user.getEmail(), user);
-        return toUserDTO(user);
+        return UserDTO.fromEntity(user);
     }
 
     @Transactional
@@ -157,7 +157,7 @@ public class UserService {
 
         log.info("Password actualizado para usuario ID: {}", user.getId());
 
-        return toUserDTO(user);
+        return UserDTO.fromEntity(user);
     }
 
     @Transactional
@@ -174,7 +174,7 @@ public class UserService {
         userRepository.save(user);
         log.info("Password cambiado exitosamente para usuario ID: {}", user.getId());
 
-        return toUserDTO(user);
+        return UserDTO.fromEntity(user);
     }
 
     @Transactional
@@ -212,7 +212,7 @@ public class UserService {
     public UserDTO getCurrentUser() {
         User user = getAuthenticatedUser();
         log.debug("Consultando datos del usuario ID: {}", user.getId());
-        return toUserDTO(user);
+        return UserDTO.fromEntity(user);
     }
 
     @Transactional
@@ -338,10 +338,6 @@ public class UserService {
             log.warn("Username no aprobado: {} - Resultado: {}", username, validationResponse);
             throw new AppException("El nombre de usuario " + validationResponse, HttpStatus.FORBIDDEN);
         }
-    }
-
-    private UserDTO toUserDTO(User user) {
-        return commonHelperService.toUserDTO(user);
     }
 
     private Cookie createCookie(String name, String value, String path, long maxAge) {

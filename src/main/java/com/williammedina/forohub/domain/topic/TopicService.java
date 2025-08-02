@@ -3,7 +3,6 @@ package com.williammedina.forohub.domain.topic;
 import com.williammedina.forohub.domain.common.ContentValidationService;
 import com.williammedina.forohub.domain.course.Course;
 import com.williammedina.forohub.domain.course.CourseRepository;
-import com.williammedina.forohub.domain.course.dto.CourseDTO;
 import com.williammedina.forohub.domain.common.CommonHelperService;
 import com.williammedina.forohub.domain.notification.NotificationService;
 import com.williammedina.forohub.domain.topic.dto.InputTopicDTO;
@@ -11,10 +10,7 @@ import com.williammedina.forohub.domain.topic.dto.TopicDTO;
 import com.williammedina.forohub.domain.topic.dto.TopicDetailsDTO;
 import com.williammedina.forohub.domain.response.Response;
 import com.williammedina.forohub.domain.response.dto.ResponseDTO;
-import com.williammedina.forohub.domain.topicfollow.dto.TopicFollowerDTO;
 import com.williammedina.forohub.domain.user.User;
-import com.williammedina.forohub.domain.user.dto.AuthorDTO;
-import com.williammedina.forohub.domain.user.dto.UserDTO;
 import com.williammedina.forohub.infrastructure.email.EmailService;
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import jakarta.mail.MessagingException;
@@ -59,7 +55,7 @@ public class TopicService {
         Topic topic = topicRepository.save(new Topic(user, data.title(), data.description(), course));
         log.info("Tópico creado con ID: {} para curso ID: {} por el usuario ID: {}", topic.getId(), course.getId(), user.getId());
 
-        return toTopicDTO(topic);
+        return TopicDTO.fromEntity(topic);
     }
 
     @Transactional(readOnly = true)
@@ -67,9 +63,9 @@ public class TopicService {
         log.debug("Obteniendo tópicos - page: {}, size: {}, courseId: {}, keyword: {}, status: {}", pageable.getPageNumber(), pageable.getPageSize(), courseId, keyword, status);
 
         if (courseId != null || keyword != null || status != null) {
-            return topicRepository.findByFilters(courseId, keyword, status, pageable).map(this::toTopicDTO);
+            return topicRepository.findByFilters(courseId, keyword, status, pageable).map(TopicDTO::fromEntity);
         }
-        return topicRepository.findAllSortedByCreationDate(pageable).map(this::toTopicDTO);
+        return topicRepository.findAllSortedByCreationDate(pageable).map(TopicDTO::fromEntity);
     }
 
     @Transactional(readOnly = true)
@@ -78,9 +74,9 @@ public class TopicService {
         log.debug("Obteniendo tópicos del usuario con ID: {} - keyword: {}", user.getId(), keyword);
 
         if (keyword != null ) {
-            return topicRepository.findByUserFilters(user, keyword, pageable).map(this::toTopicDTO);
+            return topicRepository.findByUserFilters(user, keyword, pageable).map(TopicDTO::fromEntity);
         }
-        return topicRepository.findByUserSortedByCreationDate(user, pageable).map(this::toTopicDTO);
+        return topicRepository.findByUserSortedByCreationDate(user, pageable).map(TopicDTO::fromEntity);
     }
 
     @Transactional(readOnly = true)
@@ -89,10 +85,10 @@ public class TopicService {
         Topic topic = findTopicById(topicId);
         List<ResponseDTO> responses = topic.getResponses().stream()
                 .sorted(Comparator.comparing(Response::getCreatedAt))
-                .map(this::toResponseDTO)
+                .map(ResponseDTO::fromEntity)
                 .toList();
 
-        return toTopicDetailsDTO(topic, responses);
+        return TopicDetailsDTO.fromEntity(topic, responses);
     }
 
     @Transactional
@@ -128,10 +124,10 @@ public class TopicService {
 
         List<ResponseDTO> responses = updatedTopic.getResponses().stream()
                 .filter(response -> !response.getIsDeleted())
-                .map(this::toResponseDTO)
+                .map(ResponseDTO::fromEntity)
                 .toList();
 
-        return toTopicDetailsDTO(updatedTopic, responses);
+        return TopicDetailsDTO.fromEntity(updatedTopic, responses);
     }
 
     @Transactional
@@ -204,53 +200,6 @@ public class TopicService {
             log.warn("Contenido de la descripción no aprobado: {}", validationResponse);
             throw new AppException("La descripción " + validationResponse, HttpStatus.FORBIDDEN);
         }
-    }
-
-    private TopicDTO toTopicDTO(Topic topic) {
-        return commonHelperService.toTopicDTO(topic);
-    }
-
-    private TopicDetailsDTO toTopicDetailsDTO(Topic topic, List<ResponseDTO> responses) {
-
-        AuthorDTO author = new AuthorDTO(
-                topic.getUser().getUsername(),
-                topic.getUser().getProfile().getName()
-        );
-
-        CourseDTO course = new CourseDTO(
-                topic.getCourse().getId(),
-                topic.getCourse().getName(),
-                topic.getCourse().getCategory()
-        );
-
-        List<TopicFollowerDTO> followers = topic.getFollowedTopics().stream()
-                .map(topicFollow -> new TopicFollowerDTO(
-                        new UserDTO(
-                                topicFollow.getUser().getId(),
-                                topicFollow.getUser().getUsername(),
-                                topicFollow.getUser().getProfile().getName()
-                        ),
-                        topicFollow.getFollowedAt()
-                ))
-                .toList();
-
-
-        return new TopicDetailsDTO(
-                topic.getId(),
-                topic.getTitle(),
-                topic.getDescription(),
-                course,
-                author,
-                responses,
-                topic.getStatus(),
-                topic.getCreatedAt(),
-                topic.getUpdatedAt(),
-                followers
-        );
-    }
-
-    private ResponseDTO toResponseDTO(Response response) {
-        return commonHelperService.toResponseDTO(response);
     }
 
 }
