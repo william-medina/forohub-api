@@ -32,7 +32,6 @@ public class SecurityConfigurations {
 
     public static final List<PublicEndpoint> PUBLIC_ENDPOINTS = List.of(
             new PublicEndpoint("/api/auth/login", HttpMethod.POST),
-            new PublicEndpoint("/api/auth/logout", HttpMethod.POST),
             new PublicEndpoint("/api/auth/refresh-token", HttpMethod.POST),
             new PublicEndpoint("/api/auth/create-account", HttpMethod.POST),
             new PublicEndpoint("/api/auth/request-code", HttpMethod.POST),
