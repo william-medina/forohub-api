@@ -441,4 +441,41 @@ class UserControllerTest {
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
+    @Test
+    @DisplayName("Debería devolver HTTP 200 cuando el token de actualización es válido")
+    void refreshToken_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
+        var mvcResponse = mvc.perform(post("/api/auth/refresh-token")
+                        .cookie(testUtil.createCookie(user, "refresh_token", "/", 20000)))
+                .andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    @DisplayName("Debería devolver HTTP 401 cuando el token de actualización es inválido o no está presente")
+    void refreshToken_Unauthorized() throws Exception {
+        var mvcResponse = mvc.perform(post("/api/auth/refresh-token"))
+                .andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @Test
+    @WithUserDetails("William")
+    @DisplayName("Debería devolver HTTP 200 cuando la sesión se cierra exitosamente")
+    void logout_Success() throws Exception {
+        User user = testUtil.getAuthenticatedUser("William");
+        var mvcResponse = mvc.perform(post("/api/auth/logout")
+                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
+                .andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    @DisplayName("Debería devolver HTTP 401 si el token de acceso es inválido o no está presente al cerrar sesión")
+    void logout_Unauthorized() throws Exception {
+        var mvcResponse = mvc.perform(post("/api/auth/logout"))
+                .andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+    }
+
 }
