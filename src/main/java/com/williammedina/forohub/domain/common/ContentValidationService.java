@@ -1,11 +1,13 @@
 package com.williammedina.forohub.domain.common;
 
 import com.williammedina.forohub.infrastructure.exception.AppException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class ContentValidationService {
 
@@ -19,8 +21,13 @@ public class ContentValidationService {
     }
 
     public String validateContent(String texto) {
+        log.debug("Validando contenido con IA: {}", texto);
 
-        if (!isAiEnabled) return "approved";  // Si la IA está deshabilitada, solo devolvemos "approved" sin hacer validaciones
+         // Si la IA está deshabilitada, solo devolvemos "approved" sin hacer validaciones
+        if (!isAiEnabled) {
+            log.info("Validación de contenido omitida: IA deshabilitada");
+            return "approved";
+        }
 
         String systemMessage = """
                 Eres una IA de moderación de contenido en un foro educativo que trata sobre cursos. Tu tarea es evaluar el texto proporcionado y determinar si contiene contenido inapropiado o irrelevante para los temas de los cursos. Debes identificar cualquier forma de contenido que pueda ser considerado:
@@ -62,15 +69,18 @@ public class ContentValidationService {
                     .call()
                     .content();
 
+            log.info("Resultado de validación de contenido: {}", aiResponse.trim());
             return aiResponse.trim();
 
         } catch (Exception e) {
+            log.error("Error al validar el contenido con la IA", e);
             throw new AppException("Error al validar el contenido con la IA", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
 
     public String validateUsername(String username) {
+        log.debug("Validando nombre de usuario con IA: {}", username);
 
         if (!isAiEnabled) return "approved";  // Si la IA está deshabilitada, solo devolvemos "approved" sin hacer validaciones
 
@@ -115,9 +125,11 @@ public class ContentValidationService {
                     .call()
                     .content();
 
+            log.info("Resultado de validación de username '{}': {}", username, aiResponse.trim());
             return aiResponse.trim();
 
         } catch (Exception e) {
+            log.error("Error al validar el nombre de usuario con la IA", e);
             throw new AppException("Error al validar el nombre de usuario con la IA", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }

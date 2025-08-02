@@ -7,6 +7,7 @@ import com.williammedina.forohub.domain.user.User;
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
 public class EmailService {
 
@@ -40,26 +41,30 @@ public class EmailService {
         this.environment = environment;
     }
 
-    public void sendConfirmationEmail(String to, String username, String token) throws MessagingException {
+    public void sendConfirmationEmail(String to, User user) throws MessagingException {
         String subject = "Confirmación de cuenta";
-        String url = frontendUrl + "/confirm-account/" + token;
+        String url = frontendUrl + "/confirm-account/" + user.getToken();
         String title = "¡Bienvenido a Foro Hub!";
-        String message = "Hola <b style='color: #03dac5;'>" + username + "</b>, para completar tu registro, haz clic en el siguiente enlace para confirmar tu cuenta:";
+        String message = "Hola <b style='color: #03dac5;'>" + user.getUsername() + "</b>, para completar tu registro, haz clic en el siguiente enlace para confirmar tu cuenta:";
         String buttonLabel = "Confirmar Cuenta";
         String footer = "Si no solicitaste este email, puedes ignorarlo.";
 
+        log.info("Preparando email de confirmación para usuario ID: {}", user.getId());
         sendEmail(to, subject, title, message, buttonLabel, url, footer);
+        log.info("Email de confirmación enviado a: {}", to);
     }
 
-    public void sendPasswordResetEmail(String to, String username, String token) throws MessagingException {
+    public void sendPasswordResetEmail(String to, User user) throws MessagingException {
         String subject = "Restablecimiento de password";
-        String url = frontendUrl + "/reset-password/" + token;
+        String url = frontendUrl + "/reset-password/" + user.getToken();
         String title = "Restablecimiento de Password";
-        String message = "Hola <b style='color: #03dac5;'>" + username + "</b>, has solicitado restablecer tu password. Haz clic en el siguiente enlace para crear un nuevo password:";
+        String message = "Hola <b style='color: #03dac5;'>" + user.getUsername() + "</b>, has solicitado restablecer tu password. Haz clic en el siguiente enlace para crear un nuevo password:";
         String buttonLabel = "Restablecer Password";
         String footer = "Si no solicitaste este email, puedes ignorarlo.";
 
+        log.info("Preparando email de restablecimiento de password para usuario ID: {}", user.getId());
         sendEmail(to, subject, title, message, buttonLabel, url, footer);
+        log.info("Email de restablecimiento de password enviado a: {}", to);
     }
 
     @Async
@@ -163,12 +168,12 @@ public class EmailService {
     public void sendEmail(String to, String subject, String title, String message, String buttonLabel, String url, String footer) throws MessagingException {
 
         if (Arrays.toString(environment.getActiveProfiles()).contains("test")) {
-            System.out.println("Modo de test activado: El email ha sido procesado para " + to + ", pero no se enviará realmente en este entorno.");
+            log.warn("Modo test activo - Email preparado para: {}, asunto: {}. No se enviará.", to, subject);
             return;
         }
 
         if (!isEmailEnabled()) {
-            System.out.println("El email ha sido preparado para ser enviado a " + to + ", pero el envío de emails está actualmente deshabilitado.");
+            log.warn("Envío de emails deshabilitado. Email a: {}, asunto: {} NO será enviado.", to, subject);
             return;
         }
 
@@ -187,7 +192,7 @@ public class EmailService {
         try {
             mailSender.send(mimeMessage);
         } catch (MailException e) {
-            System.out.println(e.getMessage());
+            log.error("Error al enviar email a: {}. Motivo: {}", to, e.getMessage());
             throw new AppException("Error al enviar el email. Intenta más tarde.", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
@@ -211,12 +216,14 @@ public class EmailService {
     private String loadTemplate(String fileName) {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("templates/" + fileName)) {
             if (inputStream == null) {
+                log.error("Plantilla de email no encontrada: {}", fileName);
                 throw new RuntimeException("No se pudo encontrar la plantilla de email: " + fileName);
             }
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
                 return reader.lines().collect(Collectors.joining("\n"));
             }
         } catch (IOException e) {
+            log.error("Error al cargar plantilla de email: {}. Detalle: {}", fileName, e.getMessage());
             throw new RuntimeException("Error al cargar la plantilla de email: " + fileName, e);
         }
     }

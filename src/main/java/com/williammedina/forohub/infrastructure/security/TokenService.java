@@ -6,11 +6,13 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.williammedina.forohub.domain.user.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+@Slf4j
 @Service
 public class TokenService {
 
@@ -42,12 +44,14 @@ public class TokenService {
                     .withExpiresAt(new Date(System.currentTimeMillis() + expirationMillis))
                     .sign(getAlgorithm());
         } catch (JWTCreationException e) {
+            log.error("Error al generar el token para usuario {}: {}", user.getUsername(), e.getMessage());
             throw new RuntimeException("Error al generar el token", e);
         }
     }
 
     public String getSubjectFromToken(String token) {
         if (token == null || token.isBlank()) {
+            log.warn("Intento de verificar un token nulo o vacío.");
             throw new IllegalArgumentException("El token no puede ser nulo");
         }
 
@@ -57,6 +61,7 @@ public class TokenService {
                 .verify(token);
         String subject = decodedJWT.getSubject();
         if (subject == null || subject.isBlank()) {
+            log.warn("Token inválido: no se encontró el campo 'subject' después de la verificación.");
             throw new JWTVerificationException("El campo 'sujeto' no está presente en el token");
         }
         return subject;

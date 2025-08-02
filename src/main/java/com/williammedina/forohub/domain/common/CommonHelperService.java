@@ -10,11 +10,13 @@ import com.williammedina.forohub.domain.user.dto.AuthorDTO;
 import com.williammedina.forohub.domain.user.dto.UserDTO;
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class CommonHelperService {
@@ -28,12 +30,16 @@ public class CommonHelperService {
             return (User) authentication.getPrincipal();
         }
 
+        log.error("No se pudo obtener un usuario autenticado válido");
         throw new IllegalStateException("El usuario autenticado no es válido.");
     }
 
     public Topic findTopicById(Long topicId) {
         return topicRepository.findByIdAndNotDeleted(topicId)
-                .orElseThrow(() -> new AppException("Tópico no encontrado", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.warn("Tópico no encontrado con ID: {}", topicId);
+                    return new AppException("Tópico no encontrado", HttpStatus.NOT_FOUND);
+                });
     }
 
     public UserDTO toUserDTO(User user) {

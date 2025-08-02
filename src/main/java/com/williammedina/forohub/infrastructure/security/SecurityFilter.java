@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
@@ -67,6 +69,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         Optional<String> tokenOptional = getTokenFromCookies(request, "access_token");
 
         if (tokenOptional.isEmpty()) {
+            log.warn("Token no encontrado en la cookie para la solicitud: {} {}", requestMethod, requestUri);
             sendUnauthorizedResponse(response, "Token inválido o expirado.");
             return;
         }
@@ -74,6 +77,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         try {
             authenticateUser(tokenOptional.get());
         } catch (JWTVerificationException e) {
+            log.warn("Error de verificación de token: {}", e.getMessage());
             sendUnauthorizedResponse(response, "Token inválido o expirado.");
             return;
         }
@@ -84,17 +88,22 @@ public class SecurityFilter extends OncePerRequestFilter {
     private void authenticateUser(String token) {
         String userId = tokenService.getSubjectFromToken(token);
         if (userId == null) {
+            log.error("El token no contiene un ID de usuario válido.");
             throw new JWTVerificationException("Token inválido.");
         }
 
         var user = userRepository.findById(Long.valueOf(userId))
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> {
+                    log.error("Usuario con ID {} no encontrado en la base de datos.", userId);
+                    return new UsernameNotFoundException("Usuario no encontrado");
+                });
 
         var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     private void sendUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {
+        log.warn("Respuesta de autenticación fallida: {}", message);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json; charset=UTF-8");
         response.getWriter().write(String.format("{\"error\": \"%s\"}", message));

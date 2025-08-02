@@ -1,5 +1,6 @@
 package com.williammedina.forohub.infrastructure.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,23 +14,27 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
+        log.warn("Intento de autenticación fallido: {}", ex.getMessage());
         ErrorResponse errorResponse = new ErrorResponse("Las credenciales proporcionadas son incorrectas.");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ErrorResponse> handleAppException(AppException ex) {
+        log.error("Error de aplicación: {}", ex.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
         return ResponseEntity.status(ex.getHttpStatus()).body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnknownHostException(Exception ex) {
+        log.error("Error inesperado: {}", ex.getMessage());
         ErrorResponse errorResponse = new ErrorResponse("Internal Server Error: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
@@ -37,6 +42,7 @@ public class GlobalExceptionHandler {
     // Manejo de errores de validación de formulario (MethodArgumentNotValidException)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        log.warn("Error de validación de campos en DTO: {}", exception.getMessage());
 
         // Obtiene la clase del DTO asociado a la solicitud actual
         Class<?> dtoClass = Optional.ofNullable(exception.getBindingResult().getTarget())
