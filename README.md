@@ -356,7 +356,7 @@ Este endpoint permite obtener información sobre los cursos disponibles en la AP
 
 ## ✅ Testing
 
-La API cuenta con pruebas unitarias para cada repositorio y controlador. Estas pruebas están diseñadas para garantizar el correcto funcionamiento de la API. Cada prueba interactúa con una base de datos de pruebas, lo que permite realizar validaciones sin afectar los datos reales.
+La API cuenta con pruebas de integración tanto para los controladores como para los repositorios. Estas pruebas están diseñadas para garantizar el correcto funcionamiento de los distintos componentes de la aplicación en conjunto. Cada prueba interactúa con una base de datos de pruebas, lo que permite realizar validaciones sin afectar los datos reales.
 
 ### Configuración de la base de datos para las pruebas
 
