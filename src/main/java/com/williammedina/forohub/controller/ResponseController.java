@@ -125,7 +125,8 @@ public class ResponseController {
                     @ApiResponse(responseCode = "204", description = "Respuesta eliminada exitosamente"),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
                     @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para eliminar esta respuesta.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
+                    @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "409", description = "No se puede eliminar una respuesta marcada como solución", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
             }
     )
     @DeleteMapping("/{responseId}")
