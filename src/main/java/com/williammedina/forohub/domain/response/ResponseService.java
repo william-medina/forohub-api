@@ -91,8 +91,9 @@ public class ResponseService {
     public void deleteResponse(Long responseId) throws MessagingException {
         Response response = findResponseById(responseId);
         User user = checkModificationPermission(response);
-        Topic topic = findTopicById(response.getTopic().getId());
-        topic.setStatus(Topic.Status.ACTIVE);
+        if (response.getSolution()) {
+           throw new AppException("No puedes eliminar una respuesta marcada como solución", HttpStatus.CONFLICT);
+        }
         response.setIsDeleted(true);
         log.info("Respuesta ID: {} marcada como eliminada por usuario ID: {}", responseId, user.getId());
         //responseRepository.delete(response);
