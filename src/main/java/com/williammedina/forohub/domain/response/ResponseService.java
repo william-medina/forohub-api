@@ -117,21 +117,23 @@ public class ResponseService {
         User user = getAuthenticatedUser();
         if (!user.hasElevatedPermissions()) {
             log.warn("Usuario con ID: {} intentó cambiar estado del topico sin permisos con la respuesta ID: {}", user.getId(), responseId);
-            throw new AppException("No tienes permiso para modificar el estado del tópico", HttpStatus.FORBIDDEN);
+            throw new AppException("No tienes permiso para modificar el estado de la respuesta", HttpStatus.FORBIDDEN);
         }
 
         Response response = findResponseById(responseId);
-        log.info("Usuario con ID: {} marcando respuesta ID: {} como solución", user.getId(), responseId);
+        log.info("Usuario con ID: {} cambiar estado de respuesta ID: {}", user.getId(), responseId);
         List<Response> responses = responseRepository.findByTopicId(response.getTopic().getId());
 
         boolean isCurrentlySolution = response.getSolution();
         responses.forEach(res -> res.setSolution(false)); // Desactivar todas las soluciones
-        response.getTopic().setStatus(Topic.Status.ACTIVE);
 
         if (!isCurrentlySolution) {
             response.setSolution(true);
             response.getTopic().setStatus(Topic.Status.CLOSED);
             log.info("Respuesta ID: {} marcada como solución para tópico ID: {}", response.getId(), response.getTopic().getId());
+        } else {
+            response.getTopic().setStatus(Topic.Status.ACTIVE);
+            log.info("Respuesta ID: {} desmarcada como solución para tópico ID: {}", response.getId(), response.getTopic().getId());
         }
 
         responseRepository.saveAll(responses);
