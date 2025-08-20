@@ -4,7 +4,6 @@ import com.williammedina.forohub.domain.course.dto.CourseDTO;
 import com.williammedina.forohub.domain.response.dto.ResponseDTO;
 import com.williammedina.forohub.domain.topic.Topic;
 import com.williammedina.forohub.domain.topicfollow.dto.TopicFollowerDTO;
-import com.williammedina.forohub.domain.user.dto.AuthorDTO;
 import com.williammedina.forohub.domain.user.dto.UserDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -26,8 +25,8 @@ public record TopicDetailsDTO(
         @Schema(description = "Nombre del curso al que pertenece el tópico", example = "Desarrollo de Aplicaciones Web con Spring Boot")
         CourseDTO course,
 
-        @Schema(description = "Nombre del autor del tópico", example = "William Medina")
-        AuthorDTO author,
+        @Schema(description = "Datos del autor del tópico", example = "William Medina")
+        UserDTO author,
 
         @Schema(description = "Lista de respuestas asociadas al tópico")
         List<ResponseDTO> responses,
@@ -46,7 +45,8 @@ public record TopicDetailsDTO(
 ) {
         public static TopicDetailsDTO fromEntity(Topic topic, List<ResponseDTO> responses) {
 
-                AuthorDTO author = new AuthorDTO(
+                UserDTO author = new UserDTO(
+                        topic.getUser().getId(),
                         topic.getUser().getUsername(),
                         topic.getUser().getProfile().getName()
                 );
