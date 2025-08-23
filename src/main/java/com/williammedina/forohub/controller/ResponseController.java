@@ -32,7 +32,7 @@ public class ResponseController {
     @Operation(
             summary = "Crear una nueva respuesta",
             description = "Permite a un usuario crear una respuesta para un tópico específico.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Respuesta creada exitosamente"),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
@@ -51,7 +51,7 @@ public class ResponseController {
     @Operation(
             summary = "Obtener todas las respuestas del usuario autenticado",
             description = "Recupera todas las respuestas creadas por el usuario actualmente autenticado con paginación.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Respuestas recuperadas exitosamente"),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
@@ -84,7 +84,7 @@ public class ResponseController {
     @Operation(
             summary = "Actualizar una respuesta",
             description = "Permite a un usuario actualizar el contenido de una respuesta específica.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Respuesta actualizada exitosamente"),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
@@ -103,7 +103,7 @@ public class ResponseController {
     @Operation(
             summary = "Alternar el estado de una respuesta como solución",
             description = "Permite marcar una respuesta como la solución correcta de un tópico o quitarla como solución si ya estaba marcada.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Estado de solución actualizado exitosamente"),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
@@ -120,7 +120,7 @@ public class ResponseController {
     @Operation(
             summary = "Eliminar una respuesta",
             description = "Permite a un usuario eliminar una respuesta específica.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "204", description = "Respuesta eliminada exitosamente"),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),

@@ -9,6 +9,7 @@ import com.williammedina.forohub.domain.topicfollow.TopicFollowRepository;
 import com.williammedina.forohub.domain.user.dto.*;
 import com.williammedina.forohub.infrastructure.email.EmailService;
 import com.williammedina.forohub.infrastructure.exception.*;
+import com.williammedina.forohub.infrastructure.response.MessageResponse;
 import com.williammedina.forohub.infrastructure.security.JwtTokenResponse;
 import com.williammedina.forohub.infrastructure.security.SecurityFilter;
 import com.williammedina.forohub.infrastructure.security.TokenService;
@@ -65,11 +66,10 @@ public class UserService {
         String accessToken = tokenService.generateAccessToken(user);
         String refreshToken = tokenService.generateRefreshToken(user);
 
-        response.addCookie(createCookie("access_token", accessToken, "/", TokenService.ACCESS_TOKEN_EXPIRATION));
         response.addCookie(createCookie("refresh_token", refreshToken, "/api/auth/refresh-token", TokenService.REFRESH_TOKEN_EXPIRATION));
         log.info("Usuario autenticado correctamente ID: {}", user.getId());
 
-        return new JwtTokenResponse("Autenticación exitosa.");
+        return new JwtTokenResponse(accessToken);
     }
 
     @Transactional
@@ -231,10 +231,9 @@ public class UserService {
             String userId = tokenService.getSubjectFromToken(refreshToken);
             String newAccessToken = tokenService.generateAccessToken(findUserById(Long.valueOf(userId)));
 
-            response.addCookie(createCookie("access_token", newAccessToken, "/", TokenService.ACCESS_TOKEN_EXPIRATION));
             log.info("Nuevo access token generado para usuario ID: {}", userId);
 
-            return new JwtTokenResponse("Token de acceso actualizado correctamente.");
+            return new JwtTokenResponse(newAccessToken);
 
         } catch (TokenExpiredException e) {
             log.warn("Token de refresh expirado");
@@ -243,13 +242,12 @@ public class UserService {
     }
 
     @Transactional
-    public JwtTokenResponse logout(HttpServletResponse response) {
+    public MessageResponse logout(HttpServletResponse response) {
         User user = getAuthenticatedUser();
         log.info("Cierre de sesión para usuario ID: {}", user.getId());
 
-        response.addCookie(deleteCookie("access_token", "/"));
         response.addCookie(deleteCookie("refresh_token", "/api/auth/refresh-token"));
-        return new JwtTokenResponse("Sesión cerrada exitosamente.");
+        return new MessageResponse("Sesión cerrada exitosamente.");
     }
 
     private User getAuthenticatedUser() {

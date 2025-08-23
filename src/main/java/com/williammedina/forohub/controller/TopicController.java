@@ -36,7 +36,7 @@ public class TopicController {
     @Operation(
             summary = "Crear un nuevo tópico",
             description = "Permite crear un nuevo tópico con los datos proporcionados.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Tópico creado exitosamente"),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
@@ -76,7 +76,7 @@ public class TopicController {
     @Operation(
             summary = "Obtener los tópicos del usuario",
             description = "Permite obtener los tópicos creados por el usuario, con paginación y filtrado opcional por palabra clave.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Tópicos recuperados exitosamente"),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
@@ -110,7 +110,7 @@ public class TopicController {
     @Operation(
             summary = "Actualizar un tópico",
             description = "Permite actualizar los detalles de un tópico existente.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Tópico actualizado exitosamente"),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
@@ -130,7 +130,7 @@ public class TopicController {
     @Operation(
             summary = "Eliminar un tópico",
             description = "Permite eliminar un tópico existente por su ID.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "204", description = "Tópico eliminado exitosamente"),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
@@ -147,7 +147,7 @@ public class TopicController {
     @Operation(
             summary = "Seguir o dejar de seguir un tópico",
             description = "Permite a un usuario seguir un tópico específico o dejar de seguirlo, gestionando la relación entre el usuario y el tópico en una tabla de asociación.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Relación de seguimiento del tópico actualizada exitosamente "),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
@@ -164,7 +164,7 @@ public class TopicController {
     @Operation(
             summary = "Obtener los tópicos seguidos por el usuario",
             description = "Permite obtener los tópicos que el usuario sigue, con paginación y filtrado opcional por palabra clave.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Tópicos seguidos recuperados exitosamente"),
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),

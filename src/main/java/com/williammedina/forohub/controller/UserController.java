@@ -3,6 +3,7 @@ package com.williammedina.forohub.controller;
 import com.williammedina.forohub.domain.user.UserService;
 import com.williammedina.forohub.domain.user.dto.*;
 import com.williammedina.forohub.infrastructure.exception.ErrorResponse;
+import com.williammedina.forohub.infrastructure.response.MessageResponse;
 import com.williammedina.forohub.infrastructure.security.JwtTokenResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -128,7 +129,7 @@ public class UserController {
     @Operation(
             summary = "Actualizar password actual del usuario autenticado",
             description = "Permite al usuario autenticado cambiar su password actual.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Password actualizada"),
                     @ApiResponse(responseCode = "400", description = "Datos de solicitud inválidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
@@ -144,7 +145,7 @@ public class UserController {
     @Operation(
             summary = "Actualizar el nombre de usuario del usuario autenticado",
             description = "Permite al usuario autenticado actualizar su nombre de usuario en el sistema.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Nombre de usuario actualizado correctamente"),
                     @ApiResponse(responseCode = "400", description = "Datos de solicitud inválidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
@@ -163,7 +164,7 @@ public class UserController {
     @Operation(
             summary = "Obtener estadísticas del usuario autenticado",
             description = "Recupera las estadísticas del usuario, que incluyen la cantidad de tópicos creados y seguidos, así como el número de respuestas publicadas por el usuario.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Estadísticas del usuario obtenidas correctamente"),
                     @ApiResponse(responseCode = "401", description = "No autorizado - token inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -178,7 +179,7 @@ public class UserController {
     @Operation(
             summary = "Obtener información del usuario autenticado",
             description = "Obtiene los detalles del usuario actualmente autenticado.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Detalles del usuario obtenidos correctamente"),
                     @ApiResponse(responseCode = "401", description = "No autorizado - token inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -193,7 +194,7 @@ public class UserController {
     @Operation(
             summary = "Actualizar token de acceso",
             description = "Renueva el token de acceso del usuario utilizando el token de actualización almacenado en las cookies.",
-            security = @SecurityRequirement(name = "cookieAuth"),
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Token de acceso actualizado correctamente."),
                     @ApiResponse(responseCode = "401", description = "No autorizado - token inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -214,8 +215,8 @@ public class UserController {
             }
     )
     @PostMapping("/logout")
-    public ResponseEntity<JwtTokenResponse> logout(HttpServletResponse response) {
-        JwtTokenResponse TokenResponse = userService.logout(response);
+    public ResponseEntity<MessageResponse> logout(HttpServletResponse response) {
+        MessageResponse TokenResponse = userService.logout(response);
         return ResponseEntity.ok(TokenResponse);
     }
 

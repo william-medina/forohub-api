@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/notify", produces = "application/json")
-@SecurityRequirement(name = "cookieAuth")
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Notify", description = "Endpoints para la gestión de notificaciones de los usuarios.")
 @AllArgsConstructor
 public class NotificationController {

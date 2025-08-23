@@ -65,17 +65,18 @@ public class SecurityFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Obtener el token de las cookies
-        Optional<String> tokenOptional = getTokenFromCookies(request, "access_token");
-
-        if (tokenOptional.isEmpty()) {
-            log.warn("Token no encontrado en la cookie para la solicitud: {} {}", requestMethod, requestUri);
-            sendUnauthorizedResponse(response, "Token inválido o expirado.");
+        // Leer el access token desde el header "Authorization"
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            log.warn("Authorization header ausente o malformado en la solicitud: {} {}", requestMethod, requestUri);
+            sendUnauthorizedResponse(response, "Token inválido o ausente.");
             return;
         }
 
+        String token = authHeader.replace("Bearer ", "");
+
         try {
-            authenticateUser(tokenOptional.get());
+            authenticateUser(token);
         } catch (JWTVerificationException e) {
             log.warn("Error de verificación de token: {}", e.getMessage());
             sendUnauthorizedResponse(response, "Token inválido o expirado.");
