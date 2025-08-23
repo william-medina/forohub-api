@@ -63,12 +63,15 @@ class TopicControllerTest {
     void createTopic_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         InputTopicDTO input = new InputTopicDTO("Valid Title", "Valid Description", 1L);
-        var mvcResponse  = mvc.perform(post("/api/topic")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(inputTopicDTOJacksonTester.write(input).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.CREATED.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        post("/api/topic")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(inputTopicDTOJacksonTester.write(input).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.CREATED.value());
     }
 
     @Test
@@ -77,12 +80,15 @@ class TopicControllerTest {
     void createTopic_InvalidInput() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         InputTopicDTO input = new InputTopicDTO("", "", 0L);
-        var mvcResponse  = mvc.perform(post("/api/topic")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(inputTopicDTOJacksonTester.write(input).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        post("/api/topic")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(inputTopicDTOJacksonTester.write(input).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
     @Test
@@ -91,12 +97,15 @@ class TopicControllerTest {
     void createTopic_CourseNotFound() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         InputTopicDTO input = new InputTopicDTO("Valid Title", "Valid Description", 0L);
-        var mvcResponse  = mvc.perform(post("/api/topic")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(inputTopicDTOJacksonTester.write(input).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        post("/api/topic")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(inputTopicDTOJacksonTester.write(input).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -106,12 +115,15 @@ class TopicControllerTest {
         User user = testUtil.getAuthenticatedUser("William");
         createTopic("William", 1L, "Duplicate Title", "Duplicate Description");
         InputTopicDTO input = new InputTopicDTO("Duplicate Title", "Duplicate Description", 1L);
-        var mvcResponse  = mvc.perform(post("/api/topic")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(inputTopicDTOJacksonTester.write(input).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        post("/api/topic")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(inputTopicDTOJacksonTester.write(input).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
     }
 
     @Test
@@ -127,7 +139,7 @@ class TopicControllerTest {
                         .param("status", "ACTIVE")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
     @Test
@@ -138,7 +150,7 @@ class TopicControllerTest {
         var mvcResponse  = mvc.perform(get("/api/topic/{topicId}", topic.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
     @Test
@@ -150,7 +162,7 @@ class TopicControllerTest {
         var mvcResponse  = mvc.perform(get("/api/topic/{topicId}", topic.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -160,12 +172,15 @@ class TopicControllerTest {
         User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("William", 1L, "Initial Title", "Initial Description");
         InputTopicDTO input = new InputTopicDTO("Updated Valid Title", "Updated Valid Description", 1L);
-        var mvcResponse  = mvc.perform(put("/api/topic/{topicId}", topic.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(inputTopicDTOJacksonTester.write(input).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.OK.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        put("/api/topic/{topicId}", topic.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(inputTopicDTOJacksonTester.write(input).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
     @Test
@@ -174,12 +189,15 @@ class TopicControllerTest {
     void updateTopic_InvalidInput() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         InputTopicDTO input = new InputTopicDTO("", "", 1L);
-        var mvcResponse  = mvc.perform(put("/api/topic/{topicId}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(inputTopicDTOJacksonTester.write(input).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        put("/api/topic/{topicId}", 1L)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(inputTopicDTOJacksonTester.write(input).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
     @Test
@@ -188,12 +206,15 @@ class TopicControllerTest {
     void updateTopic_NotFound() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         InputTopicDTO input = new InputTopicDTO("Updated Title", "Updated Description", 1L);
-        var mvcResponse  = mvc.perform(put("/api/topic/{topicId}", 0L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(inputTopicDTOJacksonTester.write(input).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        put("/api/topic/{topicId}", 0L)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(inputTopicDTOJacksonTester.write(input).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -204,12 +225,15 @@ class TopicControllerTest {
         createTopic("William", 1L, "Existing Title", "Existing Description");
         Topic topic = createTopic("William", 1L, "Title to Update", "Description to Update");
         InputTopicDTO input = new InputTopicDTO("Existing Title", "Existing Description", 1L);
-        var mvcResponse  = mvc.perform(put("/api/topic/{topicId}", topic.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(inputTopicDTOJacksonTester.write(input).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        put("/api/topic/{topicId}", topic.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(inputTopicDTOJacksonTester.write(input).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
     }
 
     @Test
@@ -219,12 +243,15 @@ class TopicControllerTest {
         User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("Admin", 1L, "Title", "Description");
         InputTopicDTO input = new InputTopicDTO("Updated Title", "Updated Description", 1L);
-        var mvcResponse  = mvc.perform(put("/api/topic/{topicId}", topic.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(inputTopicDTOJacksonTester.write(input).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        put("/api/topic/{topicId}", topic.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(inputTopicDTOJacksonTester.write(input).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
@@ -233,11 +260,14 @@ class TopicControllerTest {
     void deleteTopic_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("William", 1L, "Title to Delete", "Description to Delete");
-        var mvcResponse  = mvc.perform(delete("/api/topic/{topicId}", topic.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        delete("/api/topic/{topicId}", topic.getId())
+                                .contentType(MediaType.APPLICATION_JSON),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
     @Test
@@ -246,11 +276,14 @@ class TopicControllerTest {
     void deleteTopic_Forbidden() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("Admin", 1L, "Title", "Description");
-        var mvcResponse  = mvc.perform(delete("/api/topic/{topicId}", topic.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        delete("/api/topic/{topicId}", topic.getId())
+                                .contentType(MediaType.APPLICATION_JSON),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
@@ -258,11 +291,14 @@ class TopicControllerTest {
     @DisplayName("Debería devolver HTTP 404 cuando el tópico no existe")
     void deleteTopic_NotFound() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        var mvcResponse  = mvc.perform(delete("/api/topic/{topicId}", 0L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        delete("/api/topic/{topicId}", 0L)
+                                .contentType(MediaType.APPLICATION_JSON),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -271,24 +307,29 @@ class TopicControllerTest {
     void toggleFollowTopic_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("Admin", 1L, "Topic to Follow", "Description");
-        var mvcResponse  = mvc.perform(post("/api/topic/follow/{topicId}", topic.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.OK.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        post("/api/topic/follow/{topicId}", topic.getId())
+                                .contentType(MediaType.APPLICATION_JSON),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
-
 
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando el tópico no existe")
     void toggleFollowTopic_NotFound() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        var mvcResponse  = mvc.perform(post("/api/topic/follow/{topicId}", 0L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        post("/api/topic/follow/{topicId}", 0L)
+                                .contentType(MediaType.APPLICATION_JSON),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -297,11 +338,14 @@ class TopicControllerTest {
     void toggleFollowTopic_Conflict() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         Topic topic = createTopic("William", 1L, "Topic Created by User", "Description");
-        var mvcResponse  = mvc.perform(post("/api/topic/follow/{topicId}", topic.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        post("/api/topic/follow/{topicId}", topic.getId())
+                                .contentType(MediaType.APPLICATION_JSON),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
     }
 
     @Test
@@ -313,38 +357,38 @@ class TopicControllerTest {
         Topic topic2 = createTopic("Admin", 1L, "Followed Topic 2", "Description 2");
         topicFollowService.toggleFollowTopic(topic1.getId());
         topicFollowService.toggleFollowTopic(topic2.getId());
-        var mvcResponse  = mvc.perform(get("/api/topic/user/followed-topics")
-                        .param("page", "0")
-                        .param("size", "5")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.OK.value());
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        get("/api/topic/user/followed-topics")
+                                .param("page", "0")
+                                .param("size", "5")
+                                .contentType(MediaType.APPLICATION_JSON),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 con paginación y filtrado de palabras clave")
     void getFollowedTopicsByUser_WithPaginationAndKeyword() throws Exception {
-
         User user = testUtil.getAuthenticatedUser("William");
-
         Topic topic1 = createTopic("Admin", 1L, "Followed Topic 1", "Description 1");
         Topic topic2 = createTopic("Admin", 1L, "Followed Topic 2", "Description 2");
-
         topicFollowService.toggleFollowTopic(topic1.getId());
         topicFollowService.toggleFollowTopic(topic2.getId());
-        var mvcResponse  = mvc.perform(get("/api/topic/user/followed-topics")
-                        .param("page", "0")
-                        .param("size", "5")
-                        .param("keyword", "Topic 1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
-
-        // Asserting the response status
-        assertThat(mvcResponse .getStatus()).isEqualTo(HttpStatus.OK.value());
-        // Optionally, check if the response content matches the filtered results
+        var mvcResponse  = mvc.perform(
+                testUtil.withAuth(
+                        get("/api/topic/user/followed-topics")
+                                .param("page", "0")
+                                .param("size", "5")
+                                .param("keyword", "Topic 1")
+                                .contentType(MediaType.APPLICATION_JSON),
+                        user
+                )
+        ).andReturn().getResponse();
+        assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
     public Topic createTopic(String username, Long courseId, String title, String description) {

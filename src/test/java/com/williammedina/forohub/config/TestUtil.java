@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 @Component
 @AllArgsConstructor
@@ -24,6 +25,11 @@ public class TestUtil {
     public User getAuthenticatedUser(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario con username '" + username + "' no encontrado"));
+    }
+
+    public MockHttpServletRequestBuilder withAuth(MockHttpServletRequestBuilder requestBuilder, User user) {
+        String token = tokenService.generateAccessToken(user);
+        return requestBuilder.header("Authorization", "Bearer " + token);
     }
 
     // Método para generar una cookie de autenticación con JWT

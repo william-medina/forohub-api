@@ -328,11 +328,14 @@ class UserControllerTest {
     void updateCurrentUserPassword_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         UpdateCurrentUserPasswordDTO request = new UpdateCurrentUserPasswordDTO("password", "newPassword", "newPassword");
-        var mvcResponse = mvc.perform(patch("/api/auth/update-password")
-                        .contentType("application/json")
-                        .content(updateCurrentUserPasswordDTOJacksonTester.write(request).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
+        var mvcResponse = mvc.perform(
+                testUtil.withAuth(
+                        patch("/api/auth/update-password")
+                                .contentType("application/json")
+                                .content(updateCurrentUserPasswordDTOJacksonTester.write(request).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
@@ -342,11 +345,14 @@ class UserControllerTest {
     void updateCurrentUserPassword_InvalidData() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         UpdateCurrentUserPasswordDTO request = new UpdateCurrentUserPasswordDTO("", "" , "");
-        var mvcResponse = mvc.perform(patch("/api/auth/update-password")
-                        .contentType("application/json")
-                        .content(updateCurrentUserPasswordDTOJacksonTester.write(request).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
+        var mvcResponse = mvc.perform(
+                testUtil.withAuth(
+                        patch("/api/auth/update-password")
+                                .contentType("application/json")
+                                .content(updateCurrentUserPasswordDTOJacksonTester.write(request).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
@@ -356,11 +362,14 @@ class UserControllerTest {
     void updateCurrentUserPassword_Unauthorized() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         UpdateCurrentUserPasswordDTO request = new UpdateCurrentUserPasswordDTO("wrongpassword", "newPassword", "newPassword");
-        var mvcResponse = mvc.perform(patch("/api/auth/update-password")
-                        .contentType("application/json")
-                        .content(updateCurrentUserPasswordDTOJacksonTester.write(request).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
+        var mvcResponse = mvc.perform(
+                testUtil.withAuth(
+                        patch("/api/auth/update-password")
+                                .contentType("application/json")
+                                .content(updateCurrentUserPasswordDTOJacksonTester.write(request).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
@@ -370,11 +379,14 @@ class UserControllerTest {
     void updateUsername_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         UpdateUsernameDTO request = new UpdateUsernameDTO("newUsername");
-        var mvcResponse = mvc.perform(patch("/api/auth/update-username")
-                        .contentType("application/json")
-                        .content(updateUsernameDTOJacksonTester.write(request).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
+        var mvcResponse = mvc.perform(
+                testUtil.withAuth(
+                        patch("/api/auth/update-username")
+                                .contentType("application/json")
+                                .content(updateUsernameDTOJacksonTester.write(request).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
@@ -384,11 +396,14 @@ class UserControllerTest {
     void updateUsername_InvalidData() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
         UpdateUsernameDTO request = new UpdateUsernameDTO("");
-        var mvcResponse = mvc.perform(patch("/api/auth/update-username")
-                        .contentType("application/json")
-                        .content(updateUsernameDTOJacksonTester.write(request).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
+        var mvcResponse = mvc.perform(
+                testUtil.withAuth(
+                        patch("/api/auth/update-username")
+                                .contentType("application/json")
+                                .content(updateUsernameDTOJacksonTester.write(request).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
@@ -400,11 +415,14 @@ class UserControllerTest {
         testUtil.createUser("user@example.com", "user");
 
         UpdateUsernameDTO request = new UpdateUsernameDTO("user");
-        var mvcResponse = mvc.perform(patch("/api/auth/update-username")
-                        .contentType("application/json")
-                        .content(updateUsernameDTOJacksonTester.write(request).getJson())
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
+        var mvcResponse = mvc.perform(
+                testUtil.withAuth(
+                        patch("/api/auth/update-username")
+                                .contentType("application/json")
+                                .content(updateUsernameDTOJacksonTester.write(request).getJson()),
+                        user
+                )
+        ).andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
     }
 
@@ -413,10 +431,9 @@ class UserControllerTest {
     @DisplayName("Debería devolver HTTP 200 cuando se obtienen las estadísticas del usuario correctamente")
     void getUserStats_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        var mvcResponse = mvc.perform(get("/api/auth/stats")
-                        .contentType("application/json")
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
+        var mvcResponse = mvc.perform(
+                testUtil.withAuth(get("/api/auth/stats").contentType("application/json"), user)
+        ).andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
@@ -425,10 +442,9 @@ class UserControllerTest {
     @DisplayName("Debería devolver HTTP 200 cuando se obtienen los detalles del usuario correctamente")
     void getCurrentUser_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        var mvcResponse = mvc.perform(get("/api/auth/me")
-                        .contentType("application/json")
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
+        var mvcResponse = mvc.perform(
+                testUtil.withAuth(get("/api/auth/me").contentType("application/json"), user)
+        ).andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
@@ -464,9 +480,9 @@ class UserControllerTest {
     @DisplayName("Debería devolver HTTP 200 cuando la sesión se cierra exitosamente")
     void logout_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        var mvcResponse = mvc.perform(post("/api/auth/logout")
-                        .cookie(testUtil.createCookie(user, "access_token", "/", 20000)))
-                .andReturn().getResponse();
+        var mvcResponse = mvc.perform(
+                testUtil.withAuth(post("/api/auth/logout"), user)
+        ).andReturn().getResponse();
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
