@@ -67,7 +67,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         // Leer el access token desde el header "Authorization"
         String authHeader = request.getHeader("Authorization");
-        System.out.println(authHeader);
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             log.warn("Authorization header ausente o malformado en la solicitud: {} {}", requestMethod, requestUri);
             sendUnauthorizedResponse(response, "Token inválido o ausente.");
