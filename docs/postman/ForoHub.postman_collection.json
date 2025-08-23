@@ -73,6 +73,9 @@
 				{
 					"name": "AUTH - Forgot Password",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -100,6 +103,9 @@
 				{
 					"name": "AUTH - Request code",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -149,6 +155,9 @@
 				{
 					"name": "AUTH - Update Password With Token",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -178,7 +187,14 @@
 					"name": "AUTH - Update Current User Password",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PATCH",
 						"header": [],
@@ -208,7 +224,14 @@
 					"name": "AUTH - Update Username",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PATCH",
 						"header": [],
@@ -238,7 +261,14 @@
 					"name": "AUTH - Get Current User",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
@@ -259,7 +289,14 @@
 					"name": "AUTH - Get User Statistics",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
@@ -280,7 +317,14 @@
 					"name": "AUTH - Refresh Access Token",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -301,7 +345,14 @@
 					"name": "AUTH - Logout",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -328,7 +379,14 @@
 					"name": "TOPIC - Create Topic",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -398,7 +456,14 @@
 					"name": "TOPIC - Get All Topics By User",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
@@ -420,7 +485,14 @@
 					"name": "TOPIC - Update Topic",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PUT",
 						"header": [],
@@ -450,7 +522,14 @@
 					"name": "TOPIC - Delete Topic",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "DELETE",
 						"header": [],
@@ -471,7 +550,14 @@
 					"name": "TOPIC - Toggle Follow Topic",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -493,7 +579,14 @@
 					"name": "TOPIC - Get All Followed Topics By User",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
@@ -521,7 +614,14 @@
 					"name": "RESPONSE - Create Response",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -550,7 +650,14 @@
 					"name": "RESPONSE - Update Response",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PUT",
 						"header": [],
@@ -580,7 +687,14 @@
 					"name": "RESPONSE - Delete Response",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "DELETE",
 						"header": [],
@@ -622,7 +736,14 @@
 					"name": "RESPONSE - Set Correct Response",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PATCH",
 						"header": [],
@@ -643,7 +764,14 @@
 					"name": "RESPONSE - Get All Responses By User",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
@@ -697,7 +825,14 @@
 					"name": "NOTIFY - Get All Notifications By User",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
@@ -717,7 +852,14 @@
 					"name": "NOTIFY - Delete Notification",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "DELETE",
 						"header": [],
@@ -738,7 +880,14 @@
 					"name": "NOTIFY - Mark Notification As Read",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PATCH",
 						"header": [],
