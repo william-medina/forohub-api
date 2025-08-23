@@ -257,7 +257,7 @@ public class UserService {
     }
 
     private void handleAccountDisabled(String username) throws MessagingException {
-        User user = (User) userRepository.findByUsername(username);
+        User user = findUserByUsername(username);
         user.generateConfirmationToken();
         userRepository.save(user);
         emailService.sendConfirmationEmail(user.getEmail(), user);
@@ -277,6 +277,14 @@ public class UserService {
                 .orElseThrow(() -> {
                     log.error("Email no registrado: {}", email);
                     return new AppException("El email no está registrado.", HttpStatus.NOT_FOUND);
+                });
+    }
+
+    private User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> {
+                    log.error("Nombre de usuario no registrado: {}", username);
+                    return new AppException("El nombre de usuario no está registrado.", HttpStatus.NOT_FOUND);
                 });
     }
 

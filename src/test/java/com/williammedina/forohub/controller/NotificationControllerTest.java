@@ -142,7 +142,7 @@ class NotificationControllerTest {
     }
 
     public Notification createNotification(String username, String title) {
-        User user = (User) userRepository.findByUsername(username);
+        User user = testUtil.getAuthenticatedUser(username);
         Optional<Course> course = courseRepository.findById(1L);
 
         if (user != null && course.isPresent()) {

@@ -5,6 +5,7 @@ import com.williammedina.forohub.domain.user.UserRepository;
 import com.williammedina.forohub.infrastructure.security.TokenService;
 import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,8 @@ public class TestUtil {
     }
 
     public User getAuthenticatedUser(String username) {
-        return (User) userRepository.findByUsername(username);
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario con username '" + username + "' no encontrado"));
     }
 
     // Método para generar una cookie de autenticación con JWT

@@ -348,7 +348,7 @@ class TopicControllerTest {
     }
 
     public Topic createTopic(String username, Long courseId, String title, String description) {
-        User user = (User) userRepository.findByUsername(username);
+        User user = testUtil.getAuthenticatedUser(username);
         Optional<Course> course = courseRepository.findById(courseId);
 
         if (user != null && course.isPresent()) {

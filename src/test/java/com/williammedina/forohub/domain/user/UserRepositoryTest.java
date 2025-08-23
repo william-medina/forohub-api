@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
@@ -32,11 +31,11 @@ class UserRepositoryTest {
         createAndPersistUser(username, "user@example.com");
 
         // Act
-        UserDetails userDetails = userRepository.findByUsername(username);
+        Optional<User> user = userRepository.findByUsername(username);
 
         // Assert
-        assertThat(userDetails).isNotNull();
-        assertThat(userDetails.getUsername()).isEqualTo(username);
+        assertThat(user).isPresent();
+        assertThat(user.get().getUsername()).isEqualTo(username);
     }
 
     @Test

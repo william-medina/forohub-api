@@ -301,7 +301,7 @@ class ResponseControllerTest {
 
 
     public Topic createTopic(String username, Long courseId, String title, String description) {
-        User user = (User) userRepository.findByUsername(username);
+        User user = testUtil.getAuthenticatedUser(username);
 
         Optional<Course> course = courseRepository.findById(courseId);
 
@@ -314,7 +314,7 @@ class ResponseControllerTest {
     }
 
     public Response createResponse(String username, Topic topic, String message) {
-        User user = (User) userRepository.findByUsername(username);
+        User user = testUtil.getAuthenticatedUser(username);
 
         if (user != null) {
             Response response = new Response(user, topic, message);
