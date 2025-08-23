@@ -194,7 +194,6 @@ public class UserController {
     @Operation(
             summary = "Actualizar token de acceso",
             description = "Renueva el token de acceso del usuario utilizando el token de actualización almacenado en las cookies.",
-            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Token de acceso actualizado correctamente."),
                     @ApiResponse(responseCode = "401", description = "No autorizado - token inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -209,6 +208,7 @@ public class UserController {
     @Operation(
             summary = "Cerrar sesión",
             description = "Finaliza la sesión del usuario eliminando las cookies que almacenan el token de acceso y el token de actualización.",
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Sesión cerrada exitosamente."),
                     @ApiResponse(responseCode = "401", description = "No autorizado - token inválido", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
