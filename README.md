@@ -370,9 +370,13 @@ DB_PASSWORD_TEST=your_password
 ```
 > **⚠️ Importante**: El nombre de la base de datos debe ser diferente al de la base de datos principal. Esto es crucial porque cada prueba limpia los registros de las tablas al iniciar, garantizando que los tests sean independientes y no afecten los datos de producción.
 
-- Al ejecutar las pruebas, el envío de email se deshabilitará automáticamente. Esto se hace para evitar que se envíen emails durante las pruebas, ya que no se requiere este comportamiento en este entorno.
+### Comportamiento de servicios externos durante las pruebas
 
-- **Sugerencia**: Si la API utiliza inteligencia artificial, es recomendable deshabilitarla temporalmente durante las pruebas unitarias para evitar el consumo innecesario de recursos. Para lograr esto, puedes configurar la variable de entorno `AI_ENABLED` a `false` en el entorno de pruebas. Así, la inteligencia artificial estará deshabilitada durante las pruebas, lo que optimiza el uso de recursos.
+- Durante la ejecución de los tests, el envío de emails y la validación de contenido con inteligencia artificial se **deshabilitan automáticamente** mediante configuraciones de Spring (`@ConditionalOnProperty`).
+    - La propiedad `email.enabled=false` activa la implementación `DisabledEmailService`, que solo registra las acciones en lugar de enviar correos reales.
+    - La propiedad `ai.enabled=false` activa la implementación `DisabledContentValidationService`, que simula la validación de contenido sin consumir recursos de IA.
+
+- Este enfoque reemplaza la lógica interna basada en variables de entorno, garantizando que los tests sean más claros, mantenibles y no dependan de servicios externos.
 
 ## 🎨 Frontend
 La API cuenta con un frontend desarrollado en **React** utilizando **TypeScript** y **Tailwind CSS**. Este frontend está diseñado para interactuar de manera efectiva con la API.
