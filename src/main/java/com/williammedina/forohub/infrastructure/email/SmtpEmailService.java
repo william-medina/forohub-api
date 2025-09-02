@@ -11,6 +11,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailException;
@@ -25,13 +26,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EmailServiceImpl implements EmailService {
+@ConditionalOnProperty(value = "email.enabled", havingValue = "true")
+public class SmtpEmailService implements EmailService {
 
     private final JavaMailSender mailSender;
     private final Environment environment;
@@ -176,16 +177,6 @@ public class EmailServiceImpl implements EmailService {
 
     public void sendEmail(String to, String subject, String title, String message, String buttonLabel, String url, String footer) throws MessagingException {
 
-        if (Arrays.toString(environment.getActiveProfiles()).contains("test")) {
-            log.warn("Modo test activo - Email preparado para: {}, asunto: {}. No se enviará.", to, subject);
-            return;
-        }
-
-        if (!isEmailEnabled()) {
-            log.warn("Envío de emails deshabilitado. Email a: {}, asunto: {} NO será enviado.", to, subject);
-            return;
-        }
-
         String htmlContent = buildEmailContent(title, message, buttonLabel, url, footer);
 
         MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -235,12 +226,6 @@ public class EmailServiceImpl implements EmailService {
             log.error("Error al cargar plantilla de email: {}. Detalle: {}", fileName, e.getMessage());
             throw new RuntimeException("Error al cargar la plantilla de email: " + fileName, e);
         }
-    }
-
-
-    private boolean isEmailEnabled() {
-        String emailEnabled = environment.getProperty("email.enabled", "false");
-        return Boolean.parseBoolean(emailEnabled);
     }
 
 }

@@ -4,18 +4,16 @@ import com.williammedina.forohub.domain.contentvalidation.ContentValidationServi
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@ConditionalOnProperty(value = "ai.enabled", havingValue = "true")
 public class AIContentValidationService implements ContentValidationService {
 
     private final ChatClient chatClient;
-
-    @Value("${ai.enabled}")
-    private boolean isAiEnabled;
 
     public AIContentValidationService(ChatClient.Builder chatClientBuilder) {
         this.chatClient = chatClientBuilder.build();
@@ -23,12 +21,6 @@ public class AIContentValidationService implements ContentValidationService {
 
     public String validateContent(String content) {
         log.debug("Validando contenido con IA: {}", content);
-
-         // Si la IA está deshabilitada, solo devolvemos "approved" sin hacer validaciones
-        if (!isAiEnabled) {
-            log.info("Validación de contenido omitida: IA deshabilitada");
-            return "approved";
-        }
 
         String systemMessage = """
                 Eres una IA de moderación de contenido en un foro educativo que trata sobre cursos. Tu tarea es evaluar el texto proporcionado y determinar si contiene contenido inapropiado o irrelevante para los temas de los cursos. Debes identificar cualquier forma de contenido que pueda ser considerado:
@@ -82,8 +74,6 @@ public class AIContentValidationService implements ContentValidationService {
 
     public String validateUsername(String username) {
         log.debug("Validando nombre de usuario con IA: {}", username);
-
-        if (!isAiEnabled) return "approved";  // Si la IA está deshabilitada, solo devolvemos "approved" sin hacer validaciones
 
         String systemMessage = """
             Eres una IA de moderación de contenido en una plataforma educativa. Tu tarea es evaluar el siguiente nombre de usuario y determinar si es adecuado para un foro o comunidad en línea relacionada con cursos y educación. Debes verificar si el nombre contiene algún tipo de contenido inapropiado o no deseado.
