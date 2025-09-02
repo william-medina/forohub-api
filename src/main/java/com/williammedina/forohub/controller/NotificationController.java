@@ -1,6 +1,6 @@
 package com.williammedina.forohub.controller;
 
-import com.williammedina.forohub.domain.notification.NotificationService;
+import com.williammedina.forohub.domain.notification.service.NotificationService;
 import com.williammedina.forohub.domain.notification.dto.NotificationDTO;
 import com.williammedina.forohub.infrastructure.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;

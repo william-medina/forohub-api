@@ -1,10 +1,10 @@
 package com.williammedina.forohub.config;
 
-import com.williammedina.forohub.domain.profile.Profile;
-import com.williammedina.forohub.domain.response.ResponseRepository;
-import com.williammedina.forohub.domain.topic.TopicRepository;
-import com.williammedina.forohub.domain.user.User;
-import com.williammedina.forohub.domain.user.UserRepository;
+import com.williammedina.forohub.domain.profile.entity.Profile;
+import com.williammedina.forohub.domain.response.repository.ResponseRepository;
+import com.williammedina.forohub.domain.topic.repository.TopicRepository;
+import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

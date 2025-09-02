@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.course.dto;
 
-import com.williammedina.forohub.domain.course.Course;
+import com.williammedina.forohub.domain.course.entity.Course;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Datos generales del curso")

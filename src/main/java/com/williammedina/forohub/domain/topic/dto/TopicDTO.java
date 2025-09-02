@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.topic.dto;
 
-import com.williammedina.forohub.domain.topic.Topic;
+import com.williammedina.forohub.domain.topic.entity.Topic;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;

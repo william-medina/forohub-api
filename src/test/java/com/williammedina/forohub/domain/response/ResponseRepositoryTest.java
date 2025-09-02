@@ -1,8 +1,10 @@
 package com.williammedina.forohub.domain.response;
 
-import com.williammedina.forohub.domain.course.Course;
-import com.williammedina.forohub.domain.topic.Topic;
-import com.williammedina.forohub.domain.user.User;
+import com.williammedina.forohub.domain.course.entity.Course;
+import com.williammedina.forohub.domain.response.entity.Response;
+import com.williammedina.forohub.domain.response.repository.ResponseRepository;
+import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.user.entity.User;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

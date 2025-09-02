@@ -1,6 +1,6 @@
 package com.williammedina.forohub.controller;
 
-import com.williammedina.forohub.domain.user.UserService;
+import com.williammedina.forohub.domain.user.service.UserService;
 import com.williammedina.forohub.domain.user.dto.*;
 import com.williammedina.forohub.infrastructure.exception.ErrorResponse;
 import com.williammedina.forohub.infrastructure.response.MessageResponse;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class UserController {
 
-    //@Autowired
     private final UserService userService;
 
     @Operation(

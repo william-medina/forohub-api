@@ -1,8 +1,8 @@
 package com.williammedina.forohub.domain.common;
 
-import com.williammedina.forohub.domain.topic.Topic;
-import com.williammedina.forohub.domain.topic.TopicRepository;
-import com.williammedina.forohub.domain.user.User;
+import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.repository.TopicRepository;
+import com.williammedina.forohub.domain.user.entity.User;
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

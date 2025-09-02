@@ -1,5 +1,7 @@
 package com.williammedina.forohub.domain.course;
 
+import com.williammedina.forohub.domain.course.entity.Course;
+import com.williammedina.forohub.domain.course.repository.CourseRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

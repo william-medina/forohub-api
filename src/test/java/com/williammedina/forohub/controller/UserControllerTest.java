@@ -1,8 +1,8 @@
 package com.williammedina.forohub.controller;
 
 import com.williammedina.forohub.config.TestUtil;
-import com.williammedina.forohub.domain.user.User;
-import com.williammedina.forohub.domain.user.UserRepository;
+import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.repository.UserRepository;
 import com.williammedina.forohub.domain.user.dto.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

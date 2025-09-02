@@ -1,6 +1,8 @@
 package com.williammedina.forohub.domain.notification;
 
-import com.williammedina.forohub.domain.user.User;
+import com.williammedina.forohub.domain.notification.entity.Notification;
+import com.williammedina.forohub.domain.notification.repository.NotificationRepository;
+import com.williammedina.forohub.domain.user.entity.User;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

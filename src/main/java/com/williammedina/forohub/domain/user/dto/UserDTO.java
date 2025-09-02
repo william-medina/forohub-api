@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.user.dto;
 
-import com.williammedina.forohub.domain.user.User;
+import com.williammedina.forohub.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Información pública del usuario")

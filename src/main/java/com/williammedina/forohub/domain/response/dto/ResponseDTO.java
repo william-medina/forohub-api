@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.response.dto;
 
-import com.williammedina.forohub.domain.response.Response;
+import com.williammedina.forohub.domain.response.entity.Response;
 import com.williammedina.forohub.domain.user.dto.UserDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 

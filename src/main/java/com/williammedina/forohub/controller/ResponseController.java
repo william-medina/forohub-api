@@ -1,6 +1,6 @@
 package com.williammedina.forohub.controller;
 
-import com.williammedina.forohub.domain.response.ResponseService;
+import com.williammedina.forohub.domain.response.service.ResponseService;
 import com.williammedina.forohub.domain.response.dto.CreateResponseDTO;
 import com.williammedina.forohub.domain.response.dto.ResponseDTO;
 import com.williammedina.forohub.domain.response.dto.UpdateResponseDTO;

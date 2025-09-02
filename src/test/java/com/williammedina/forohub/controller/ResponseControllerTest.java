@@ -1,16 +1,16 @@
 package com.williammedina.forohub.controller;
 
 import com.williammedina.forohub.config.TestUtil;
-import com.williammedina.forohub.domain.course.Course;
-import com.williammedina.forohub.domain.course.CourseRepository;
-import com.williammedina.forohub.domain.response.Response;
-import com.williammedina.forohub.domain.response.ResponseRepository;
+import com.williammedina.forohub.domain.course.entity.Course;
+import com.williammedina.forohub.domain.course.repository.CourseRepository;
+import com.williammedina.forohub.domain.response.entity.Response;
+import com.williammedina.forohub.domain.response.repository.ResponseRepository;
 import com.williammedina.forohub.domain.response.dto.CreateResponseDTO;
 import com.williammedina.forohub.domain.response.dto.UpdateResponseDTO;
-import com.williammedina.forohub.domain.topic.Topic;
-import com.williammedina.forohub.domain.topic.TopicRepository;
-import com.williammedina.forohub.domain.user.User;
-import com.williammedina.forohub.domain.user.UserRepository;
+import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.repository.TopicRepository;
+import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

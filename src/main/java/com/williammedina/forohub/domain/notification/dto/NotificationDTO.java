@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.notification.dto;
 
-import com.williammedina.forohub.domain.notification.Notification;
+import com.williammedina.forohub.domain.notification.entity.Notification;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;

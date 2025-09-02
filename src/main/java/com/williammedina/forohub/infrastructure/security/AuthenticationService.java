@@ -1,6 +1,6 @@
 package com.williammedina.forohub.infrastructure.security;
 
-import com.williammedina.forohub.domain.user.UserRepository;
+import com.williammedina.forohub.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

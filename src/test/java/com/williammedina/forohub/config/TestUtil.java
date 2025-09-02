@@ -1,7 +1,7 @@
 package com.williammedina.forohub.config;
 
-import com.williammedina.forohub.domain.user.User;
-import com.williammedina.forohub.domain.user.UserRepository;
+import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.repository.UserRepository;
 import com.williammedina.forohub.infrastructure.security.TokenService;
 import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;

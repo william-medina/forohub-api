@@ -1,10 +1,8 @@
 package com.williammedina.forohub.controller;
 
-import com.williammedina.forohub.domain.course.CourseService;
+import com.williammedina.forohub.domain.course.service.CourseService;
 import com.williammedina.forohub.domain.course.dto.CourseDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -21,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CourseController {
 
-    private final CourseService courseService;
+    private final CourseService courseServiceImpl;
 
     @Operation(
             summary = "Obtener todos los cursos disponibles",
@@ -32,7 +30,7 @@ public class CourseController {
     )
     @GetMapping
     public ResponseEntity<List<CourseDTO>> getAllCourses() {
-        List<CourseDTO> courses = courseService.getAllCourses();
+        List<CourseDTO> courses = courseServiceImpl.getAllCourses();
         return ResponseEntity.ok(courses);
     }
 }

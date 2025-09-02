@@ -1,14 +1,14 @@
 package com.williammedina.forohub.controller;
 
 import com.williammedina.forohub.config.TestUtil;
-import com.williammedina.forohub.domain.course.Course;
-import com.williammedina.forohub.domain.course.CourseRepository;
-import com.williammedina.forohub.domain.topic.Topic;
-import com.williammedina.forohub.domain.topic.TopicRepository;
+import com.williammedina.forohub.domain.course.entity.Course;
+import com.williammedina.forohub.domain.course.repository.CourseRepository;
+import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.repository.TopicRepository;
 import com.williammedina.forohub.domain.topic.dto.InputTopicDTO;
-import com.williammedina.forohub.domain.topicfollow.TopicFollowService;
-import com.williammedina.forohub.domain.user.User;
-import com.williammedina.forohub.domain.user.UserRepository;
+import com.williammedina.forohub.domain.topicfollow.service.TopicFollowServiceImpl;
+import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ class TopicControllerTest {
     private CourseRepository courseRepository;
 
     @Autowired
-    private TopicFollowService topicFollowService;
+    private TopicFollowServiceImpl topicFollowService;
 
     @Autowired
     private TestUtil testUtil;

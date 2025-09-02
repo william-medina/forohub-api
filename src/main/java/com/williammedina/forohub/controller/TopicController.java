@@ -1,11 +1,11 @@
 package com.williammedina.forohub.controller;
 
-import com.williammedina.forohub.domain.topic.Topic;
-import com.williammedina.forohub.domain.topic.TopicService;
+import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.service.TopicService;
 import com.williammedina.forohub.domain.topic.dto.InputTopicDTO;
 import com.williammedina.forohub.domain.topic.dto.TopicDTO;
 import com.williammedina.forohub.domain.topic.dto.TopicDetailsDTO;
-import com.williammedina.forohub.domain.topicfollow.TopicFollowService;
+import com.williammedina.forohub.domain.topicfollow.service.TopicFollowService;
 import com.williammedina.forohub.domain.topicfollow.dto.TopicFollowDetailsDTO;
 import com.williammedina.forohub.infrastructure.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;

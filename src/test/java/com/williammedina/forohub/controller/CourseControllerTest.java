@@ -1,7 +1,7 @@
 package com.williammedina.forohub.controller;
 
-import com.williammedina.forohub.domain.course.Course;
-import com.williammedina.forohub.domain.course.CourseRepository;
+import com.williammedina.forohub.domain.course.entity.Course;
+import com.williammedina.forohub.domain.course.repository.CourseRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
