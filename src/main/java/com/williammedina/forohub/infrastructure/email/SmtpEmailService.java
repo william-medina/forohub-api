@@ -49,9 +49,9 @@ public class SmtpEmailService implements EmailService {
         String buttonLabel = "Confirmar Cuenta";
         String footer = "Si no solicitaste este email, puedes ignorarlo.";
 
-        log.info("Preparando email de confirmación para usuario ID: {}", user.getId());
+        log.info("Preparing confirmation email for user ID: {}", user.getId());
         sendEmail(to, subject, title, message, buttonLabel, url, footer);
-        log.info("Email de confirmación enviado a: {}", to);
+        log.info("Confirmation email sent to: {}", to);
     }
 
     @Override
@@ -63,9 +63,9 @@ public class SmtpEmailService implements EmailService {
         String buttonLabel = "Restablecer Password";
         String footer = "Si no solicitaste este email, puedes ignorarlo.";
 
-        log.info("Preparando email de restablecimiento de password para usuario ID: {}", user.getId());
+        log.info("Preparing password reset email for user ID: {}", user.getId());
         sendEmail(to, subject, title, message, buttonLabel, url, footer);
-        log.info("Email de restablecimiento de password enviado a: {}", to);
+        log.info("Password reset email sent to: {}", to);
     }
 
     @Override
@@ -192,7 +192,7 @@ public class SmtpEmailService implements EmailService {
         try {
             mailSender.send(mimeMessage);
         } catch (MailException e) {
-            log.error("Error al enviar email a: {}. Motivo: {}", to, e.getMessage());
+            log.error("Error sending email to: {}. Reason: {}", to, e.getMessage());
             throw new AppException("Error al enviar el email. Intenta más tarde.", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
@@ -216,14 +216,14 @@ public class SmtpEmailService implements EmailService {
     private String loadTemplate(String fileName) {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("templates/" + fileName)) {
             if (inputStream == null) {
-                log.error("Plantilla de email no encontrada: {}", fileName);
+                log.error("Email template not found: {}", fileName);
                 throw new RuntimeException("No se pudo encontrar la plantilla de email: " + fileName);
             }
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
                 return reader.lines().collect(Collectors.joining("\n"));
             }
         } catch (IOException e) {
-            log.error("Error al cargar plantilla de email: {}. Detalle: {}", fileName, e.getMessage());
+            log.error("Error loading email template: {}. Details: {}", fileName, e.getMessage());
             throw new RuntimeException("Error al cargar la plantilla de email: " + fileName, e);
         }
     }

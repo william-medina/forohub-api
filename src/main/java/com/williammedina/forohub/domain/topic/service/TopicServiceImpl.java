@@ -44,7 +44,7 @@ public class TopicServiceImpl implements TopicService {
     @Transactional
     public TopicDTO createTopic(InputTopicDTO data) {
         User user = getAuthenticatedUser();
-        log.info("Creando tópico por usuario con ID: {}", user.getId());
+        log.info("Creating topic by user ID: {}", user.getId());
 
         existsByTitle(data.title());
         existsByDescription(data.description());
@@ -56,7 +56,7 @@ public class TopicServiceImpl implements TopicService {
         Course course = findCourseById(data.courseId());
 
         Topic topic = topicRepository.save(new Topic(user, data.title(), data.description(), course));
-        log.info("Tópico creado con ID: {} para curso ID: {} por el usuario ID: {}", topic.getId(), course.getId(), user.getId());
+        log.info("Topic created with ID: {} for course ID: {} by user ID: {}", topic.getId(), course.getId(), user.getId());
 
         return TopicDTO.fromEntity(topic);
     }
@@ -64,7 +64,8 @@ public class TopicServiceImpl implements TopicService {
     @Override
     @Transactional(readOnly = true)
     public Page<TopicDTO> getAllTopics(Pageable pageable, Long courseId, String keyword, Topic.Status status) {
-        log.debug("Obteniendo tópicos - page: {}, size: {}, courseId: {}, keyword: {}, status: {}", pageable.getPageNumber(), pageable.getPageSize(), courseId, keyword, status);
+        log.debug("Fetching topics - page: {}, size: {}, courseId: {}, keyword: {}, status: {}",
+                pageable.getPageNumber(), pageable.getPageSize(), courseId, keyword, status);
 
         if (courseId != null || keyword != null || status != null) {
             return topicRepository.findByFilters(courseId, keyword, status, pageable).map(TopicDTO::fromEntity);
@@ -76,7 +77,7 @@ public class TopicServiceImpl implements TopicService {
     @Transactional(readOnly = true)
     public Page<TopicDTO> getAllTopicsByUser(Pageable pageable, String keyword) {
         User user = getAuthenticatedUser();
-        log.debug("Obteniendo tópicos del usuario con ID: {} - keyword: {}", user.getId(), keyword);
+        log.debug("Fetching topics for user ID: {} - keyword: {}", user.getId(), keyword);
 
         if (keyword != null ) {
             return topicRepository.findByUserFilters(user, keyword, pageable).map(TopicDTO::fromEntity);
@@ -87,7 +88,7 @@ public class TopicServiceImpl implements TopicService {
     @Override
     @Transactional(readOnly = true)
     public TopicDetailsDTO getTopicById(Long topicId) {
-        log.info("Obteniendo detalles del tópico con ID: {}", topicId);
+        log.debug("Fetching topic details with ID: {}", topicId);
         Topic topic = findTopicById(topicId);
         List<ResponseDTO> responses = topic.getResponses().stream()
                 .sorted(Comparator.comparing(Response::getCreatedAt))
@@ -102,7 +103,7 @@ public class TopicServiceImpl implements TopicService {
     public TopicDetailsDTO updateTopic(@Valid InputTopicDTO data, Long topicId) throws MessagingException {
         Topic topic = findTopicById(topicId);
         User user = checkModificationPermission(topic);
-        log.info("Actualizando tópico ID: {} por usuario ID: {}", topicId, user.getId());
+        log.info("Updating topic ID: {} by user ID: {}", topicId, user.getId());
 
         Course course = findCourseById(data.courseId());
 
@@ -121,10 +122,10 @@ public class TopicServiceImpl implements TopicService {
         topic.setCourse(course);
 
         Topic updatedTopic = topicRepository.save(topic);
-        log.info("Tópico actualizado ID: {} por el usuario ID: {}", updatedTopic.getId(), user.getId());
+        log.info("Topic updated ID: {} by user ID: {}", updatedTopic.getId(), user.getId());
 
         if(!user.getUsername().equals(topic.getUser().getUsername())) {
-            log.debug("Notificando actualización a propietario del tópico ID: {}", topic.getId());
+            log.debug("Notifying topic owner ID: {} about update", topic.getId());
             emailService.notifyTopicEdited(topic);
             notificationService.notifyTopicEdited(topic);
         }
@@ -142,12 +143,11 @@ public class TopicServiceImpl implements TopicService {
     public void deleteTopic(Long topicId) throws MessagingException {
         Topic topic = findTopicById(topicId);
         User user = checkModificationPermission(topic);
-        topic.setIsDeleted(true);
-        log.info("Tópico marcado como eliminado - ID: {} por usuario ID: {}", topicId, user.getId());
-        //topicRepository.delete(topic);
+        topic.setIsDeleted(true); //topicRepository.delete(topic);
+        log.info("Topic marked as deleted - ID: {} by user ID: {}", topicId, user.getId());
 
         if(!user.getUsername().equals(topic.getUser().getUsername())) {
-            log.debug("Notificando eliminación a propietario del tópico ID: {}", topicId);
+            log.debug("Notifying topic owner ID: {} about deletion", topicId);
             notificationService.notifyTopicDeleted(topic);
             emailService.notifyTopicDeleted(topic);
         }
@@ -164,7 +164,7 @@ public class TopicServiceImpl implements TopicService {
     private Course findCourseById(Long courseId) {
         return courseRepository.findById(courseId)
                 .orElseThrow(() -> {
-                    log.error("Curso no encontrado con ID: {}", courseId);;
+                    log.error("Course not found with ID: {}", courseId);
                     return new AppException("Curso no encontrado.", HttpStatus.NOT_FOUND);
                 });
     }
@@ -173,7 +173,7 @@ public class TopicServiceImpl implements TopicService {
         User user = getAuthenticatedUser();
         // Si el usuario es el propietario O tiene permisos elevados, puede modificar el topic
         if (!topic.getUser().equals(getAuthenticatedUser()) && !getAuthenticatedUser().hasElevatedPermissions()) {
-            log.warn("Usuario sin permiso con ID: {} intentó modificar tópico ID: {}", topic.getId(), user.getId());
+            log.warn("User ID: {} attempted to modify topic ID: {} without permission", user.getId(), topic.getId());
             throw new AppException("No tienes permiso para realizar cambios en este tópico", HttpStatus.FORBIDDEN);
         }
         return user;
@@ -181,14 +181,14 @@ public class TopicServiceImpl implements TopicService {
 
     private void existsByTitle(String title) {
         if (topicRepository.existsByTitle(title)) {
-            log.warn("Ya existe un tópico con el título: {}", title);
+            log.warn("Topic already exists with title: {}", title);
             throw new AppException("El titulo ya existe.", HttpStatus.CONFLICT);
         }
     }
 
     private void existsByDescription(String description) {
         if (topicRepository.existsByDescription(description)) {
-            log.warn("Ya existe un tópico con la descripción: {}", description);
+            log.warn("Topic already exists with description: {}", description);
             throw new AppException("La descripción ya existe.", HttpStatus.CONFLICT);
         }
     }
@@ -196,7 +196,7 @@ public class TopicServiceImpl implements TopicService {
     private void validateTitleContent(String title) {
         String validationResponse = contentValidationService.validateContent(title);
         if (!"approved".equals(validationResponse)) {
-            log.warn("Contenido del título no aprobado: {}", validationResponse);
+            log.warn("Title content not approved: {}", validationResponse);
             throw new AppException("El título " + validationResponse, HttpStatus.FORBIDDEN);
         }
     }
@@ -205,7 +205,7 @@ public class TopicServiceImpl implements TopicService {
     private void validateDescriptionContent(String description) {
         String validationResponse = contentValidationService.validateContent(description);
         if (!"approved".equals(validationResponse)) {
-            log.warn("Contenido de la descripción no aprobado: {}", validationResponse);
+            log.warn("Description content not approved: {}", validationResponse);
             throw new AppException("La descripción " + validationResponse, HttpStatus.FORBIDDEN);
         }
     }

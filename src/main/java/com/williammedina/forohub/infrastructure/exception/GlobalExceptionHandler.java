@@ -20,21 +20,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
-        log.warn("Intento de autenticación fallido: {}", ex.getMessage());
+        log.warn("Failed authentication attempt: {}", ex.getMessage());
         ErrorResponse errorResponse = new ErrorResponse("Las credenciales proporcionadas son incorrectas.");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ErrorResponse> handleAppException(AppException ex) {
-        log.error("Error de aplicación: {}", ex.getMessage());
+        log.error("Application error: {}", ex.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
         return ResponseEntity.status(ex.getHttpStatus()).body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnknownHostException(Exception ex) {
-        log.error("Error inesperado: {}", ex.getMessage());
+        log.error("Unexpected error: {}", ex.getMessage());
         ErrorResponse errorResponse = new ErrorResponse("Internal Server Error: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     // Manejo de errores de validación de formulario (MethodArgumentNotValidException)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        log.warn("Error de validación de campos en DTO: {}", exception.getMessage());
+        log.warn("Field validation error in DTO: {}", exception.getMessage());
 
         // Obtiene la clase del DTO asociado a la solicitud actual
         Class<?> dtoClass = Optional.ofNullable(exception.getBindingResult().getTarget())

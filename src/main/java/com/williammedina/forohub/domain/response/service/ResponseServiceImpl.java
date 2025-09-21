@@ -42,22 +42,22 @@ public class ResponseServiceImpl implements ResponseService {
     public ResponseDTO createResponse(@Valid CreateResponseDTO data) throws MessagingException {
         User user = getAuthenticatedUser();
         Topic topic = findTopicById(data.topicId());
-        log.info("Usuario con ID: {} creando respuesta para tópico ID: {}", user.getId(), topic.getId());
+        log.info("User ID: {} creating response for topic ID: {}", user.getId(), topic.getId());
 
         isTopicClosed(topic);
         validateResponseContent(data.content());// Validar el contenido de la respuesta con IA
 
         Response response = responseRepository.save(new Response(user, topic, data.content()));
-        log.info("Respuesta creada con ID: {} por usuario ID: {}", response.getId(), user.getId());
+        log.info("Response created with ID: {} by user ID: {}", response.getId(), user.getId());
 
         if(!user.getUsername().equals(topic.getUser().getUsername())) {
-            log.debug("Notificando al propietario del tópico ID: {} sobre nueva respuesta", topic.getId());
+            log.debug("Notifying topic owner ID: {} about new response", topic.getId());
             notificationService.notifyTopicReply(topic, user);
             emailService.notifyTopicReply(topic, user);
         }
 
         Hibernate.initialize(topic.getFollowedTopics());
-        log.debug("Notificando a seguidores del tópico ID: {}", topic.getId());
+        log.debug("Notifying followers of topic ID: {}", topic.getId());
         notificationService.notifyFollowersTopicReply(topic, user);
         emailService.notifyFollowersTopicReply(topic, user);
 
@@ -68,7 +68,7 @@ public class ResponseServiceImpl implements ResponseService {
     @Transactional(readOnly = true)
     public Page<ResponseDTO> getAllResponsesByUser(Pageable pageable) {
         User user = getAuthenticatedUser();
-        log.debug("Obteniendo respuestas del usuario con ID: {}", user.getId());
+        log.debug("Fetching responses for user ID: {}", user.getId());
         return responseRepository.findByUserSortedByCreationDate(user, pageable).map(ResponseDTO::fromEntity);
     }
 
@@ -77,7 +77,7 @@ public class ResponseServiceImpl implements ResponseService {
     public ResponseDTO updateResponse(@Valid UpdateResponseDTO data, Long responseId) throws MessagingException {
         Response response = findResponseById(responseId);
         User user = checkModificationPermission(response);
-        log.info("Usuario con ID: {} actualizando respuesta ID: {}", user.getId(), responseId);
+        log.info("User ID: {} updating response ID: {}", user.getId(), responseId);
 
         validateResponseContent(data.content()); // Validar el contenido de la respuesta actualizada con IA
 
@@ -85,7 +85,7 @@ public class ResponseServiceImpl implements ResponseService {
         Response updatedResponse = responseRepository.save(response);
 
         if(!user.getUsername().equals(response.getUser().getUsername())) {
-            log.debug("Notificando al propietario de la respuesta ID: {}", responseId);
+            log.debug("Notifying response owner ID: {}", responseId);
             notificationService.notifyResponseEdited(response);
             emailService.notifyResponseEdited(response);
         }
@@ -100,12 +100,12 @@ public class ResponseServiceImpl implements ResponseService {
         if (response.getSolution()) {
            throw new AppException("No puedes eliminar una respuesta marcada como solución", HttpStatus.CONFLICT);
         }
-        response.setIsDeleted(true);
-        log.info("Respuesta ID: {} marcada como eliminada por usuario ID: {}", responseId, user.getId());
-        //responseRepository.delete(response);
+
+        response.setIsDeleted(true); //responseRepository.delete(response);
+        log.info("Response ID: {} marked as deleted by user ID: {}", responseId, user.getId());
 
         if(!user.getUsername().equals(response.getUser().getUsername())) {
-            log.debug("Notificando eliminación al propietario de la respuesta ID: {}", responseId);
+            log.debug("Notifying response owner ID: {} about deletion", responseId);
             notificationService.notifyResponseDeleted(response);
             emailService.notifyResponseDeleted(response);
         }
@@ -114,7 +114,7 @@ public class ResponseServiceImpl implements ResponseService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDTO getResponseById(Long responseId) {
-        log.debug("Obteniendo respuesta con ID: {}", responseId);
+        log.debug("Fetching response ID: {}", responseId);
         Response response = findResponseById(responseId);
         return ResponseDTO.fromEntity(response);
     }
@@ -124,12 +124,12 @@ public class ResponseServiceImpl implements ResponseService {
     public ResponseDTO setCorrectResponse(Long responseId) throws MessagingException {
         User user = getAuthenticatedUser();
         if (!user.hasElevatedPermissions()) {
-            log.warn("Usuario con ID: {} intentó cambiar estado del topico sin permisos con la respuesta ID: {}", user.getId(), responseId);
+            log.warn("User ID: {} attempted to modify topic state without permission for response ID: {}", user.getId(), responseId);
             throw new AppException("No tienes permiso para modificar el estado de la respuesta", HttpStatus.FORBIDDEN);
         }
 
         Response response = findResponseById(responseId);
-        log.info("Usuario con ID: {} cambiar estado de respuesta ID: {}", user.getId(), responseId);
+        log.info("User ID: {} changing state of response ID: {}", user.getId(), responseId);
         List<Response> responses = responseRepository.findByTopicId(response.getTopic().getId());
 
         boolean isCurrentlySolution = response.getSolution();
@@ -138,16 +138,16 @@ public class ResponseServiceImpl implements ResponseService {
         if (!isCurrentlySolution) {
             response.setSolution(true);
             response.getTopic().setStatus(Topic.Status.CLOSED);
-            log.info("Respuesta ID: {} marcada como solución para tópico ID: {}", response.getId(), response.getTopic().getId());
+            log.info("Response ID: {} marked as solution for topic ID: {}", response.getId(), response.getTopic().getId());
         } else {
             response.getTopic().setStatus(Topic.Status.ACTIVE);
-            log.info("Respuesta ID: {} desmarcada como solución para tópico ID: {}", response.getId(), response.getTopic().getId());
+            log.info("Response ID: {} unmarked as solution for topic ID: {}", response.getId(), response.getTopic().getId());
         }
 
         responseRepository.saveAll(responses);
 
         if(response.getSolution()) {
-            log.debug("Enviando notificaciones por solución de respuesta");
+            log.debug("Sending notifications for response solution");
             notificationService.notifyTopicSolved(response.getTopic());
             notificationService.notifyResponseSolved(response, response.getTopic());
             notificationService.notifyFollowersTopicSolved(response.getTopic());
@@ -170,7 +170,7 @@ public class ResponseServiceImpl implements ResponseService {
     private Response findResponseById(Long responseId) {
         return responseRepository.findByIdAndIsDeletedFalse(responseId)
                 .orElseThrow(() ->  {
-                    log.error("Respuesta no encontrada con ID: {}", responseId);
+                    log.error("Response not found with ID: {}", responseId);
                     return new AppException("Respuesta no encontrada", HttpStatus.NOT_FOUND);
                 });
     }
@@ -179,7 +179,7 @@ public class ResponseServiceImpl implements ResponseService {
         User user = getAuthenticatedUser();
         // Si el usuario es el propietario O tiene permisos elevados, puede modificar la respuesta
         if (!response.getUser().equals(getAuthenticatedUser()) && !getAuthenticatedUser().hasElevatedPermissions()) {
-            log.warn("Usuario con ID: {} sin permisos intentó modificar respuesta ID: {}", user.getId(), response.getId());
+            log.warn("User ID: {} without permissions attempted to modify response ID: {}", user.getId(), response.getId());
             throw new AppException("No tienes permiso para realizar cambios en esta respuesta", HttpStatus.FORBIDDEN);
         }
 
@@ -188,7 +188,7 @@ public class ResponseServiceImpl implements ResponseService {
 
     private void isTopicClosed(Topic topic) {
         if(topic.isTopicClosed()) {
-            log.warn("Intento de respuesta en tópico cerrado - ID: {}", topic.getId());
+            log.warn("Attempt to respond to closed topic ID: {}", topic.getId());
             throw new AppException("No se puede crear una respuesta. El tópico está cerrado.", HttpStatus.FORBIDDEN);
         }
     }
@@ -196,7 +196,7 @@ public class ResponseServiceImpl implements ResponseService {
     private void validateResponseContent(String content) {
         String validationResponse = contentValidationService.validateContent(content);
         if (!"approved".equals(validationResponse)) {
-            log.warn("Contenido no aprobado en respuesta: {}", validationResponse);
+            log.warn("Response content not approved: {}", validationResponse);
             throw new AppException("La respuesta " + validationResponse, HttpStatus.FORBIDDEN);
         }
     }

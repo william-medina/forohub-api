@@ -33,6 +33,6 @@ public class UserTransactionServiceImpl implements UserTransactionService {
         user.generateConfirmationToken();
         userRepository.save(user);
         emailService.sendConfirmationEmail(user.getEmail(), user);
-        log.info("Se reenvió confirmación por cuenta no confirmada: usuario ID {}", user.getId());
+        log.info("Resent account confirmation email for unconfirmed account: user ID {}", user.getId());
     }
 }

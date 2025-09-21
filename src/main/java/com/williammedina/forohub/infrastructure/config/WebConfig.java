@@ -9,7 +9,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
-        // Este metodo agrega el prefijo /api a todas las rutas de los controladores
+        // This method adds the /api prefix to all controller routes
         configurer.addPathPrefix("api", c -> true);
     }
 }

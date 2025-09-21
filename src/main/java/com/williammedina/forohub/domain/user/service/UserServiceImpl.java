@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public JwtTokenResponse authenticateAndGenerateToken(LoginUserDTO data, HttpServletResponse response) throws MessagingException {
-        log.info("Intentando autenticar usuario: {}", data.username());
+        log.info("Attempting to authenticate user: {}", data.username());
 
         Authentication authenticationToken = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         Authentication authenticatedUser = authenticationManager.authenticate(authenticationToken);
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
         User user = (User) authenticatedUser.getPrincipal();
 
         if (!user.isAccountConfirmed()) {
-            log.warn("Usuario no confirmado intentó autenticarse: {} (ID: {})", data.username(), user.getId());
+            log.warn("Unconfirmed user attempted login: {} (ID: {})", data.username(), user.getId());
             userTransactionService.handleAccountDisabled(data.username());
             throw new AppException("La cuenta no está confirmada. Por favor, verifique su email.", HttpStatus.FORBIDDEN);
         }
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
         String refreshToken = tokenService.generateRefreshToken(user);
 
         response.addCookie(createCookie("refresh_token", refreshToken, "/api/auth/refresh-token", TokenService.REFRESH_TOKEN_EXPIRATION));
-        log.info("Usuario autenticado correctamente ID: {}", user.getId());
+        log.info("User successfully authenticated - ID: {}", user.getId());
 
         return new JwtTokenResponse(accessToken);
     }
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO createAccount(CreateUserDTO data) throws MessagingException {
-        log.info("Creando cuenta para: {}", data.username());
+        log.info("Creating account for: {}", data.username());
 
         validatePasswordsMatch(data.password(), data.password_confirmation());
         existsByUsername(data.username());
@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
         User userCreated = userRepository.save(user);
 
         emailService.sendConfirmationEmail(userCreated.getEmail(), userCreated);
-        log.info("Usuario creado con ID: {}", userCreated.getId());
+        log.info("User created successfully - ID: {}", userCreated.getId());
 
         return UserDTO.fromEntity(userCreated);
     }
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO confirmAccount(String token) {
-        log.info("Confirmando cuenta con token");
+        log.info("Confirming account with token");
 
         User user = findUserByToken(token);
         validateTokenExpiration(user);
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
         user.setAccountConfirmed(true);
         user.clearTokenData();
         userRepository.save(user);
-        log.info("Cuenta confirmada para usuario ID: {}", user.getId());
+        log.info("Account confirmed for user ID: {}", user.getId());
 
         return UserDTO.fromEntity(user);
     }
@@ -116,19 +116,19 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO requestConfirmationCode(EmailUserDTO data) throws MessagingException {
-        log.info("Solicitud de código de confirmación para email: {}", data.email());
+        log.info("Requesting confirmation code for email: {}", data.email());
 
         User user = findUserByEmail(data.email());
         checkIfAccountConfirmed(user);
 
         if (isRecentRequest(user.getUpdatedAt()) && user.getToken() != null) {
-            log.warn("Solicitud de confirmación demasiado pronto para usuario ID: {}", user.getId());
+            log.warn("Confirmation request too soon for user ID: {}", user.getId());
             throw new AppException("Debe esperar 2 minutos para solicitar otro código de confirmación.", HttpStatus.BAD_REQUEST);
         }
 
         user.generateConfirmationToken();
         emailService.sendConfirmationEmail(user.getEmail(), user);
-        log.info("Código de confirmación generado y enviado para usuario ID: {}", user.getId());
+        log.info("Confirmation code generated and sent for user ID: {}", user.getId());
 
         return UserDTO.fromEntity(user);
     }
@@ -136,19 +136,19 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO forgotPassword(EmailUserDTO data) throws MessagingException {
-        log.info("Solicitud de recuperación de password para: {}", data.email());
+        log.info("Password reset requested for: {}", data.email());
 
         User user = findUserByEmail(data.email());
         checkIfAccountNotConfirmed(user);
 
         if (isRecentRequest(user.getUpdatedAt()) && user.getToken() != null) {
-            log.warn("Solicitud de reset demasiado pronto para usuario ID: {}", user.getId());
+            log.warn("Password reset request too soon for user ID: {}", user.getId());
             throw new AppException("Debe esperar 2 minutos para solicitar otro código de restablecimiento de password.", HttpStatus.BAD_REQUEST);
         }
 
         user.generateConfirmationToken();
         emailService.sendPasswordResetEmail(user.getEmail(), user);
-        log.info("Código de restablecimiento de contraseña generado y enviado para usuario ID: {}", user.getId());
+        log.info("Password reset code generated and sent for user ID: {}", user.getId());
 
         return UserDTO.fromEntity(user);
     }
@@ -156,7 +156,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO updatePasswordWithToken(String token, UpdatePasswordWithTokenDTO data) {
-        log.info("Actualizando password usando token");
+        log.info("Updating password using token");
 
         validatePasswordsMatch(data.password(), data.password_confirmation());
 
@@ -167,7 +167,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(data.password()));
         user.clearTokenData();
         userRepository.save(user);
-        log.info("Password actualizado para usuario ID: {}", user.getId());
+        log.info("Password updated for user ID: {}", user.getId());
 
         return UserDTO.fromEntity(user);
     }
@@ -179,13 +179,13 @@ public class UserServiceImpl implements UserService {
 
         User user = getAuthenticatedUser();
         if (!passwordEncoder.matches(data.current_password(), user.getPassword())) {
-            log.warn("Password actual incorrecto para usuario ID: {}", user.getId());
+            log.warn("Incorrect current password for user ID: {}", user.getId());
             throw new AppException("El password actual es incorrecto.", HttpStatus.UNAUTHORIZED);
         }
 
         user.setPassword(passwordEncoder.encode(data.password()));
         userRepository.save(user);
-        log.info("Password cambiado exitosamente para usuario ID: {}", user.getId());
+        log.info("Password successfully changed for user ID: {}", user.getId());
 
         return UserDTO.fromEntity(user);
     }
@@ -196,7 +196,7 @@ public class UserServiceImpl implements UserService {
         User user = getAuthenticatedUser();
 
         if (user.getUsername().equals(data.username())) {
-            log.warn("Intento de cambiar a mismo username - usuario ID: {}", user.getId());
+            log.warn("Attempt to update to same username - user ID: {}", user.getId());
             throw new AppException("Debes ingresa un nuevo nombre.", HttpStatus.BAD_REQUEST);
         }
 
@@ -205,7 +205,7 @@ public class UserServiceImpl implements UserService {
         existsByUsername(data.username());
         user.setUsername(data.username());
         userRepository.save(user);
-        log.info("Username actualizado a '{}' para usuario ID: {}", data.username(), user.getId());
+        log.info("Username updated to '{}' for user ID: {}", data.username(), user.getId());
 
         return new UserDTO(user.getId(), user.getUsername(), user.getProfile().getName());
     }
@@ -214,7 +214,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserStatsDTO getUserStats() {
         User user = getAuthenticatedUser();
-        log.debug("Obteniendo estadísticas para usuario ID: {}", user.getId());
+        log.debug("Fetching stats for user ID: {}", user.getId());
 
         long topicsCount = topicRepository.countByUserId(user.getId());
         long responsesCount = responseRepository.countByUserId(user.getId());
@@ -226,18 +226,18 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserDTO getCurrentUser() {
         User user = getAuthenticatedUser();
-        log.debug("Consultando datos del usuario ID: {}", user.getId());
+        log.debug("Fetching current user info - ID: {}", user.getId());
         return UserDTO.fromEntity(user);
     }
 
     @Override
     @Transactional
     public JwtTokenResponse refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
-        log.info("Solicitando refresh token");
+        log.info("Requesting refresh token");
 
         String refreshToken = securityFilter.getTokenFromCookies(request, "refresh_token")
                 .orElseThrow(() -> {
-                    log.warn("Token de refresh no presente en cookies");
+                    log.warn("Refresh token not present in cookies");
                     return new AppException("Unauthorized", HttpStatus.UNAUTHORIZED);
                 });
 
@@ -245,12 +245,12 @@ public class UserServiceImpl implements UserService {
             String userId = tokenService.getSubjectFromToken(refreshToken);
             String newAccessToken = tokenService.generateAccessToken(findUserById(Long.valueOf(userId)));
 
-            log.info("Nuevo access token generado para usuario ID: {}", userId);
+            log.info("New access token generated for user ID: {}", userId);
 
             return new JwtTokenResponse(newAccessToken);
 
         } catch (TokenExpiredException e) {
-            log.warn("Token de refresh expirado");
+            log.warn("Refresh token expired");
             throw new AppException("Unauthorized", HttpStatus.UNAUTHORIZED);
         }
     }
@@ -259,7 +259,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public MessageResponse logout(HttpServletResponse response) {
         User user = getAuthenticatedUser();
-        log.info("Cierre de sesión para usuario ID: {}", user.getId());
+        log.info("Logging out user ID: {}", user.getId());
 
         response.addCookie(deleteCookie("refresh_token", "/api/auth/refresh-token"));
         return new MessageResponse("Sesión cerrada exitosamente.");
@@ -272,7 +272,7 @@ public class UserServiceImpl implements UserService {
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> {
-                    log.error("Usuario no encontrado con ID: {}", userId);
+                    log.error("User not found with ID: {}", userId);
                     return new AppException("Usuario no encontrado.", HttpStatus.NOT_FOUND);
                 });
     }
@@ -280,7 +280,7 @@ public class UserServiceImpl implements UserService {
     private User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    log.error("Email no registrado: {}", email);
+                    log.error("Email not registered: {}", email);
                     return new AppException("El email no está registrado.", HttpStatus.NOT_FOUND);
                 });
     }
@@ -288,28 +288,28 @@ public class UserServiceImpl implements UserService {
     private User findUserByToken(String token) {
         return userRepository.findByToken(token)
                 .orElseThrow(() -> {
-                    log.error("Token inválido o expirado");
+                    log.error("Invalid or expired token");
                     return new AppException("Token inválido o expirado.", HttpStatus.BAD_REQUEST);
                 });
     }
 
     private void validateTokenExpiration(User user) {
         if (user.getTokenExpiration() == null || user.getTokenExpiration().isBefore(LocalDateTime.now())) {
-            log.warn("Token expirado para usuario ID: {}", user.getId());
+            log.warn("Token expired for user ID: {}", user.getId());
             throw new AppException("El token de confirmación ha expirado.", HttpStatus.GONE);
         }
     }
 
     private void checkIfAccountConfirmed(User user) {
         if (user.isAccountConfirmed()) {
-            log.warn("Cuenta ya confirmada para usuario ID: {}", user.getId());
+            log.warn("Account already confirmed for user ID: {}", user.getId());
             throw new AppException("La cuenta ya está confirmada.", HttpStatus.CONFLICT);
         }
     }
 
     private void checkIfAccountNotConfirmed(User user) {
         if (!user.isAccountConfirmed()) {
-            log.warn("Cuenta aún no confirmada para usuario ID: {}", user.getId());
+            log.warn("Account not yet confirmed for user ID: {}", user.getId());
             throw new AppException("La cuenta no está confirmada.", HttpStatus.CONFLICT);
         }
     }
@@ -320,21 +320,21 @@ public class UserServiceImpl implements UserService {
 
     private void validatePasswordsMatch(String password, String passwordConfirmation) {
         if (!password.equals(passwordConfirmation)) {
-            log.warn("Passwords no coinciden");
+            log.warn("Passwords do not match");
             throw new AppException("Los passwords no coinciden.", HttpStatus.BAD_REQUEST);
         }
     }
 
     private void existsByUsername(String username) {
         if (userRepository.existsByUsername(username)) {
-            log.warn("Username ya registrado: {}", username);
+            log.warn("Username already registered: {}", username);
             throw new AppException("El nombre de usuario ya está registrado.", HttpStatus.CONFLICT);
         }
     }
 
     private void existsByEmail(String email) {
         if (userRepository.existsByEmail(email.trim().toLowerCase())) {
-            log.warn("Email ya registrado: {}", email);
+            log.warn("Email already registered: {}", email);
             throw new AppException("El email ya está registrado.", HttpStatus.CONFLICT);
         }
     }
@@ -342,7 +342,7 @@ public class UserServiceImpl implements UserService {
     private void validateUsernameContent(String username) {
         String validationResponse = contentValidationService.validateUsername(username);
         if (!"approved".equals(validationResponse)) {
-            log.warn("Username no aprobado: {} - Resultado: {}", username, validationResponse);
+            log.warn("Username not approved: {} - Result: {}", username, validationResponse);
             throw new AppException("El nombre de usuario " + validationResponse, HttpStatus.FORBIDDEN);
         }
     }

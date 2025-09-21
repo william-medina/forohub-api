@@ -29,7 +29,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional(readOnly = true)
     public List<NotificationDTO> getAllNotificationsByUser() {
         User user = getAuthenticatedUser();
-        log.debug("Consultando todas las notificaciones del usuario con ID: {}", user.getId());
+        log.debug("Fetching all notifications for user ID: {}", user.getId());
         return notificationRepository.findAllByUserOrderByCreatedAtDesc(user).stream().map(NotificationDTO::fromEntity).toList();
     }
 
@@ -40,7 +40,7 @@ public class NotificationServiceImpl implements NotificationService {
         checkModificationPermission(notification);
 
         notificationRepository.delete(notification);
-        log.info("Notificación con ID: {} eliminada por el usuario con ID: {}", notifyId, getAuthenticatedUser().getId());
+        log.info("Notification ID: {} deleted by user ID: {}", notifyId, getAuthenticatedUser().getId());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class NotificationServiceImpl implements NotificationService {
         checkModificationPermission(notification);
 
         notification.setIsRead(true);
-        log.debug("Notificación con ID: {} marcada como leída por el usuario con ID: {}", notifyId, getAuthenticatedUser().getId());
+        log.debug("Notification ID: {} marked as read by user ID: {}", notifyId, getAuthenticatedUser().getId());
 
         return NotificationDTO.fromEntity(notification);
     }
@@ -64,7 +64,7 @@ public class NotificationServiceImpl implements NotificationService {
                 + topic.getTitle() + "' del curso: " + topic.getCourse().getName();
 
         createNotification(topic.getUser(), topic, null, title, message, Notification.Type.TOPIC, Notification.Subtype.REPLY);
-        log.debug("Notificación de respuesta creada para el tópico ID: {} al usuario con ID: {}", topic.getId(), topic.getUser().getId());
+        log.debug("Reply notification created for topic ID: {} to user ID: {}", topic.getId(), topic.getUser().getId());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class NotificationServiceImpl implements NotificationService {
         String message = "Tu tópico '" + topic.getTitle() + "' del curso: " + topic.getCourse().getName() + " ha sido marcado como solucionado.";
 
         createNotification(topic.getUser(), topic, null, title, message, Notification.Type.TOPIC, Notification.Subtype.SOLVED);
-        log.debug("Notificación de tópico solucionado creada para el tópico ID: {} al usuario con ID: {}", topic.getId(), topic.getUser().getId());
+        log.debug("Topic solved notification created for topic ID: {} to user ID: {}", topic.getId(), topic.getUser().getId());
     }
 
     @Override
@@ -84,7 +84,7 @@ public class NotificationServiceImpl implements NotificationService {
         String message = "Se ha realizado cambios en tu tópico titulado '" + topic.getTitle() + "' del curso: " + topic.getCourse().getName() + ". Puedes revisar los detalles haciendo clic en el siguiente botón.";
 
         createNotification(topic.getUser(), topic, null, title, message, Notification.Type.TOPIC, Notification.Subtype.EDITED);
-        log.debug("Notificación de edición creada para el tópico ID: {} al usuario con ID: {}", topic.getId(), topic.getUser().getId());
+        log.debug("Topic edited notification created for topic ID: {} to user ID: {}", topic.getId(), topic.getUser().getId());
     }
 
     @Override
@@ -94,7 +94,7 @@ public class NotificationServiceImpl implements NotificationService {
         String message = "Lamentamos informarte que tu tópico titulado '" + topic.getTitle() + "' del curso: " + topic.getCourse().getName() + " ha sido eliminado. Si tienes alguna pregunta, por favor contacta a nuestro equipo de soporte.";
 
         createNotification(topic.getUser(), null, null, title, message, Notification.Type.TOPIC, Notification.Subtype.DELETED);
-        log.debug("Notificación de eliminación creada para el usuario con ID: {} por el tópico eliminado ID: {}", topic.getUser().getId(), topic.getId());
+        log.debug("Topic deleted notification created for user ID: {} for deleted topic ID: {}", topic.getUser().getId(), topic.getId());
     }
 
     @Override
@@ -104,7 +104,7 @@ public class NotificationServiceImpl implements NotificationService {
         String message = "Tu respuesta en el tópico '" + response.getTopic().getTitle() + "' del curso: " + topic.getCourse().getName() + " ha sido marcada como solución.";
 
         createNotification(response.getUser(), topic, response, title, message, Notification.Type.RESPONSE, Notification.Subtype.SOLVED);
-        log.debug("Notificación de respuesta marcada como solución creada para usuario ID: {}", response.getUser().getId());
+        log.debug("Response solved notification created for user ID: {}", response.getUser().getId());
     }
 
     @Override
@@ -114,7 +114,7 @@ public class NotificationServiceImpl implements NotificationService {
         String message = "Se han realizado cambios en tu respuesta del tópico '" + response.getTopic().getTitle() + "' del curso: " + response.getTopic().getCourse().getName() + ". Puedes revisar los detalles haciendo clic en el siguiente botón.";
 
         createNotification(response.getUser(), response.getTopic(), response, title, message, Notification.Type.RESPONSE, Notification.Subtype.EDITED);
-        log.debug("Notificación de edición de respuesta creada para usuario ID: {}", response.getUser().getId());
+        log.debug("Response edited notification created for user ID: {}", response.getUser().getId());
     }
 
     @Override
@@ -124,7 +124,7 @@ public class NotificationServiceImpl implements NotificationService {
         String message = "Lamentamos informarte que tu respuesta del tópico '" + response.getTopic().getTitle() + "' del curso: " + response.getTopic().getCourse().getName() + " ha sido eliminada. Si tienes alguna pregunta, por favor contacta a nuestro equipo de soporte.";
 
         createNotification(response.getUser(), response.getTopic(), null, title, message, Notification.Type.RESPONSE, Notification.Subtype.DELETED);
-        log.debug("Notificación de eliminación de respuesta creada para usuario ID: {}", response.getUser().getId());
+        log.debug("Response deleted notification created for user ID: {}", response.getUser().getId());
     }
 
     @Override
@@ -163,7 +163,7 @@ public class NotificationServiceImpl implements NotificationService {
     private void checkModificationPermission(Notification notification) {
         User user = getAuthenticatedUser();
         if (!notification.getUser().equals(getAuthenticatedUser())) {
-            log.warn("Usuario con ID: {} intentó modificar notificación que no le pertenece (ID: {})", user.getId(), notification.getId());
+            log.warn("User ID: {} attempted to modify a notification they do not own (ID: {})", user.getId(), notification.getId());
             throw new AppException("No tienes permiso para eliminar esta notificación", HttpStatus.FORBIDDEN);
         }
     }
@@ -171,7 +171,7 @@ public class NotificationServiceImpl implements NotificationService {
     private Notification findNotificationById(Long notifyId) {
         return notificationRepository.findById(notifyId)
                 .orElseThrow(() -> {
-                    log.warn("Notificación no encontrada con ID: {}", notifyId);
+                    log.warn("Notification not found with ID: {}", notifyId);
                     return new AppException("Notificación no encontrada", HttpStatus.NOT_FOUND);
                 });
     }

@@ -12,13 +12,13 @@ public class DisabledContentValidationService implements ContentValidationServic
 
     @Override
     public String validateContent(String content) {
-        log.info("[DISABLED AI] Validación de contenido omitida. Retornando 'approved'. Contenido: {}", content);
+        log.info("[DISABLED AI] Content validation skipped. Returning 'approved'. Content: {}", content);
         return "approved";
     }
 
     @Override
     public String validateUsername(String username) {
-        log.info("[DISABLED AI] Validación de username omitida. Retornando 'approved'. Username: {}", username);
+        log.info("[DISABLED AI] Username validation skipped. Returning 'approved'. Username: {}", username);
         return "approved";
     }
 

@@ -69,7 +69,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            log.warn("Authorization header ausente o malformado en la solicitud: {} {}", requestMethod, requestUri);
+            log.warn("Missing or malformed Authorization header in request: {} {}", requestMethod, requestUri);
             sendUnauthorizedResponse(response, "Token inválido o ausente.");
             return;
         }
@@ -79,7 +79,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         try {
             authenticateUser(token);
         } catch (JWTVerificationException e) {
-            log.warn("Error de verificación de token: {}", e.getMessage());
+            log.warn("Token verification error: {}", e.getMessage());
             sendUnauthorizedResponse(response, "Token inválido o expirado.");
             return;
         }
@@ -90,13 +90,13 @@ public class SecurityFilter extends OncePerRequestFilter {
     private void authenticateUser(String token) {
         String userId = tokenService.getSubjectFromToken(token);
         if (userId == null) {
-            log.error("El token no contiene un ID de usuario válido.");
+            log.error("Token does not contain a valid user ID.");
             throw new JWTVerificationException("Token inválido.");
         }
 
         var user = userRepository.findById(Long.valueOf(userId))
                 .orElseThrow(() -> {
-                    log.error("Usuario con ID {} no encontrado en la base de datos.", userId);
+                    log.error("User with ID {} not found in the database.", userId);
                     return new UsernameNotFoundException("Usuario no encontrado");
                 });
 
@@ -105,7 +105,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     private void sendUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {
-        log.warn("Respuesta de autenticación fallida: {}", message);
+        log.warn("Authentication failure response: {}", message);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json; charset=UTF-8");
         response.getWriter().write(String.format("{\"error\": \"%s\"}", message));

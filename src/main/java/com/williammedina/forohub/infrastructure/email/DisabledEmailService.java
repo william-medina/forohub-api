@@ -16,56 +16,56 @@ public class DisabledEmailService implements EmailService {
 
     @Override
     public void sendConfirmationEmail(String to, User user) throws MessagingException {
-        log.info("[DISABLED EMAIL] Confirmación de cuenta para usuario: {} ({})", user.getUsername(), to);
+        log.info("[DISABLED EMAIL] Account confirmation for user: {} ({})", user.getUsername(), to);
     }
 
     @Override
     public void sendPasswordResetEmail(String to, User user) throws MessagingException {
-        log.info("[DISABLED EMAIL] Restablecimiento de password solicitado por usuario: {} ({})", user.getUsername(), to);
+        log.info("[DISABLED EMAIL] Password reset requested by user: {} ({})", user.getUsername(), to);
     }
 
     @Override
     public void notifyTopicReply(Topic topic, User user) throws MessagingException {
-        log.info("[DISABLED EMAIL] Notificación de nueva respuesta en tópico '{}' por usuario: {}", topic.getTitle(), user.getUsername());
+        log.info("[DISABLED EMAIL] Notification of new reply in topic '{}' by user: {}", topic.getTitle(), user.getUsername());
     }
 
     @Override
     public void notifyTopicSolved(Topic topic) throws MessagingException {
-        log.info("[DISABLED EMAIL] Notificación de tópico solucionado: {}", topic.getTitle());
+        log.info("[DISABLED EMAIL] Notification of topic marked as solved: {}", topic.getTitle());
     }
 
     @Override
     public void notifyTopicEdited(Topic topic) throws MessagingException {
-        log.info("[DISABLED EMAIL] Notificación de tópico editado: {}", topic.getTitle());
+        log.info("[DISABLED EMAIL] Notification of topic edited: {}", topic.getTitle());
     }
 
     @Override
     public void notifyTopicDeleted(Topic topic) throws MessagingException {
-        log.info("[DISABLED EMAIL] Notificación de tópico eliminado: {}", topic.getTitle());
+        log.info("[DISABLED EMAIL] Notification of topic deleted: {}", topic.getTitle());
     }
 
     @Override
     public void notifyResponseSolved(Response response, Topic topic) throws MessagingException {
-        log.info("[DISABLED EMAIL] Notificación de respuesta marcada como solución en tópico '{}'", topic.getTitle());
+        log.info("[DISABLED EMAIL] Notification of response marked as solution in topic '{}'", topic.getTitle());
     }
 
     @Override
     public void notifyResponseEdited(Response response) throws MessagingException {
-        log.info("[DISABLED EMAIL] Notificación de respuesta editada en tópico '{}'", response.getTopic().getTitle());
+        log.info("[DISABLED EMAIL] Notification of response edited in topic '{}'", response.getTopic().getTitle());
     }
 
     @Override
     public void notifyResponseDeleted(Response response) throws MessagingException {
-        log.info("[DISABLED EMAIL] Notificación de respuesta eliminada en tópico '{}'", response.getTopic().getTitle());
+        log.info("[DISABLED EMAIL] Notification of response deleted in topic '{}'", response.getTopic().getTitle());
     }
 
     @Override
     public void notifyFollowersTopicReply(Topic topic, User user) throws MessagingException {
-        log.info("[DISABLED EMAIL] Notificación a seguidores de nueva respuesta en tópico '{}' por usuario {}", topic.getTitle(), user.getUsername());
+        log.info("[DISABLED EMAIL] Notification to followers of new reply in topic '{}' by user {}", topic.getTitle(), user.getUsername());
     }
 
     @Override
     public void notifyFollowersTopicSolved(Topic topic) throws MessagingException {
-        log.info("[DISABLED EMAIL] Notificación a seguidores de tópico solucionado '{}'", topic.getTitle());
+        log.info("[DISABLED EMAIL] Notification to followers of topic marked as solved '{}'", topic.getTitle());
     }
 }

@@ -31,7 +31,7 @@ public class TopicFollowServiceImpl implements TopicFollowService {
         Topic topic = findTopicById(topicId);
 
         if (user.getUsername().equals(topic.getUser().getUsername())) {
-            log.warn("El usuario ID: {} intentó seguir su propio tópico con ID {}", user.getId(), topicId);
+            log.warn("User ID: {} attempted to follow their own topic with ID: {}", user.getId(), topicId);
             throw new AppException("No puedes seguir un tópico que has creado." , HttpStatus.CONFLICT);
         }
 
@@ -39,11 +39,11 @@ public class TopicFollowServiceImpl implements TopicFollowService {
 
         if (isFollowing) {
             topicFollowRepository.deleteByUserIdAndTopicId(user.getId(), topicId);
-            log.info("Usuario ID: {} dejó de seguir el tópico con ID {}", user.getId(), topicId);
+            log.info("User ID: {} unfollowed topic ID: {}", user.getId(), topicId);
             return new TopicFollowDetailsDTO(TopicDTO.fromEntity(topic), null);
         } else {
             TopicFollow newFollow = topicFollowRepository.save(new TopicFollow(user, topic));
-            log.info("Usuario ID: {} comenzó a seguir el tópico con ID {}", user.getId(), topicId);
+            log.info("User ID: {} followed topic ID: {}", user.getId(), topicId);
             return new TopicFollowDetailsDTO(TopicDTO.fromEntity(newFollow.getTopic()), newFollow.getFollowedAt());
         }
 
@@ -53,7 +53,7 @@ public class TopicFollowServiceImpl implements TopicFollowService {
     @Transactional(readOnly = true)
     public Page<TopicFollowDetailsDTO> getFollowedTopicsByUser(Pageable pageable, String keyword) {
         User user = getAuthenticatedUser();
-        log.debug("Consultando tópicos seguidos por el usuario ID: {}", user.getId());
+        log.debug("Fetching followed topics for user ID: {}", user.getId());
 
         if (keyword != null ) {
             return topicFollowRepository.findByUserFilters(user, keyword, pageable).map(this::toTopicFollowDetailsDTO);

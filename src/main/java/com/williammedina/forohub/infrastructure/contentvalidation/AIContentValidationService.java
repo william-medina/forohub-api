@@ -20,7 +20,7 @@ public class AIContentValidationService implements ContentValidationService {
     }
 
     public String validateContent(String content) {
-        log.debug("Validando contenido con IA: {}", content);
+        log.debug("Validating content with AI: {}", content);
 
         String systemMessage = """
                 Eres una IA de moderación de contenido en un foro educativo que trata sobre cursos. Tu tarea es evaluar el texto proporcionado y determinar si contiene contenido inapropiado o irrelevante para los temas de los cursos. Debes identificar cualquier forma de contenido que pueda ser considerado:
@@ -62,18 +62,18 @@ public class AIContentValidationService implements ContentValidationService {
                     .call()
                     .content();
 
-            log.info("Resultado de validación de contenido: {}", aiResponse.trim());
+            log.info("Content validation result: {}", aiResponse.trim());
             return aiResponse.trim();
 
         } catch (Exception e) {
-            log.error("Error al validar el contenido con la IA", e);
+            log.error("Error validating content with AI", e);
             throw new AppException("Error al validar el contenido con la IA", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
 
     public String validateUsername(String username) {
-        log.debug("Validando nombre de usuario con IA: {}", username);
+        log.debug("Validating username with AI: {}", username);
 
         String systemMessage = """
             Eres una IA de moderación de contenido en una plataforma educativa. Tu tarea es evaluar el siguiente nombre de usuario y determinar si es adecuado para un foro o comunidad en línea relacionada con cursos y educación. Debes verificar si el nombre contiene algún tipo de contenido inapropiado o no deseado.
@@ -116,11 +116,11 @@ public class AIContentValidationService implements ContentValidationService {
                     .call()
                     .content();
 
-            log.info("Resultado de validación de username '{}': {}", username, aiResponse.trim());
+            log.info("Username validation result for '{}': {}", username, aiResponse.trim());
             return aiResponse.trim();
 
         } catch (Exception e) {
-            log.error("Error al validar el nombre de usuario con la IA", e);
+            log.error("Error validating username with AI", e);
             throw new AppException("Error al validar el nombre de usuario con la IA", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }

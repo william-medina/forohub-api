@@ -27,14 +27,14 @@ public class CommonHelperService {
             return (User) authentication.getPrincipal();
         }
 
-        log.error("No se pudo obtener un usuario autenticado válido");
+        log.error("Failed to retrieve a valid authenticated user");
         throw new IllegalStateException("El usuario autenticado no es válido.");
     }
 
     public Topic findTopicById(Long topicId) {
         return topicRepository.findByIdAndNotDeleted(topicId)
                 .orElseThrow(() -> {
-                    log.warn("Tópico no encontrado con ID: {}", topicId);
+                    log.warn("Topic not found with ID: {}", topicId);
                     return new AppException("Tópico no encontrado", HttpStatus.NOT_FOUND);
                 });
     }
@@ -42,7 +42,7 @@ public class CommonHelperService {
     public User findUserByEmailOrUsername(String identifier) {
         return userRepository.findByEmailOrUsername(identifier, identifier)
                 .orElseThrow(() -> {
-                    log.error("Usuario no registrado: {}", identifier);
+                    log.error("User not registered: {}", identifier);
                     return new AppException("Usuario no está registrado.", HttpStatus.NOT_FOUND);
                 });
     }

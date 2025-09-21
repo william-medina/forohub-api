@@ -20,8 +20,8 @@ public class TokenService {
     private String jwtSecret;
 
     private static final String ISSUER = "ForoHub";
-    public static final long ACCESS_TOKEN_EXPIRATION = ( 15 ) * 60; // 15 minutos en segundos
-    public static final long REFRESH_TOKEN_EXPIRATION = ( 30 ) * 24 * 60 * 60; // 30 días en segundos
+    public static final long ACCESS_TOKEN_EXPIRATION = ( 15 ) * 60; // 15 minutes in seconds
+    public static final long REFRESH_TOKEN_EXPIRATION = ( 30 ) * 24 * 60 * 60; // 30 days in seconds
 
     private Algorithm getAlgorithm() {
         return Algorithm.HMAC256(jwtSecret);
@@ -44,14 +44,14 @@ public class TokenService {
                     .withExpiresAt(new Date(System.currentTimeMillis() + expirationMillis))
                     .sign(getAlgorithm());
         } catch (JWTCreationException e) {
-            log.error("Error al generar el token para usuario {}: {}", user.getUsername(), e.getMessage());
+            log.error("Error generating token for user {}: {}", user.getUsername(), e.getMessage());
             throw new RuntimeException("Error al generar el token", e);
         }
     }
 
     public String getSubjectFromToken(String token) {
         if (token == null || token.isBlank()) {
-            log.warn("Intento de verificar un token nulo o vacío.");
+            log.warn("Attempt to verify null or empty token.");
             throw new IllegalArgumentException("El token no puede ser nulo");
         }
 
@@ -61,7 +61,7 @@ public class TokenService {
                 .verify(token);
         String subject = decodedJWT.getSubject();
         if (subject == null || subject.isBlank()) {
-            log.warn("Token inválido: no se encontró el campo 'subject' después de la verificación.");
+            log.warn("Invalid token: 'subject' field not found after verification.");
             throw new JWTVerificationException("El campo 'sujeto' no está presente en el token");
         }
         return subject;
