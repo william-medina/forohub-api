@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService {
     private final TopicFollowRepository topicFollowRepository;
     private final ContentValidationService contentValidationService;
     private final SecurityFilter securityFilter;
+    private final UserTransactionService userTransactionService;
 
     @Override
     @Transactional
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
         if (!user.isAccountConfirmed()) {
             log.warn("Usuario no confirmado intentó autenticarse: {} (ID: {})", data.username(), user.getId());
-            handleAccountDisabled(data.username());
+            userTransactionService.handleAccountDisabled(data.username());
             throw new AppException("La cuenta no está confirmada. Por favor, verifique su email.", HttpStatus.FORBIDDEN);
         }
 
@@ -268,14 +269,6 @@ public class UserServiceImpl implements UserService {
         return commonHelperService.getAuthenticatedUser();
     }
 
-    private void handleAccountDisabled(String username) throws MessagingException {
-        User user = findUserByUsername(username);
-        user.generateConfirmationToken();
-        userRepository.save(user);
-        emailService.sendConfirmationEmail(user.getEmail(), user);
-        log.info("Se reenvió confirmación por cuenta no confirmada: usuario ID {}", user.getId());
-    }
-
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> {
@@ -289,14 +282,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> {
                     log.error("Email no registrado: {}", email);
                     return new AppException("El email no está registrado.", HttpStatus.NOT_FOUND);
-                });
-    }
-
-    private User findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> {
-                    log.error("Nombre de usuario no registrado: {}", username);
-                    return new AppException("El nombre de usuario no está registrado.", HttpStatus.NOT_FOUND);
                 });
     }
 

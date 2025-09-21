@@ -3,6 +3,7 @@ package com.williammedina.forohub.domain.common;
 import com.williammedina.forohub.domain.topic.entity.Topic;
 import com.williammedina.forohub.domain.topic.repository.TopicRepository;
 import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.repository.UserRepository;
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class CommonHelperService {
 
     private final TopicRepository topicRepository;
+    private final UserRepository userRepository;
 
     public User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -34,6 +36,14 @@ public class CommonHelperService {
                 .orElseThrow(() -> {
                     log.warn("Tópico no encontrado con ID: {}", topicId);
                     return new AppException("Tópico no encontrado", HttpStatus.NOT_FOUND);
+                });
+    }
+
+    public User findUserByEmailOrUsername(String identifier) {
+        return userRepository.findByEmailOrUsername(identifier, identifier)
+                .orElseThrow(() -> {
+                    log.error("Usuario no registrado: {}", identifier);
+                    return new AppException("Usuario no está registrado.", HttpStatus.NOT_FOUND);
                 });
     }
 }
