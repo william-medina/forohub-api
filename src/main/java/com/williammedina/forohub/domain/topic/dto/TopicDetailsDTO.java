@@ -1,7 +1,7 @@
 package com.williammedina.forohub.domain.topic.dto;
 
 import com.williammedina.forohub.domain.course.dto.CourseDTO;
-import com.williammedina.forohub.domain.response.dto.ResponseDTO;
+import com.williammedina.forohub.domain.reply.dto.ReplyDTO;
 import com.williammedina.forohub.domain.topic.entity.Topic;
 import com.williammedina.forohub.domain.topicfollow.dto.TopicFollowerDTO;
 import com.williammedina.forohub.domain.user.dto.UserDTO;
@@ -29,7 +29,7 @@ public record TopicDetailsDTO(
         UserDTO author,
 
         @Schema(description = "Lista de respuestas asociadas al tópico")
-        List<ResponseDTO> responses,
+        List<ReplyDTO> replies,
 
         @Schema(description = "Estado actual del tópico", example = "ACTIVE")
         Topic.Status status,
@@ -43,7 +43,7 @@ public record TopicDetailsDTO(
         @Schema(description = "Lista de seguidores del tópico")
         List<TopicFollowerDTO> followers
 ) {
-        public static TopicDetailsDTO fromEntity(Topic topic, List<ResponseDTO> responses) {
+        public static TopicDetailsDTO fromEntity(Topic topic, List<ReplyDTO> replies) {
 
                 UserDTO author = new UserDTO(
                         topic.getUser().getId(),
@@ -75,7 +75,7 @@ public record TopicDetailsDTO(
                         topic.getDescription(),
                         course,
                         author,
-                        responses,
+                        replies,
                         topic.getStatus(),
                         topic.getCreatedAt(),
                         topic.getUpdatedAt(),

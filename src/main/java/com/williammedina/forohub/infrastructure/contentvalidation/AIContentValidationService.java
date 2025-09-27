@@ -34,8 +34,6 @@ public class AIContentValidationService implements ContentValidationService {
                 - Amenazas
                 - Contenido explícito
                 - Repetitivo
-                - Sin sentido (comentarios que no están relacionados con el tema del curso o que no aportan valor)
-                - Cualquier otro tipo de contenido que no sea apropiado para un foro de cursos.
             
                 Si el contenido es inapropiado, responde con una breve descripción de los problemas encontrados, siempre iniciando con la palabra "contiene" en minúscula. No utilices caracteres especiales ni mayúsculas al principio. La respuesta debe finalizar con un punto.
             

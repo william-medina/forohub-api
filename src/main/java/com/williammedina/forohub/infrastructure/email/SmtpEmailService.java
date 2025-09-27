@@ -1,7 +1,7 @@
 package com.williammedina.forohub.infrastructure.email;
 
 import com.williammedina.forohub.domain.email.EmailService;
-import com.williammedina.forohub.domain.response.entity.Response;
+import com.williammedina.forohub.domain.reply.entity.Reply;
 import com.williammedina.forohub.domain.topic.entity.Topic;
 import com.williammedina.forohub.domain.topicfollow.entity.TopicFollow;
 import com.williammedina.forohub.domain.user.entity.User;
@@ -116,35 +116,35 @@ public class SmtpEmailService implements EmailService {
 
     @Override
     @Async
-    public void notifyResponseSolved(Response response, Topic topic) throws MessagingException {
+    public void notifyReplySolved(Reply reply, Topic topic) throws MessagingException {
         String subject = "Tu respuesta ha sido marcada como solución";
-        String actionMessage = "Tu respuesta en el tópico <b style='color: #03dac5;'>" + response.getTopic().getTitle() + "</b> del curso: <b>" + topic.getCourse().getName() + "</b> ha sido marcada como solución.";
+        String actionMessage = "Tu respuesta en el tópico <b style='color: #03dac5;'>" + reply.getTopic().getTitle() + "</b> del curso: <b>" + topic.getCourse().getName() + "</b> ha sido marcada como solución.";
 
         String url = frontendUrl + "/topic/" + topic.getId();
         String footer = "Gracias por ser parte de ForoHub.";
 
-        sendEmail(response.getUser().getEmail(), subject, subject, actionMessage, "Ver Respuesta", url, footer);
+        sendEmail(reply.getUser().getEmail(), subject, subject, actionMessage, "Ver Respuesta", url, footer);
     }
 
     @Override
     @Async
-    public void notifyResponseEdited(Response response) throws MessagingException {
+    public void notifyReplyEdited(Reply reply) throws MessagingException {
         String subject = "Tu respuesta ha sido editada";
-        String actionMessage = "Se ha realizado cambios en tu respuesta del tópico <b style='color: #03dac5;'>\"" + response.getTopic().getTitle() + "</b> del curso: <b>" + response.getTopic().getCourse().getName() + "</b>. Puedes revisar los detalles haciendo clic en el siguiente botón.";
-        String url = frontendUrl + "/topic/" + response.getTopic().getId();
+        String actionMessage = "Se ha realizado cambios en tu respuesta del tópico <b style='color: #03dac5;'>\"" + reply.getTopic().getTitle() + "</b> del curso: <b>" + reply.getTopic().getCourse().getName() + "</b>. Puedes revisar los detalles haciendo clic en el siguiente botón.";
+        String url = frontendUrl + "/topic/" + reply.getTopic().getId();
         String footer = "Gracias por ser parte de ForoHub.";
 
-        sendEmail(response.getUser().getEmail(), subject, subject, actionMessage, "Ver Respuesta", url, footer);
+        sendEmail(reply.getUser().getEmail(), subject, subject, actionMessage, "Ver Respuesta", url, footer);
     }
 
     @Override
     @Async
-    public void notifyResponseDeleted(Response response) throws MessagingException {
+    public void notifyReplyDeleted(Reply reply) throws MessagingException {
         String subject = "Tu respuesta ha sido eliminada";
-        String actionMessage = "Lamentamos informarte que tu respuesta del tópico <b style='color: #03dac5;'>" + response.getTopic().getTitle() + "</b> del curso: <b>" + response.getTopic().getCourse().getName() + "</b> ha sido eliminada. Si tienes alguna pregunta o inquietud, por favor contacta a nuestro equipo de soporte para más detalles.";
+        String actionMessage = "Lamentamos informarte que tu respuesta del tópico <b style='color: #03dac5;'>" + reply.getTopic().getTitle() + "</b> del curso: <b>" + reply.getTopic().getCourse().getName() + "</b> ha sido eliminada. Si tienes alguna pregunta o inquietud, por favor contacta a nuestro equipo de soporte para más detalles.";
         String footer = "Gracias por ser parte de ForoHub.";
 
-        sendEmail(response.getUser().getEmail(), subject, subject, actionMessage, null, null, footer);
+        sendEmail(reply.getUser().getEmail(), subject, subject, actionMessage, null, null, footer);
     }
 
     @Override
@@ -203,7 +203,7 @@ public class SmtpEmailService implements EmailService {
                 .replace("{MESSAGE}", message)
                 .replace("{FOOTER}", footer);
 
-        // Verificar si buttonLabel y url son nulos
+        // Check if buttonLabel and url are null
         String buttonSection = (buttonLabel != null && url != null)
                 ? "<a href=\"" + url + "\" style=\"display: inline-block; background-color: #03dac5; color: #121212; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; max-width: 100%; text-align: center;\">"
                 + buttonLabel + "</a>"
@@ -212,7 +212,7 @@ public class SmtpEmailService implements EmailService {
         return template.replace("{BUTTON_SECTION}", buttonSection);
     }
 
-    // Carga un archivo de plantilla desde el sistema de archivos.
+    // Loads a template file from the file system
     private String loadTemplate(String fileName) {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("templates/" + fileName)) {
             if (inputStream == null) {

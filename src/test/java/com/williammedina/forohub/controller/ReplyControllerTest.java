@@ -1,12 +1,13 @@
 package com.williammedina.forohub.controller;
 
+import com.williammedina.forohub.config.TestConfig;
 import com.williammedina.forohub.config.TestUtil;
 import com.williammedina.forohub.domain.course.entity.Course;
 import com.williammedina.forohub.domain.course.repository.CourseRepository;
-import com.williammedina.forohub.domain.response.entity.Response;
-import com.williammedina.forohub.domain.response.repository.ResponseRepository;
-import com.williammedina.forohub.domain.response.dto.CreateResponseDTO;
-import com.williammedina.forohub.domain.response.dto.UpdateResponseDTO;
+import com.williammedina.forohub.domain.reply.entity.Reply;
+import com.williammedina.forohub.domain.reply.repository.ReplyRepository;
+import com.williammedina.forohub.domain.reply.dto.CreateReplyDTO;
+import com.williammedina.forohub.domain.reply.dto.UpdateReplyDTO;
 import com.williammedina.forohub.domain.topic.entity.Topic;
 import com.williammedina.forohub.domain.topic.repository.TopicRepository;
 import com.williammedina.forohub.domain.user.entity.User;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -36,15 +38,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureJsonTesters
 @ActiveProfiles("test")
 @Transactional
-class ResponseControllerTest {
+@Import(TestConfig.class)
+class ReplyControllerTest {
     @Autowired
     private MockMvc mvc;
 
     @Autowired
-    private JacksonTester<CreateResponseDTO> createResponseDTOJacksonTester;
+    private JacksonTester<CreateReplyDTO> createReplyDTOJacksonTester;
 
     @Autowired
-    private JacksonTester<UpdateResponseDTO> updateResponseDTOJacksonTester;
+    private JacksonTester<UpdateReplyDTO> updateReplyDTOJacksonTester;
 
     @Autowired
     private UserRepository userRepository;
@@ -56,7 +59,7 @@ class ResponseControllerTest {
     private CourseRepository courseRepository;
 
     @Autowired
-    private ResponseRepository responseRepository;
+    private ReplyRepository replyRepository;
 
     @Autowired
     private TestUtil testUtil;
@@ -64,15 +67,15 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 201 cuando se crea una respuesta exitosamente")
-    void createResponse_Success() throws Exception {
+    void createReply_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
-        CreateResponseDTO createResponseDTO = new CreateResponseDTO(topic.getId(), "This is a test response.");
+        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        CreateReplyDTO createReplyDTO = new CreateReplyDTO(topic.getId(), "This is a test reply.");
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
-                                post("/api/response")
+                                post("/api/reply")
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content(createResponseDTOJacksonTester.write(createResponseDTO).getJson()),
+                                        .content(createReplyDTOJacksonTester.write(createReplyDTO).getJson()),
                                 user
                         )
         ).andReturn().getResponse();
@@ -82,15 +85,15 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 400 cuando los datos de entrada son inválidos")
-    void createResponse_InvalidData() throws Exception {
+    void createReply_InvalidData() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
-        CreateResponseDTO createResponseDTO = new CreateResponseDTO(topic.getId(), "");
+        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        CreateReplyDTO createReplyDTO = new CreateReplyDTO(topic.getId(), "");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                    post("/api/response")
+                    post("/api/reply")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(createResponseDTOJacksonTester.write(createResponseDTO).getJson()),
+                            .content(createReplyDTOJacksonTester.write(createReplyDTO).getJson()),
                     user
                 )
         ).andReturn().getResponse();
@@ -100,16 +103,16 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando se intenta agregar una respuesta a un tópico cerrado")
-    void createResponse_ClosedTopic() throws Exception {
+    void createReply_ClosedTopic() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
+        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
         topic.setStatus(Topic.Status.CLOSED);
-        CreateResponseDTO createResponseDTO = new CreateResponseDTO(topic.getId(), "This is a test response.");
+        CreateReplyDTO createReplyDTO = new CreateReplyDTO(topic.getId(), "This is a test reply.");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        post("/api/response")
+                        post("/api/reply")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(createResponseDTOJacksonTester.write(createResponseDTO).getJson()),
+                                .content(createReplyDTOJacksonTester.write(createReplyDTO).getJson()),
                         user
                 )
         ).andReturn().getResponse();
@@ -119,15 +122,15 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando el tópico no existe")
-    void createResponse_TopicNotFound() throws Exception {
+    void createReply_TopicNotFound() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        createTopic("William", 1L, "Topic for Response", "Topic Description");
-        CreateResponseDTO createResponseDTO = new CreateResponseDTO(0L, "This is a test response.");
+        createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        CreateReplyDTO createReplyDTO = new CreateReplyDTO(0L, "This is a test reply.");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        post("/api/response")
+                        post("/api/reply")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(createResponseDTOJacksonTester.write(createResponseDTO).getJson()),
+                                .content(createReplyDTOJacksonTester.write(createReplyDTO).getJson()),
                         user
                 )
         ).andReturn().getResponse();
@@ -137,14 +140,14 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 y las respuestas del usuario autenticado")
-    void getAllResponsesByUser_Success() throws Exception {
+    void getAllRepliesByUser_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
-        createResponse("William", topic, "First response");
-        createResponse("William", topic, "Second response");
+        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        createReply("William", topic, "First reply");
+        createReply("William", topic, "Second reply");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        get("/api/response/user/responses")
+                        get("/api/reply/user/replies")
                                 .contentType(MediaType.APPLICATION_JSON),
                         user
                 )
@@ -155,13 +158,13 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando se obtiene una respuesta por ID exitosamente")
-    void getResponseById_Success() throws Exception {
+    void getReplyById_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
-        Response response = createResponse("William", topic, "Test response message");
+        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        Reply reply = createReply("William", topic, "Test reply message");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        get("/api/response/{responseId}", response.getId())
+                        get("/api/reply/{replyId}", reply.getId())
                                 .contentType(MediaType.APPLICATION_JSON),
                         user
                 )
@@ -172,12 +175,12 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando no se encuentra la respuesta por ID")
-    void getResponseById_NotFound() throws Exception {
+    void getReplyById_NotFound() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Long nonExistentResponseId = 0L;
+        Long nonExistentReplyId = 0L;
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        get("/api/response/{responseId}", nonExistentResponseId)
+                        get("/api/reply/{replyId}", nonExistentReplyId)
                                 .contentType(MediaType.APPLICATION_JSON),
                         user
                 )
@@ -188,16 +191,16 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando se actualiza una respuesta exitosamente")
-    void updateResponse_Success() throws Exception {
+    void updateReply_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
-        Response response = createResponse("William", topic, "Original response message");
-        UpdateResponseDTO updateResponseDTO = new UpdateResponseDTO("This is a updated response.");
+        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        Reply reply = createReply("William", topic, "Original reply message");
+        UpdateReplyDTO updateReplyDTO = new UpdateReplyDTO("This is a updated reply.");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        put("/api/response/{responseId}", response.getId())
+                        put("/api/reply/{replyId}", reply.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(updateResponseDTOJacksonTester.write(updateResponseDTO).getJson()),
+                                .content(updateReplyDTOJacksonTester.write(updateReplyDTO).getJson()),
                         user
                 )
         ).andReturn().getResponse();
@@ -207,16 +210,16 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 400 cuando los datos de entrada son inválidos")
-    void updateResponse_InvalidData() throws Exception {
+    void updateReply_InvalidData() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
-        Response response = createResponse("William", topic, "Original response message");
-        UpdateResponseDTO updateResponseDTO = new UpdateResponseDTO("");
+        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        Reply reply = createReply("William", topic, "Original reply message");
+        UpdateReplyDTO updateReplyDTO = new UpdateReplyDTO("");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        put("/api/response/{responseId}", response.getId())
+                        put("/api/reply/{replyId}", reply.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(updateResponseDTOJacksonTester.write(updateResponseDTO).getJson()),
+                                .content(updateReplyDTOJacksonTester.write(updateReplyDTO).getJson()),
                         user
                 )
         ).andReturn().getResponse();
@@ -226,16 +229,16 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario no tiene permiso para modificar la respuesta")
-    void updateResponse_Forbidden() throws Exception {
+    void updateReply_Forbidden() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Response", "Topic Description");
-        Response response = createResponse("Admin", topic, "Original response message");
-        UpdateResponseDTO updateResponseDTO = new UpdateResponseDTO("Updated response message");
+        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        Reply reply = createReply("Admin", topic, "Original reply message");
+        UpdateReplyDTO updateReplyDTO = new UpdateReplyDTO("Updated reply message");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        put("/api/response/{responseId}", response.getId())
+                        put("/api/reply/{replyId}", reply.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(updateResponseDTOJacksonTester.write(updateResponseDTO).getJson()),
+                                .content(updateReplyDTOJacksonTester.write(updateReplyDTO).getJson()),
                         user
                 )
         ).andReturn().getResponse();
@@ -245,15 +248,15 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando la respuesta no existe")
-    void updateResponse_NotFound() throws Exception {
+    void updateReply_NotFound() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Long nonExistentResponseId = 0L;
-        UpdateResponseDTO updateResponseDTO = new UpdateResponseDTO("Updated response message");
+        Long nonExistentReplyId = 0L;
+        UpdateReplyDTO updateReplyDTO = new UpdateReplyDTO("Updated reply message");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        put("/api/response/{responseId}", nonExistentResponseId)
+                        put("/api/reply/{replyId}", nonExistentReplyId)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(updateResponseDTOJacksonTester.write(updateResponseDTO).getJson()),
+                                .content(updateReplyDTOJacksonTester.write(updateReplyDTO).getJson()),
                         user
                 )
         ).andReturn().getResponse();
@@ -263,13 +266,13 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("Admin")
     @DisplayName("Debería devolver HTTP 200 cuando el estado de solución se actualiza correctamente")
-    void setCorrectResponse_Success() throws Exception {
+    void setCorrectReply_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("Admin");
-        Topic topic = createTopic("William", 1L, "Topic for Solution", "Topic Description");
-        Response response = createResponse("William", topic, "Sample response");
+        Topic topic = createTopic("William", 1L, "Topic for Reply Solution", "Topic Description");
+        Reply reply = createReply("William", topic, "Sample reply");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        patch("/api/response/{responseId}", response.getId()),
+                        patch("/api/reply/{replyId}", reply.getId()),
                         user
                 )
         ).andReturn().getResponse();
@@ -279,13 +282,13 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario no tiene permiso para modificar la respuesta")
-    void setCorrectResponse_Forbidden() throws Exception {
+    void setCorrectReply_Forbidden() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Solution", "Topic Description");
-        Response response = createResponse("William", topic, "Sample response");
+        Topic topic = createTopic("William", 1L, "Topic for Reply Solution", "Topic Description");
+        Reply reply = createReply("William", topic, "Sample reply");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        patch("/api/response/{responseId}", response.getId()),
+                        patch("/api/reply/{replyId}", reply.getId()),
                         user
                 )
         ).andReturn().getResponse();
@@ -295,12 +298,12 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("Admin")
     @DisplayName("Debería devolver HTTP 404 cuando la respuesta no existe")
-    void setCorrectResponse_NotFound() throws Exception {
+    void setCorrectReply_NotFound() throws Exception {
         User user = testUtil.getAuthenticatedUser("Admin");
-        Long nonExistentResponseId = 0L;
+        Long nonExistentReplyId = 0L;
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        patch("/api/response/{responseId}", nonExistentResponseId),
+                        patch("/api/reply/{replyId}", nonExistentReplyId),
                         user
                 )
         ).andReturn().getResponse();
@@ -310,13 +313,13 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 204 cuando la respuesta se elimina exitosamente")
-    void deleteResponse_Success() throws Exception {
+    void deleteReply_Success() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic to delete", "Topic Description");
-        Response response = createResponse("William", topic, "Sample response");
+        Topic topic = createTopic("William", 1L, "Topic to Reply delete", "Topic Description");
+        Reply reply = createReply("William", topic, "Sample reply");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        delete("/api/response/{responseId}", response.getId()),
+                        delete("/api/reply/{replyId}", reply.getId()),
                         user
                 )
         ).andReturn().getResponse();
@@ -326,13 +329,13 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario no tiene permiso para eliminar la respuesta")
-    void deleteResponse_Forbidden() throws Exception {
+    void deleteReply_Forbidden() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("Admin", 1L, "Topic to delete", "Topic Description");
-        Response response = createResponse("Admin", topic, "Sample response");
+        Topic topic = createTopic("Admin", 1L, "Topic to Reply delete", "Topic Description");
+        Reply reply = createReply("Admin", topic, "Sample reply");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        delete("/api/response/{responseId}", response.getId()),
+                        delete("/api/reply/{replyId}", reply.getId()),
                         user
                 )
         ).andReturn().getResponse();
@@ -342,12 +345,12 @@ class ResponseControllerTest {
     @Test
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando la respuesta no existe")
-    void deleteResponse_NotFound() throws Exception {
+    void deleteReply_NotFound() throws Exception {
         User user = testUtil.getAuthenticatedUser("William");
-        Long nonExistentResponseId = 0L;
+        Long nonExistentReplyId = 0L;
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
-                        delete("/api/response/{responseId}", nonExistentResponseId),
+                        delete("/api/reply/{replyId}", nonExistentReplyId),
                         user
                 )
         ).andReturn().getResponse();
@@ -368,12 +371,12 @@ class ResponseControllerTest {
         }
     }
 
-    public Response createResponse(String username, Topic topic, String message) {
+    public Reply createReply(String username, Topic topic, String message) {
         User user = testUtil.getAuthenticatedUser(username);
 
         if (user != null) {
-            Response response = new Response(user, topic, message);
-            return responseRepository.save(response);
+            Reply reply = new Reply(user, topic, message);
+            return replyRepository.save(reply);
         } else {
             throw new IllegalArgumentException("Usuario o curso no encontrado");
         }

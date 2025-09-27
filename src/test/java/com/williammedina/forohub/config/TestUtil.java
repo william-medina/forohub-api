@@ -32,7 +32,7 @@ public class TestUtil {
         return requestBuilder.header("Authorization", "Bearer " + token);
     }
 
-    // Método para generar una cookie de autenticación con JWT
+    // Method to generate an authentication cookie with JWT
     public Cookie createCookie(User user, String name, String path, int expired) {
         String token = tokenService.generateToken(user, expired);
 

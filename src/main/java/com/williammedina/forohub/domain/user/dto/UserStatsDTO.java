@@ -8,7 +8,7 @@ public record UserStatsDTO(
         Long topicsCount,
 
         @Schema(description = "Cantidad de respuestas publicadas", example = "43")
-        Long responsesCount,
+        Long repliesCount,
 
         @Schema(description = "Cantidad de tópicos seguidos", example = "9")
         Long followedTopicsCount

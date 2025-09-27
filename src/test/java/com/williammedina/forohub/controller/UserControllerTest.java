@@ -1,5 +1,6 @@
 package com.williammedina.forohub.controller;
 
+import com.williammedina.forohub.config.TestConfig;
 import com.williammedina.forohub.config.TestUtil;
 import com.williammedina.forohub.domain.user.entity.User;
 import com.williammedina.forohub.domain.user.repository.UserRepository;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -27,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureJsonTesters
 @ActiveProfiles("test")
 @Transactional
+@Import(TestConfig.class)
 class UserControllerTest {
 
     @Autowired
@@ -161,8 +164,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Debería devolver HTTP 403 cuando la cuenta no está confirmada")
     void login_UnconfirmedAccount() throws Exception {
-        testUtil.createUser("user@example.com", "user");
-        LoginUserDTO loginData = new LoginUserDTO("user", "password");
+        LoginUserDTO loginData = new LoginUserDTO("unconfirmed@example.com", "password");
         var mvcResponse = mvc.perform(post("/api/auth/login")
                         .contentType("application/json")
                         .content(loginUserDTOJacksonTester.write(loginData).getJson()))

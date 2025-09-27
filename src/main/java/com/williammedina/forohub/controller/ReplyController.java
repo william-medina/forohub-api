@@ -1,9 +1,9 @@
 package com.williammedina.forohub.controller;
 
-import com.williammedina.forohub.domain.response.service.ResponseService;
-import com.williammedina.forohub.domain.response.dto.CreateResponseDTO;
-import com.williammedina.forohub.domain.response.dto.ResponseDTO;
-import com.williammedina.forohub.domain.response.dto.UpdateResponseDTO;
+import com.williammedina.forohub.domain.reply.service.ReplyService;
+import com.williammedina.forohub.domain.reply.dto.CreateReplyDTO;
+import com.williammedina.forohub.domain.reply.dto.ReplyDTO;
+import com.williammedina.forohub.domain.reply.dto.UpdateReplyDTO;
 import com.williammedina.forohub.infrastructure.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,12 +22,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/response", produces = "application/json")
-@Tag(name = "Response", description = "Endpoints para la gestión de respuestas en los tópicos del foro.")
+@RequestMapping(value = "/reply", produces = "application/json")
+@Tag(name = "Reply", description = "Endpoints para la gestión de respuestas en los tópicos del foro.")
 @AllArgsConstructor
-public class ResponseController {
+public class ReplyController {
 
-    private final ResponseService responseService;
+    private final ReplyService replyService;
 
     @Operation(
             summary = "Crear una nueva respuesta",
@@ -43,9 +43,9 @@ public class ResponseController {
             }
     )
     @PostMapping
-    public ResponseEntity<ResponseDTO> createResponse(@RequestBody @Valid CreateResponseDTO data) throws MessagingException {
-        ResponseDTO response = responseService.createResponse(data);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<ReplyDTO> createReply(@RequestBody @Valid CreateReplyDTO data) throws MessagingException {
+        ReplyDTO reply = replyService.createReply(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(reply);
     }
 
     @Operation(
@@ -57,14 +57,14 @@ public class ResponseController {
                     @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
             }
     )
-    @GetMapping("/user/responses")
-    public ResponseEntity<Page<ResponseDTO>> getAllResponsesByUser(
+    @GetMapping("/user/replies")
+    public ResponseEntity<Page<ReplyDTO>> getAllRepliesByUser(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ResponseDTO> responses = responseService.getAllResponsesByUser(pageable);
-        return ResponseEntity.ok(responses);
+        Page<ReplyDTO> replies = replyService.getAllRepliesByUser(pageable);
+        return ResponseEntity.ok(replies);
     }
 
     @Operation(
@@ -75,10 +75,10 @@ public class ResponseController {
                     @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
             }
     )
-    @GetMapping("/{responseId}")
-    public ResponseEntity<ResponseDTO> getResponseById(@PathVariable Long responseId) {
-        ResponseDTO response = responseService.getResponseById(responseId);
-        return ResponseEntity.ok(response);
+    @GetMapping("/{replyId}")
+    public ResponseEntity<ReplyDTO> getReplyById(@PathVariable Long replyId) {
+        ReplyDTO reply = replyService.getReplyById(replyId);
+        return ResponseEntity.ok(reply);
     }
 
     @Operation(
@@ -94,10 +94,10 @@ public class ResponseController {
                     @ApiResponse(responseCode = "503", description = "Error al validar el contenido con el servicio de IA.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
-    @PutMapping("/{responseId}")
-    public ResponseEntity<ResponseDTO> updateResponse(@RequestBody @Valid UpdateResponseDTO data, @PathVariable Long responseId) throws MessagingException {
-        ResponseDTO response = responseService.updateResponse(data, responseId);
-        return ResponseEntity.ok(response);
+    @PutMapping("/{replyId}")
+    public ResponseEntity<ReplyDTO> updateResponse(@RequestBody @Valid UpdateReplyDTO data, @PathVariable Long replyId) throws MessagingException {
+        ReplyDTO reply = replyService.updateReply(data, replyId);
+        return ResponseEntity.ok(reply);
     }
 
     @Operation(
@@ -111,10 +111,10 @@ public class ResponseController {
                     @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
             }
     )
-    @PatchMapping("/{responseId}")
-    public ResponseEntity<ResponseDTO> setCorrectResponse(@PathVariable Long responseId) throws MessagingException {
-        ResponseDTO response = responseService.setCorrectResponse(responseId);
-        return ResponseEntity.ok(response);
+    @PatchMapping("/{replyId}")
+    public ResponseEntity<ReplyDTO> setCorrectResponse(@PathVariable Long replyId) throws MessagingException {
+        ReplyDTO reply = replyService.setCorrectReply(replyId);
+        return ResponseEntity.ok(reply);
     }
 
     @Operation(
@@ -129,9 +129,9 @@ public class ResponseController {
                     @ApiResponse(responseCode = "409", description = "No se puede eliminar una respuesta marcada como solución", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
             }
     )
-    @DeleteMapping("/{responseId}")
-    public ResponseEntity<Void> deleteResponse(@PathVariable Long responseId) throws MessagingException {
-        responseService.deleteResponse(responseId);
+    @DeleteMapping("/{replyId}")
+    public ResponseEntity<Void> deleteResponse(@PathVariable Long replyId) throws MessagingException {
+        replyService.deleteReply(replyId);
         return ResponseEntity.noContent().build();
     }
 

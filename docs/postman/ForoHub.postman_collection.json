@@ -608,10 +608,10 @@
 			"description": "Estos endpoints gestionan la creación, obtención, actualización y eliminación de tópicos, así como el seguimiento de los mismos por parte de los usuarios. La eliminación de un tópico es lógica, es decir, no se elimina físicamente de la base de datos, sino que se marca como eliminado."
 		},
 		{
-			"name": "RESPONSE",
+			"name": "REPLY",
 			"item": [
 				{
-					"name": "RESPONSE - Create Response",
+					"name": "REPLY - Create Reply",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -635,19 +635,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{forohub_api_url}}/response",
+							"raw": "{{forohub_api_url}}/reply",
 							"host": [
 								"{{forohub_api_url}}"
 							],
 							"path": [
-								"response"
+								"reply"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "RESPONSE - Update Response",
+					"name": "REPLY - Update Reply",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -671,12 +671,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{forohub_api_url}}/response/23",
+							"raw": "{{forohub_api_url}}/reply/23",
 							"host": [
 								"{{forohub_api_url}}"
 							],
 							"path": [
-								"response",
+								"reply",
 								"23"
 							]
 						}
@@ -684,7 +684,7 @@
 					"response": []
 				},
 				{
-					"name": "RESPONSE - Delete Response",
+					"name": "REPLY - Delete Reply",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -699,12 +699,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{forohub_api_url}}/response/23",
+							"raw": "{{forohub_api_url}}/reply/23",
 							"host": [
 								"{{forohub_api_url}}"
 							],
 							"path": [
-								"response",
+								"reply",
 								"23"
 							]
 						}
@@ -712,7 +712,7 @@
 					"response": []
 				},
 				{
-					"name": "RESPONSE - Get Response By Id",
+					"name": "REPLY - Get Reply By Id",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -720,12 +720,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{forohub_api_url}}/response/23",
+							"raw": "{{forohub_api_url}}/reply/23",
 							"host": [
 								"{{forohub_api_url}}"
 							],
 							"path": [
-								"response",
+								"reply",
 								"23"
 							]
 						}
@@ -733,7 +733,7 @@
 					"response": []
 				},
 				{
-					"name": "RESPONSE - Set Correct Response",
+					"name": "REPLY - Set Correct Reply",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -748,12 +748,12 @@
 						"method": "PATCH",
 						"header": [],
 						"url": {
-							"raw": "{{forohub_api_url}}/response/23",
+							"raw": "{{forohub_api_url}}/reply/23",
 							"host": [
 								"{{forohub_api_url}}"
 							],
 							"path": [
-								"response",
+								"reply",
 								"23"
 							]
 						}
@@ -761,7 +761,7 @@
 					"response": []
 				},
 				{
-					"name": "RESPONSE - Get All Responses By User",
+					"name": "REPLY - Get All replies By User",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -776,14 +776,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{forohub_api_url}}/response/user/responses",
+							"raw": "{{forohub_api_url}}/reply/user/replies",
 							"host": [
 								"{{forohub_api_url}}"
 							],
 							"path": [
-								"response",
+								"reply",
 								"user",
-								"responses"
+								"replies"
 							]
 						}
 					},

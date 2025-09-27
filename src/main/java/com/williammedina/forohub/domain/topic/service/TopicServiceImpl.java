@@ -8,15 +8,14 @@ import com.williammedina.forohub.domain.notification.service.NotificationService
 import com.williammedina.forohub.domain.topic.dto.InputTopicDTO;
 import com.williammedina.forohub.domain.topic.dto.TopicDTO;
 import com.williammedina.forohub.domain.topic.dto.TopicDetailsDTO;
-import com.williammedina.forohub.domain.response.entity.Response;
-import com.williammedina.forohub.domain.response.dto.ResponseDTO;
+import com.williammedina.forohub.domain.reply.entity.Reply;
+import com.williammedina.forohub.domain.reply.dto.ReplyDTO;
 import com.williammedina.forohub.domain.topic.entity.Topic;
 import com.williammedina.forohub.domain.topic.repository.TopicRepository;
 import com.williammedina.forohub.domain.user.entity.User;
 import com.williammedina.forohub.domain.email.EmailService;
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import jakarta.mail.MessagingException;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -49,7 +48,7 @@ public class TopicServiceImpl implements TopicService {
         existsByTitle(data.title());
         existsByDescription(data.description());
 
-        // Validar el contenido del título y la descripción con IA
+        // Validate the title and description content using AI
         validateTitleContent(data.title());
         validateDescriptionContent(data.description());
 
@@ -90,17 +89,17 @@ public class TopicServiceImpl implements TopicService {
     public TopicDetailsDTO getTopicById(Long topicId) {
         log.debug("Fetching topic details with ID: {}", topicId);
         Topic topic = findTopicById(topicId);
-        List<ResponseDTO> responses = topic.getResponses().stream()
-                .sorted(Comparator.comparing(Response::getCreatedAt))
-                .map(ResponseDTO::fromEntity)
+        List<ReplyDTO> replies = topic.getReplies().stream()
+                .sorted(Comparator.comparing(Reply::getCreatedAt))
+                .map(ReplyDTO::fromEntity)
                 .toList();
 
-        return TopicDetailsDTO.fromEntity(topic, responses);
+        return TopicDetailsDTO.fromEntity(topic, replies);
     }
 
     @Override
     @Transactional
-    public TopicDetailsDTO updateTopic(@Valid InputTopicDTO data, Long topicId) throws MessagingException {
+    public TopicDetailsDTO updateTopic(InputTopicDTO data, Long topicId) throws MessagingException {
         Topic topic = findTopicById(topicId);
         User user = checkModificationPermission(topic);
         log.info("Updating topic ID: {} by user ID: {}", topicId, user.getId());
@@ -109,12 +108,12 @@ public class TopicServiceImpl implements TopicService {
 
         if(!data.title().equals(topic.getTitle())) {
             existsByTitle(data.title());
-            validateTitleContent(data.title()); // Validar el contenido del nuevo título con IA
+            validateTitleContent(data.title()); // Validate the new title content using AI
         }
 
         if(!data.description().equals(topic.getDescription())) {
             existsByDescription(data.description());
-            validateDescriptionContent(data.description()); // Validar el contenido de la nueva descripción con IA
+            validateDescriptionContent(data.description()); // Validate the new description content using AI
         }
 
         topic.setTitle(data.title());
@@ -130,12 +129,12 @@ public class TopicServiceImpl implements TopicService {
             notificationService.notifyTopicEdited(topic);
         }
 
-        List<ResponseDTO> responses = updatedTopic.getResponses().stream()
+        List<ReplyDTO> replies = updatedTopic.getReplies().stream()
                 .filter(response -> !response.getIsDeleted())
-                .map(ResponseDTO::fromEntity)
+                .map(ReplyDTO::fromEntity)
                 .toList();
 
-        return TopicDetailsDTO.fromEntity(updatedTopic, responses);
+        return TopicDetailsDTO.fromEntity(updatedTopic, replies);
     }
 
     @Override
@@ -171,7 +170,7 @@ public class TopicServiceImpl implements TopicService {
 
     private User checkModificationPermission(Topic topic) {
         User user = getAuthenticatedUser();
-        // Si el usuario es el propietario O tiene permisos elevados, puede modificar el topic
+        // If the user is the owner OR has elevated permissions, they are allowed to modify the topic
         if (!topic.getUser().equals(getAuthenticatedUser()) && !getAuthenticatedUser().hasElevatedPermissions()) {
             log.warn("User ID: {} attempted to modify topic ID: {} without permission", user.getId(), topic.getId());
             throw new AppException("No tienes permiso para realizar cambios en este tópico", HttpStatus.FORBIDDEN);
@@ -194,19 +193,19 @@ public class TopicServiceImpl implements TopicService {
     }
 
     private void validateTitleContent(String title) {
-        String validationResponse = contentValidationService.validateContent(title);
-        if (!"approved".equals(validationResponse)) {
-            log.warn("Title content not approved: {}", validationResponse);
-            throw new AppException("El título " + validationResponse, HttpStatus.FORBIDDEN);
+        String validationResult = contentValidationService.validateContent(title);
+        if (!"approved".equals(validationResult)) {
+            log.warn("Title content not approved: {}", validationResult);
+            throw new AppException("El título " + validationResult, HttpStatus.FORBIDDEN);
         }
     }
 
 
     private void validateDescriptionContent(String description) {
-        String validationResponse = contentValidationService.validateContent(description);
-        if (!"approved".equals(validationResponse)) {
-            log.warn("Description content not approved: {}", validationResponse);
-            throw new AppException("La descripción " + validationResponse, HttpStatus.FORBIDDEN);
+        String validationResult = contentValidationService.validateContent(description);
+        if (!"approved".equals(validationResult)) {
+            log.warn("Description content not approved: {}", validationResult);
+            throw new AppException("La descripción " + validationResult, HttpStatus.FORBIDDEN);
         }
     }
 

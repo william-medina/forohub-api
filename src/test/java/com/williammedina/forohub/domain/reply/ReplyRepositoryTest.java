@@ -1,8 +1,8 @@
-package com.williammedina.forohub.domain.response;
+package com.williammedina.forohub.domain.reply;
 
 import com.williammedina.forohub.domain.course.entity.Course;
-import com.williammedina.forohub.domain.response.entity.Response;
-import com.williammedina.forohub.domain.response.repository.ResponseRepository;
+import com.williammedina.forohub.domain.reply.entity.Reply;
+import com.williammedina.forohub.domain.reply.repository.ReplyRepository;
 import com.williammedina.forohub.domain.topic.entity.Topic;
 import com.williammedina.forohub.domain.user.entity.User;
 import jakarta.persistence.EntityManager;
@@ -24,25 +24,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-class ResponseRepositoryTest {
+class ReplyRepositoryTest {
 
     @Autowired
-    private ResponseRepository responseRepository;
+    private ReplyRepository replyRepository;
 
     @Autowired
     private EntityManager entityManager;
 
     @Test
     @DisplayName("Debe devolver las respuestas de un tópico específico")
-    void findByTopicId_ReturnsResponsesForTopic() {
+    void findByTopicId_ReturnsRepliesForTopic() {
         // Arrange
         User user = createAndPersistUser();
         Topic topic = createAndPersistTopic(user);
-        createAndPersistResponse(user, topic);
-        createAndPersistResponse(user, topic);
+        createAndPersistReply(user, topic);
+        createAndPersistReply(user, topic);
 
         // Act
-        List<Response> responses = responseRepository.findByTopicId(topic.getId());
+        List<Reply> responses = replyRepository.findByTopicId(topic.getId());
 
         // Assert
         assertThat(responses).hasSize(2);
@@ -50,17 +50,17 @@ class ResponseRepositoryTest {
 
     @Test
     @DisplayName("Debe devolver respuestas de un usuario")
-    void findByUserSortedByCreationDate_ReturnsResponsesForUser() {
+    void findByUserSortedByCreationDate_ReturnsRepliesForUser() {
         // Arrange
         User user = createAndPersistUser();
         Topic topic = createAndPersistTopic(user);
-        createAndPersistResponse(user, topic);
-        createAndPersistResponse(user, topic);
+        createAndPersistReply(user, topic);
+        createAndPersistReply(user, topic);
 
         Pageable pageable = PageRequest.of(0, 10);
 
         // Act
-        Page<Response> responsesPage = responseRepository.findByUserSortedByCreationDate(user, pageable);
+        Page<Reply> responsesPage = replyRepository.findByUserSortedByCreationDate(user, pageable);
 
         // Assert
         assertThat(responsesPage).isNotEmpty();
@@ -69,15 +69,15 @@ class ResponseRepositoryTest {
 
     @Test
     @DisplayName("Debe contar las respuestas de un usuario")
-    void countByUserId_ReturnsResponseCount() {
+    void countByUserId_ReturnsRepliesCount() {
         // Arrange
         User user = createAndPersistUser();
         Topic topic = createAndPersistTopic(user);
-        createAndPersistResponse(user, topic);
-        createAndPersistResponse(user, topic);
+        createAndPersistReply(user, topic);
+        createAndPersistReply(user, topic);
 
         // Act
-        long responseCount = responseRepository.countByUserId(user.getId());
+        long responseCount = replyRepository.countByUserId(user.getId());
 
         // Assert
         assertThat(responseCount).isEqualTo(2);
@@ -85,14 +85,14 @@ class ResponseRepositoryTest {
 
     @Test
     @DisplayName("Debe devolver una respuesta por id")
-    void findByIdAndIsDeletedFalse_ReturnsResponse() {
+    void findByIdAndIsDeletedFalse_ReturnsReply() {
         // Arrange
         User user = createAndPersistUser();
         Topic topic = createAndPersistTopic(user);
-        Response response = createAndPersistResponse(user, topic);
+        Reply response = createAndPersistReply(user, topic);
 
         // Act
-        Optional<Response> foundResponse = responseRepository.findByIdAndIsDeletedFalse(response.getId());
+        Optional<Reply> foundResponse = replyRepository.findByIdAndIsDeletedFalse(response.getId());
 
         // Assert
         assertThat(foundResponse).isPresent();
@@ -117,9 +117,9 @@ class ResponseRepositoryTest {
         return user;
     }
 
-    private Response createAndPersistResponse(User user, Topic topic) {
-        Response response = new Response(user, topic, "Response Content" );
-        entityManager.persist(response);
-        return response;
+    private Reply createAndPersistReply(User user, Topic topic) {
+        Reply reply = new Reply(user, topic, "Reply Content" );
+        entityManager.persist(reply);
+        return reply;
     }
 }

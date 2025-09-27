@@ -4,7 +4,7 @@ import com.williammedina.forohub.domain.common.CommonHelperService;
 import com.williammedina.forohub.domain.notification.dto.NotificationDTO;
 import com.williammedina.forohub.domain.notification.entity.Notification;
 import com.williammedina.forohub.domain.notification.repository.NotificationRepository;
-import com.williammedina.forohub.domain.response.entity.Response;
+import com.williammedina.forohub.domain.reply.entity.Reply;
 import com.williammedina.forohub.domain.topic.entity.Topic;
 import com.williammedina.forohub.domain.topicfollow.entity.TopicFollow;
 import com.williammedina.forohub.domain.user.entity.User;
@@ -99,32 +99,32 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public void notifyResponseSolved(Response response, Topic topic) {
+    public void notifyReplySolved(Reply reply, Topic topic) {
         String title = "Tu respuesta ha sido marcada como solución";
-        String message = "Tu respuesta en el tópico '" + response.getTopic().getTitle() + "' del curso: " + topic.getCourse().getName() + " ha sido marcada como solución.";
+        String message = "Tu respuesta en el tópico '" + reply.getTopic().getTitle() + "' del curso: " + topic.getCourse().getName() + " ha sido marcada como solución.";
 
-        createNotification(response.getUser(), topic, response, title, message, Notification.Type.RESPONSE, Notification.Subtype.SOLVED);
-        log.debug("Response solved notification created for user ID: {}", response.getUser().getId());
+        createNotification(reply.getUser(), topic, reply, title, message, Notification.Type.REPLY, Notification.Subtype.SOLVED);
+        log.debug("Reply solved notification created for user ID: {}", reply.getUser().getId());
     }
 
     @Override
     @Transactional
-    public void notifyResponseEdited(Response response) {
+    public void notifyReplyEdited(Reply reply) {
         String title = "Tu respuesta ha sido editada";
-        String message = "Se han realizado cambios en tu respuesta del tópico '" + response.getTopic().getTitle() + "' del curso: " + response.getTopic().getCourse().getName() + ". Puedes revisar los detalles haciendo clic en el siguiente botón.";
+        String message = "Se han realizado cambios en tu respuesta del tópico '" + reply.getTopic().getTitle() + "' del curso: " + reply.getTopic().getCourse().getName() + ". Puedes revisar los detalles haciendo clic en el siguiente botón.";
 
-        createNotification(response.getUser(), response.getTopic(), response, title, message, Notification.Type.RESPONSE, Notification.Subtype.EDITED);
-        log.debug("Response edited notification created for user ID: {}", response.getUser().getId());
+        createNotification(reply.getUser(), reply.getTopic(), reply, title, message, Notification.Type.REPLY, Notification.Subtype.EDITED);
+        log.debug("Reply edited notification created for user ID: {}", reply.getUser().getId());
     }
 
     @Override
     @Transactional
-    public void notifyResponseDeleted(Response response) {
+    public void notifyReplyDeleted(Reply reply) {
         String title = "Tu respuesta ha sido eliminada";
-        String message = "Lamentamos informarte que tu respuesta del tópico '" + response.getTopic().getTitle() + "' del curso: " + response.getTopic().getCourse().getName() + " ha sido eliminada. Si tienes alguna pregunta, por favor contacta a nuestro equipo de soporte.";
+        String message = "Lamentamos informarte que tu respuesta del tópico '" + reply.getTopic().getTitle() + "' del curso: " + reply.getTopic().getCourse().getName() + " ha sido eliminada. Si tienes alguna pregunta, por favor contacta a nuestro equipo de soporte.";
 
-        createNotification(response.getUser(), response.getTopic(), null, title, message, Notification.Type.RESPONSE, Notification.Subtype.DELETED);
-        log.debug("Response deleted notification created for user ID: {}", response.getUser().getId());
+        createNotification(reply.getUser(), reply.getTopic(), null, title, message, Notification.Type.REPLY, Notification.Subtype.DELETED);
+        log.debug("Reply deleted notification created for user ID: {}", reply.getUser().getId());
     }
 
     @Override
@@ -151,7 +151,7 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    private void createNotification(User user, Topic topic, Response response,String title, String message, Notification.Type type, Notification.Subtype subtype) {
+    private void createNotification(User user, Topic topic, Reply response, String title, String message, Notification.Type type, Notification.Subtype subtype) {
         Notification notification = new Notification(user, topic, response, title, message, type, subtype);
         notificationRepository.save(notification);
     }

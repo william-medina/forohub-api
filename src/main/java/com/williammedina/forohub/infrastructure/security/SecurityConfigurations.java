@@ -40,7 +40,7 @@ public class SecurityConfigurations {
             new PublicEndpoint("/api/auth/confirm-account/{token}", HttpMethod.GET),
             new PublicEndpoint("/api/topic", HttpMethod.GET),
             new PublicEndpoint("/api/topic/{topicId}", HttpMethod.GET),
-            new PublicEndpoint("/api/response/{responseId}", HttpMethod.GET),
+            new PublicEndpoint("/api/reply/{replyId}", HttpMethod.GET),
             new PublicEndpoint("/api/course", HttpMethod.GET),
             new PublicEndpoint("/api/docs", HttpMethod.GET),
             new PublicEndpoint("/api/docs/swagger-config", HttpMethod.GET),

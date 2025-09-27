@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @RestControllerAdvice
@@ -39,17 +40,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
-    // Manejo de errores de validación de formulario (MethodArgumentNotValidException)
+    // Handles form validation errors (MethodArgumentNotValidException)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         log.warn("Field validation error in DTO: {}", exception.getMessage());
 
-        // Obtiene la clase del DTO asociado a la solicitud actual
+        // Gets the class of the DTO associated with the current request
         Class<?> dtoClass = Optional.ofNullable(exception.getBindingResult().getTarget())
                 .map(Object::getClass)
                 .orElse(null);
 
-        // Si no se obtiene la clase del DTO, devolver el primer error sin ordenar
+        // If the DTO class cannot be determined, return the first error without sorting
         if (dtoClass == null) {
             return exception.getFieldErrors().stream()
                     .findFirst()
@@ -57,10 +58,10 @@ public class GlobalExceptionHandler {
                     .orElseGet(() -> ResponseEntity.badRequest().build());
         }
 
-        // Obtiene la lista de nombres de los campos en el orden en que fueron definidos en el DTO
+        // Gets the list of field names in the order they were defined in the DTO
         List<String> fieldPriorityOrder = getFieldOrder(dtoClass);
 
-        // Ordena los errores de validación según el orden de los campos en el DTO y devuelve solo el primero
+        // Sorts validation errors according to the order of the fields in the DTO and returns only the first one
         return exception.getFieldErrors().stream()
                 .min(Comparator.comparingInt(fieldError -> {
                     int index = fieldPriorityOrder.indexOf(fieldError.getField());
@@ -70,9 +71,9 @@ public class GlobalExceptionHandler {
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    // Obtiene los nombres de los campos de un DTO en el orden en que fueron definidos.
+    // Gets the field names of a DTO in the order they were defined
     private List<String> getFieldOrder(Class<?> dtoClass) {
-        return List.of(dtoClass.getDeclaredFields()).stream()
+        return Stream.of(dtoClass.getDeclaredFields())
                 .map(Field::getName)
                 .collect(Collectors.toList());
     }

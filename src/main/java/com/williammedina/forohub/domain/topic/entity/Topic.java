@@ -1,7 +1,7 @@
 package com.williammedina.forohub.domain.topic.entity;
 
 import com.williammedina.forohub.domain.course.entity.Course;
-import com.williammedina.forohub.domain.response.entity.Response;
+import com.williammedina.forohub.domain.reply.entity.Reply;
 import com.williammedina.forohub.domain.topicfollow.entity.TopicFollow;
 import com.williammedina.forohub.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -58,7 +58,7 @@ public class Topic {
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     @SQLRestriction("is_deleted = false")
-    private List<Response> responses = new ArrayList<>();
+    private List<Reply> replies = new ArrayList<>();
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TopicFollow> followedTopics = new ArrayList<>();

@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.notification.entity;
 
-import com.williammedina.forohub.domain.response.entity.Response;
+import com.williammedina.forohub.domain.reply.entity.Reply;
 import com.williammedina.forohub.domain.topic.entity.Topic;
 import com.williammedina.forohub.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -33,8 +33,8 @@ public class Notification {
     private Topic topic;
 
     @ManyToOne
-    @JoinColumn(name = "response_id")
-    private Response response;
+    @JoinColumn(name = "reply_id")
+    private Reply reply;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -61,10 +61,10 @@ public class Notification {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Notification(User user, Topic topic, Response response, String title, String message, Type type, Subtype subtype) {
+    public Notification(User user, Topic topic, Reply reply, String title, String message, Type type, Subtype subtype) {
         this.user = user;
         this.topic = topic;
-        this.response = response;
+        this.reply = reply;
         this.title = title;
         this.message = message;
         this.type = type;
@@ -73,7 +73,7 @@ public class Notification {
 
     public enum Type {
         TOPIC,
-        RESPONSE
+        REPLY
     }
 
     public enum Subtype {

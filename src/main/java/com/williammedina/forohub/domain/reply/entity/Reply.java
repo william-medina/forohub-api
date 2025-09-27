@@ -1,4 +1,4 @@
-package com.williammedina.forohub.domain.response.entity;
+package com.williammedina.forohub.domain.reply.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.williammedina.forohub.domain.topic.entity.Topic;
@@ -11,14 +11,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "responses")
+@Table(name = "replies")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(of = "id")
-public class Response {
+public class Reply {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +51,7 @@ public class Response {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
-    public Response(User user, Topic topic, String content) {
+    public Reply(User user, Topic topic, String content) {
         this.user = user;
         this.topic = topic;
         this.content = content;

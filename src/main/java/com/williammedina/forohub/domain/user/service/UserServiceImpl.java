@@ -3,7 +3,7 @@ package com.williammedina.forohub.domain.user.service;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.williammedina.forohub.domain.common.CommonHelperService;
 import com.williammedina.forohub.domain.contentvalidation.ContentValidationService;
-import com.williammedina.forohub.domain.response.repository.ResponseRepository;
+import com.williammedina.forohub.domain.reply.repository.ReplyRepository;
 import com.williammedina.forohub.domain.topic.repository.TopicRepository;
 import com.williammedina.forohub.domain.topicfollow.repository.TopicFollowRepository;
 import com.williammedina.forohub.domain.user.entity.User;
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final CommonHelperService commonHelperService;
     private final TopicRepository topicRepository;
-    private final ResponseRepository responseRepository;
+    private final ReplyRepository replyRepository;
     private final TopicFollowRepository topicFollowRepository;
     private final ContentValidationService contentValidationService;
     private final SecurityFilter securityFilter;
@@ -217,9 +217,9 @@ public class UserServiceImpl implements UserService {
         log.debug("Fetching stats for user ID: {}", user.getId());
 
         long topicsCount = topicRepository.countByUserId(user.getId());
-        long responsesCount = responseRepository.countByUserId(user.getId());
+        long repliesCount = replyRepository.countByUserId(user.getId());
         long followedTopicsCount = topicFollowRepository.countByUserId(user.getId());
-        return new UserStatsDTO(topicsCount, responsesCount, followedTopicsCount);
+        return new UserStatsDTO(topicsCount, repliesCount, followedTopicsCount);
     }
 
     @Override

@@ -36,7 +36,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             String uriPattern = endpoint.url()
                     .replace("{token}", "[^/]+")
                     .replace("{topicId}", "[^/]+")
-                    .replace("{responseId}", "[^/]+")
+                    .replace("{replyId}", "[^/]+")
                     .replace("**", ".*");
 
             return requestUri.matches(uriPattern) && requestMethod.equals(endpoint.method().name());

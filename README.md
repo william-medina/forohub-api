@@ -106,7 +106,7 @@ Este diagrama proporciona una visión clara de la estructura de datos de la apli
 
 - **Users**: Gestiona los datos de los usuarios.
 - **Topics**: Representa los tópicos del foro creados por los usuarios.
-- **Responses**: Contiene las respuestas asociadas a los tópicos.
+- **Replies**: Contiene las respuestas asociadas a los tópicos.
 - **Courses**: Representa los cursos a los cuales los tópicos están asociados.
 - **Topic Followers**: Representa los usuarios que siguen un tópico.
 - **Notifications**: Administra las notificaciones generadas por actividades en el foro.
@@ -134,7 +134,7 @@ La API genera notificaciones internas que se almacenan en la base de datos y pue
 
 #### Email por una nueva respuesta a tu tópico.
 
-<img src="./src/main/resources/static/images/email-new-response.png" alt="Nueva respuesta a tu tópico" width="500" style="display: block;" />
+<img src="./src/main/resources/static/images/email-new-reply.png" alt="Nueva respuesta a tu tópico" width="500" style="display: block;" />
 
 #### Email cuando un tópico que sigues es marcado como solucionado.
 <img src="./src/main/resources/static/images/email-topic-solved.png" alt="Tópico solucionado" width="500" style="display: block;" />
@@ -326,14 +326,14 @@ Estos endpoints gestionan la creación, obtención, actualización y eliminació
 ### Endpoints de Respuestas
 Los endpoints de respuestas gestionan la creación, actualización, eliminación y la posibilidad de marcar una respuesta como solución. Al igual que los tópicos, la eliminación de respuestas es lógica.
 
-| Endpoint                                 | Método      | Descripción                                                                                                                                                                                                                                                                                             |
-|------------------------------------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `/response`                              | `POST`      | Crea una respuesta para un tópico. Si se agrega una respuesta, el creador del tópico y los usuarios que lo siguen recibirán notificaciones y emails informándoles.                                                                                                                                      |
-| `/response/user/responses`               | `GET`       | Obtiene todas las respuestas del usuario autenticado con paginación.                                                                                                                                                                                                                                    |
-| `/response/{responseId}`                 | `GET`       | Obtiene una respuesta específica utilizando su ID.                                                                                                                                                                                                                                                      |
-| `/response/{responseId}`                 | `PUT`       | Actualiza una respuesta. Si la actualización la hace un moderador, instructor o administrador, solo se notifica al creador de la respuesta.                                                                                                                                                             |
-| `/response/{responseId}`                 | `PATCH`     | Alterna el estado de una respuesta como solución o la quita si ya estaba marcada como solución. Además, actualiza el estado del tópico, indicándole si está activo o cerrado. Al hacerlo, Se notificará al creador de la respuesta, al creador del tópico, y a todos los usuarios que siguen el tópico. |
-| `/response/{responseId}`                 | `DELETE`    | Elimina una respuesta de manera lógica. Si un moderador, instructor o administrador la elimina, solo se notifica al creador de la respuesta.                                                                                                                                                            |
+| Endpoint              | Método      | Descripción                                                                                                                                                                                                                                                                                             |
+|-----------------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `/reply`              | `POST`      | Crea una respuesta para un tópico. Si se agrega una respuesta, el creador del tópico y los usuarios que lo siguen recibirán notificaciones y emails informándoles.                                                                                                                                      |
+| `/reply/user/replies` | `GET`       | Obtiene todas las respuestas del usuario autenticado con paginación.                                                                                                                                                                                                                                    |
+| `/reply/{replyId}`    | `GET`       | Obtiene una respuesta específica utilizando su ID.                                                                                                                                                                                                                                                      |
+| `/reply/{replyId}` | `PUT`       | Actualiza una respuesta. Si la actualización la hace un moderador, instructor o administrador, solo se notifica al creador de la respuesta.                                                                                                                                                             |
+| `/reply/{replyId}` | `PATCH`     | Alterna el estado de una respuesta como solución o la quita si ya estaba marcada como solución. Además, actualiza el estado del tópico, indicándole si está activo o cerrado. Al hacerlo, Se notificará al creador de la respuesta, al creador del tópico, y a todos los usuarios que siguen el tópico. |
+| `/reply/{replyId}` | `DELETE`    | Elimina una respuesta de manera lógica. Si un moderador, instructor o administrador la elimina, solo se notifica al creador de la respuesta.                                                                                                                                                            |
 ---
 
 ### Endpoints de Notificaciones

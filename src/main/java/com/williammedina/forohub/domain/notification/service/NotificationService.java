@@ -1,7 +1,7 @@
 package com.williammedina.forohub.domain.notification.service;
 
 import com.williammedina.forohub.domain.notification.dto.NotificationDTO;
-import com.williammedina.forohub.domain.response.entity.Response;
+import com.williammedina.forohub.domain.reply.entity.Reply;
 import com.williammedina.forohub.domain.topic.entity.Topic;
 import com.williammedina.forohub.domain.user.entity.User;
 
@@ -16,9 +16,9 @@ public interface NotificationService {
     void notifyTopicSolved(Topic topic);
     void notifyTopicEdited(Topic topic);
     void notifyTopicDeleted(Topic topic);
-    void notifyResponseSolved(Response response, Topic topic);
-    void notifyResponseEdited(Response response);
-    void notifyResponseDeleted(Response response);
+    void notifyReplySolved(Reply reply, Topic topic);
+    void notifyReplyEdited(Reply reply);
+    void notifyReplyDeleted(Reply reply);
     void notifyFollowersTopicReply(Topic topic, User user);
     void notifyFollowersTopicSolved(Topic topic);
 

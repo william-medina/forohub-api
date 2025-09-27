@@ -1,7 +1,7 @@
 package com.williammedina.forohub.infrastructure.email;
 
 import com.williammedina.forohub.domain.email.EmailService;
-import com.williammedina.forohub.domain.response.entity.Response;
+import com.williammedina.forohub.domain.reply.entity.Reply;
 import com.williammedina.forohub.domain.topic.entity.Topic;
 import com.williammedina.forohub.domain.user.entity.User;
 import jakarta.mail.MessagingException;
@@ -45,18 +45,18 @@ public class DisabledEmailService implements EmailService {
     }
 
     @Override
-    public void notifyResponseSolved(Response response, Topic topic) throws MessagingException {
-        log.info("[DISABLED EMAIL] Notification of response marked as solution in topic '{}'", topic.getTitle());
+    public void notifyReplySolved(Reply reply, Topic topic) throws MessagingException {
+        log.info("[DISABLED EMAIL] Notification of reply marked as solution in topic '{}'", topic.getTitle());
     }
 
     @Override
-    public void notifyResponseEdited(Response response) throws MessagingException {
-        log.info("[DISABLED EMAIL] Notification of response edited in topic '{}'", response.getTopic().getTitle());
+    public void notifyReplyEdited(Reply reply) throws MessagingException {
+        log.info("[DISABLED EMAIL] Notification of reply edited in topic '{}'", reply.getTopic().getTitle());
     }
 
     @Override
-    public void notifyResponseDeleted(Response response) throws MessagingException {
-        log.info("[DISABLED EMAIL] Notification of response deleted in topic '{}'", response.getTopic().getTitle());
+    public void notifyReplyDeleted(Reply reply) throws MessagingException {
+        log.info("[DISABLED EMAIL] Notification of reply deleted in topic '{}'", reply.getTopic().getTitle());
     }
 
     @Override

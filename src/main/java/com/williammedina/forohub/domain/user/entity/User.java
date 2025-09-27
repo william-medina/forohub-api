@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.user.entity;
 
-import com.williammedina.forohub.domain.response.entity.Response;
+import com.williammedina.forohub.domain.reply.entity.Reply;
 import com.williammedina.forohub.domain.topic.entity.Topic;
 import com.williammedina.forohub.domain.profile.entity.Profile;
 import com.williammedina.forohub.domain.topicfollow.entity.TopicFollow;
@@ -59,7 +59,7 @@ public class User implements UserDetails {
     private List<Topic> topics = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Response> responses = new ArrayList<>();
+    private List<Reply> replies = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TopicFollow> followedTopics = new ArrayList<>();

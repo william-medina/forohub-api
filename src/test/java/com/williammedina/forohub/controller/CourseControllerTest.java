@@ -1,5 +1,6 @@
 package com.williammedina.forohub.controller;
 
+import com.williammedina.forohub.config.TestConfig;
 import com.williammedina.forohub.domain.course.entity.Course;
 import com.williammedina.forohub.domain.course.repository.CourseRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureJsonTesters
 @ActiveProfiles("test")
 @Transactional
+@Import(TestConfig.class)
 class CourseControllerTest {
 
     @Autowired

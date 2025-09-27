@@ -27,7 +27,7 @@ public record TopicDTO(
         String author,
 
         @Schema(description = "Cantidad de respuestas asociadas al tópico", example = "3")
-        Integer responsesCount,
+        Integer repliesCount,
 
         @Schema(description = "Estado actual del tópico", example = "CLOSED")
         Topic.Status status,
@@ -46,7 +46,7 @@ public record TopicDTO(
                         topic.getCourse().getName(),
                         topic.getCourse().getCategory(),
                         topic.getUser().getUsername(),
-                        topic.getResponses().size(),
+                        topic.getReplies().size(),
                         topic.getStatus(),
                         topic.getCreatedAt(),
                         topic.getUpdatedAt()
