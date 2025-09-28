@@ -1,10 +1,10 @@
 package com.williammedina.forohub.domain.topicfollow;
 
-import com.williammedina.forohub.domain.course.entity.Course;
-import com.williammedina.forohub.domain.topic.entity.Topic;
-import com.williammedina.forohub.domain.topicfollow.entity.TopicFollow;
+import com.williammedina.forohub.domain.course.entity.CourseEntity;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
+import com.williammedina.forohub.domain.topicfollow.entity.TopicFollowEntity;
 import com.williammedina.forohub.domain.topicfollow.repository.TopicFollowRepository;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,9 +33,9 @@ class TopicFollowRepositoryTest {
     @DisplayName("Debe verificar si un usuario sigue un tema")
     void existsByUserIdAndTopicId_ReturnsTrueIfTopicIsFollowed() {
         // Arrange
-        User user = createAndPersistUser();
-        Course course = createAndPersistCourse();
-        Topic topic = createAndPersistTopic("Topic title", "Topic description", user, course);
+        UserEntity user = createAndPersistUser();
+        CourseEntity course = createAndPersistCourse();
+        TopicEntity topic = createAndPersistTopic("Topic title", "Topic description", user, course);
         createAndPersistTopicFollow(user, topic);
 
         // Act
@@ -49,10 +49,10 @@ class TopicFollowRepositoryTest {
     @DisplayName("Debe devolver el número de tópicos que sigue un usuario")
     void countByUserId_ReturnsFollowedTopicCount() {
         // Arrange
-        User user = createAndPersistUser();
-        Course course = createAndPersistCourse();
-        Topic topic1 = createAndPersistTopic("Topic title 1", "Topic description A", user, course);
-        Topic topic2 = createAndPersistTopic("Topic title 2", "Topic description B", user, course);
+        UserEntity user = createAndPersistUser();
+        CourseEntity course = createAndPersistCourse();
+        TopicEntity topic1 = createAndPersistTopic("Topic title 1", "Topic description A", user, course);
+        TopicEntity topic2 = createAndPersistTopic("Topic title 2", "Topic description B", user, course);
         createAndPersistTopicFollow(user, topic1);
         createAndPersistTopicFollow(user, topic2);
 
@@ -67,16 +67,16 @@ class TopicFollowRepositoryTest {
     @DisplayName("Debe devolver los tópicos seguidos por un usuario con filtros de palabra clave")
     void findByUserFilters_ReturnsFilteredFollowedTopics() {
         // Arrange
-        User user = createAndPersistUser();
-        Course course = createAndPersistCourse();
-        Topic topic = createAndPersistTopic("Topic title", "Topic description", user, course);
+        UserEntity user = createAndPersistUser();
+        CourseEntity course = createAndPersistCourse();
+        TopicEntity topic = createAndPersistTopic("Topic title", "Topic description", user, course);
         createAndPersistTopicFollow(user, topic);
 
         String keyword = "title";
         Pageable pageable = PageRequest.of(0, 10);
 
         // Act
-        Page<TopicFollow> page = topicFollowRepository.findByUserFilters(user, keyword, pageable);
+        Page<TopicFollowEntity> page = topicFollowRepository.findByUserFilters(user, keyword, pageable);
 
         // Assert
         assertThat(page.getContent()).isNotEmpty();
@@ -87,17 +87,17 @@ class TopicFollowRepositoryTest {
     @DisplayName("Debe devolver los tópicos seguidos por un usuario")
     void findByUserSortedByCreationDate_ReturnsFollowedTopicsSortedByDate() {
         // Arrange
-        User user = createAndPersistUser();
-        Course course = createAndPersistCourse();
-        Topic topic1 = createAndPersistTopic("Topic title 1", "Topic description A", user, course);
-        Topic topic2 = createAndPersistTopic("Topic title 2", "Topic description B", user, course);
+        UserEntity user = createAndPersistUser();
+        CourseEntity course = createAndPersistCourse();
+        TopicEntity topic1 = createAndPersistTopic("Topic title 1", "Topic description A", user, course);
+        TopicEntity topic2 = createAndPersistTopic("Topic title 2", "Topic description B", user, course);
         createAndPersistTopicFollow(user, topic1);
         createAndPersistTopicFollow(user, topic2);
 
         Pageable pageable = PageRequest.of(0, 10);
 
         // Act
-        Page<TopicFollow> page = topicFollowRepository.findByUserSortedByCreationDate(user, pageable);
+        Page<TopicFollowEntity> page = topicFollowRepository.findByUserSortedByCreationDate(user, pageable);
 
         // Assert
         assertThat(page.getContent()).isNotEmpty();
@@ -108,9 +108,9 @@ class TopicFollowRepositoryTest {
     @DisplayName("Debe eliminar la relación de seguimiento entre un usuario y un tópico")
     void deleteByUserIdAndTopicId_RemovesTopicFollow() {
         // Arrange
-        User user = createAndPersistUser();
-        Course course = createAndPersistCourse();
-        Topic topic = createAndPersistTopic("Topic title", "Topic description", user, course);
+        UserEntity user = createAndPersistUser();
+        CourseEntity course = createAndPersistCourse();
+        TopicEntity topic = createAndPersistTopic("Topic title", "Topic description", user, course);
         createAndPersistTopicFollow(user, topic);
 
         // Act
@@ -121,26 +121,26 @@ class TopicFollowRepositoryTest {
         assertThat(exists).isFalse();
     }
 
-    private Topic createAndPersistTopic(String title, String description, User user, Course course) {
-        Topic topic = new Topic(user, title, description, course);
+    private TopicEntity createAndPersistTopic(String title, String description, UserEntity user, CourseEntity course) {
+        TopicEntity topic = new TopicEntity(user, title, description, course);
         entityManager.persist(topic);
         return topic;
     }
 
-    private Course createAndPersistCourse() {
-        Course course = new Course("Course 1", "Category 1");
+    private CourseEntity createAndPersistCourse() {
+        CourseEntity course = new CourseEntity("Course 1", "Category 1");
         entityManager.persist(course);
         return course;
     }
 
-    private User createAndPersistUser() {
-        User user = new User("WilliamM", "williamM@example.com", "password");
+    private UserEntity createAndPersistUser() {
+        UserEntity user = new UserEntity("WilliamM", "williamM@example.com", "password");
         entityManager.persist(user);
         return user;
     }
 
-    private void createAndPersistTopicFollow(User user, Topic topic) {
-        TopicFollow topicFollow = new TopicFollow(user, topic);
+    private void createAndPersistTopicFollow(UserEntity user, TopicEntity topic) {
+        TopicFollowEntity topicFollow = new TopicFollowEntity(user, topic);
         entityManager.persist(topicFollow);
     }
 }

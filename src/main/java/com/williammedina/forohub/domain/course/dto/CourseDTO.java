@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.course.dto;
 
-import com.williammedina.forohub.domain.course.entity.Course;
+import com.williammedina.forohub.domain.course.entity.CourseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Datos generales del curso")
@@ -16,7 +16,7 @@ public record CourseDTO(
         String category
 ) {
 
-        public static CourseDTO fromEntity(Course course) {
+        public static CourseDTO fromEntity(CourseEntity course) {
                 return new CourseDTO(
                         course.getId(),
                         course.getName(),

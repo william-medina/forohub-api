@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.user.dto;
 
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Información pública del usuario")
@@ -16,7 +16,7 @@ public record UserDTO(
     String profile
 ) {
 
-    public static UserDTO fromEntity(User user) {
+    public static UserDTO fromEntity(UserEntity user) {
         return new UserDTO(
                 user.getId(),
                 user.getUsername(),

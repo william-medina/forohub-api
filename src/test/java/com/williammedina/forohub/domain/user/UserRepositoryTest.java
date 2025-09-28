@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.user;
 
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +33,7 @@ class UserRepositoryTest {
         createAndPersistUser(username, "user@example.com");
 
         // Act
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<UserEntity> user = userRepository.findByUsername(username);
 
         // Assert
         assertThat(user).isPresent();
@@ -48,7 +48,7 @@ class UserRepositoryTest {
         createAndPersistUser("User", email);
 
         // Act
-        Optional<User> user = userRepository.findByEmail(email);
+        Optional<UserEntity> user = userRepository.findByEmail(email);
 
         // Assert
         assertThat(user).isPresent();
@@ -91,7 +91,7 @@ class UserRepositoryTest {
         createAndPersistUserWithToken("User", "user@example.com", token);
 
         // Act
-        Optional<User> user = userRepository.findByToken(token);
+        Optional<UserEntity> user = userRepository.findByToken(token);
 
         // Assert
         assertThat(user).isPresent();
@@ -100,12 +100,12 @@ class UserRepositoryTest {
 
 
     private void createAndPersistUser(String username, String email) {
-        User user = new User(username, email, "password");
+        UserEntity user = new UserEntity(username, email, "password");
         entityManager.persist(user);
     }
 
     private void createAndPersistUserWithToken(String username, String email, String token) {
-        User user = new User(username, email, "password");
+        UserEntity user = new UserEntity(username, email, "password");
         user.setToken(token);
         entityManager.persist(user);
     }

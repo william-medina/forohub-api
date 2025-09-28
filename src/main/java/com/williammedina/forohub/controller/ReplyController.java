@@ -95,7 +95,7 @@ public class ReplyController {
             }
     )
     @PutMapping("/{replyId}")
-    public ResponseEntity<ReplyDTO> updateResponse(@RequestBody @Valid UpdateReplyDTO data, @PathVariable Long replyId) throws MessagingException {
+    public ResponseEntity<ReplyDTO> updateReply(@RequestBody @Valid UpdateReplyDTO data, @PathVariable Long replyId) throws MessagingException {
         ReplyDTO reply = replyService.updateReply(data, replyId);
         return ResponseEntity.ok(reply);
     }
@@ -112,7 +112,7 @@ public class ReplyController {
             }
     )
     @PatchMapping("/{replyId}")
-    public ResponseEntity<ReplyDTO> setCorrectResponse(@PathVariable Long replyId) throws MessagingException {
+    public ResponseEntity<ReplyDTO> setCorrectReply(@PathVariable Long replyId) throws MessagingException {
         ReplyDTO reply = replyService.setCorrectReply(replyId);
         return ResponseEntity.ok(reply);
     }
@@ -130,7 +130,7 @@ public class ReplyController {
             }
     )
     @DeleteMapping("/{replyId}")
-    public ResponseEntity<Void> deleteResponse(@PathVariable Long replyId) throws MessagingException {
+    public ResponseEntity<Void> deleteReply(@PathVariable Long replyId) throws MessagingException {
         replyService.deleteReply(replyId);
         return ResponseEntity.noContent().build();
     }

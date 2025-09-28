@@ -1,8 +1,8 @@
 package com.williammedina.forohub.domain.reply.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.williammedina.forohub.domain.topic.entity.Topic;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,7 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "Reply")
 @Table(name = "replies")
 @Getter
 @Setter
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(of = "id")
-public class Reply {
+public class ReplyEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +27,12 @@ public class Reply {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
-    private User user;
+    private UserEntity user;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "topic_id", nullable = false)
     @JsonIgnore
-    private Topic topic;
+    private TopicEntity topic;
 
     @Column(nullable = false)
     private String content;
@@ -51,7 +51,7 @@ public class Reply {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
-    public Reply(User user, Topic topic, String content) {
+    public ReplyEntity(UserEntity user, TopicEntity topic, String content) {
         this.user = user;
         this.topic = topic;
         this.content = content;

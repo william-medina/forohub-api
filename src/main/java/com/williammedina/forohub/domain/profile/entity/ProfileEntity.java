@@ -3,7 +3,7 @@ package com.williammedina.forohub.domain.profile.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
+@Entity(name = "Profile")
 @Table(name = "profiles")
 @Getter
 @Setter
@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(of = "id")
-public class Profile {
+public class ProfileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

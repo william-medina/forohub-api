@@ -1,9 +1,9 @@
 package com.williammedina.forohub.domain.user.entity;
 
-import com.williammedina.forohub.domain.reply.entity.Reply;
-import com.williammedina.forohub.domain.topic.entity.Topic;
-import com.williammedina.forohub.domain.profile.entity.Profile;
-import com.williammedina.forohub.domain.topicfollow.entity.TopicFollow;
+import com.williammedina.forohub.domain.reply.entity.ReplyEntity;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
+import com.williammedina.forohub.domain.profile.entity.ProfileEntity;
+import com.williammedina.forohub.domain.topicfollow.entity.TopicFollowEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.*;
 
-@Entity
+@Entity(name = "User")
 @Table(name = "users")
 @Getter
 @Setter
@@ -23,7 +23,7 @@ import java.util.*;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(of = "id")
-public class User implements UserDetails {
+public class UserEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,19 +56,19 @@ public class User implements UserDetails {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Topic> topics = new ArrayList<>();
+    private List<TopicEntity> topics = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reply> replies = new ArrayList<>();
+    private List<ReplyEntity> replies = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TopicFollow> followedTopics = new ArrayList<>();
+    private List<TopicFollowEntity> followedTopics = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "profile_id")
-    private Profile profile;
+    private ProfileEntity profile;
 
-    public User(String username, String email, String password) {
+    public UserEntity(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -128,7 +128,7 @@ public class User implements UserDetails {
     @PrePersist
     public void prePersist() {
         if (this.profile == null) {
-            this.profile = new Profile();
+            this.profile = new ProfileEntity();
             this.profile.setId(4L);
         }
     }

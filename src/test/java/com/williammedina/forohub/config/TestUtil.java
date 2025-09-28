@@ -1,6 +1,6 @@
 package com.williammedina.forohub.config;
 
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.domain.user.repository.UserRepository;
 import com.williammedina.forohub.infrastructure.security.TokenService;
 import jakarta.servlet.http.Cookie;
@@ -18,22 +18,22 @@ public class TestUtil {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
-    public User createUser(String email, String username) {
-        return userRepository.save(new User(username, email, passwordEncoder.encode("password")));
+    public UserEntity createUser(String email, String username) {
+        return userRepository.save(new UserEntity(username, email, passwordEncoder.encode("password")));
     }
 
-    public User getAuthenticatedUser(String username) {
+    public UserEntity getAuthenticatedUser(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario con username '" + username + "' no encontrado"));
     }
 
-    public MockHttpServletRequestBuilder withAuth(MockHttpServletRequestBuilder requestBuilder, User user) {
+    public MockHttpServletRequestBuilder withAuth(MockHttpServletRequestBuilder requestBuilder, UserEntity user) {
         String token = tokenService.generateAccessToken(user);
         return requestBuilder.header("Authorization", "Bearer " + token);
     }
 
     // Method to generate an authentication cookie with JWT
-    public Cookie createCookie(User user, String name, String path, int expired) {
+    public Cookie createCookie(UserEntity user, String name, String path, int expired) {
         String token = tokenService.generateToken(user, expired);
 
         Cookie cookie = new Cookie(name, token);

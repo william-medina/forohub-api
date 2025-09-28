@@ -1,9 +1,9 @@
 package com.williammedina.forohub.domain.topic.entity;
 
-import com.williammedina.forohub.domain.course.entity.Course;
-import com.williammedina.forohub.domain.reply.entity.Reply;
-import com.williammedina.forohub.domain.topicfollow.entity.TopicFollow;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.course.entity.CourseEntity;
+import com.williammedina.forohub.domain.reply.entity.ReplyEntity;
+import com.williammedina.forohub.domain.topicfollow.entity.TopicFollowEntity;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(name = "Topic")
 @Table(name = "topics")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Topic {
+public class TopicEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class Topic {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity user;
 
     @Column(nullable = false)
     private String title;
@@ -39,7 +39,7 @@ public class Topic {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id")
-    private Course course;
+    private CourseEntity course;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -58,13 +58,13 @@ public class Topic {
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     @SQLRestriction("is_deleted = false")
-    private List<Reply> replies = new ArrayList<>();
+    private List<ReplyEntity> replies = new ArrayList<>();
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TopicFollow> followedTopics = new ArrayList<>();
+    private List<TopicFollowEntity> followedTopics = new ArrayList<>();
 
 
-    public Topic(User user, String title, String description, Course course) {
+    public TopicEntity(UserEntity user, String title, String description, CourseEntity course) {
         this.user = user;
         this.title = title;
         this.description = description;

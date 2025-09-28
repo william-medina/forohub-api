@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.topic.dto;
 
-import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
@@ -30,7 +30,7 @@ public record TopicDTO(
         Integer repliesCount,
 
         @Schema(description = "Estado actual del tópico", example = "CLOSED")
-        Topic.Status status,
+        TopicEntity.Status status,
 
         @Schema(description = "Fecha de creación del tópico", example = "2025-05-31T15:45:00")
         LocalDateTime createdAt,
@@ -38,7 +38,7 @@ public record TopicDTO(
         @Schema(description = "Fecha de última actualización del tópico", example = "2025-07-01T10:15:00")
         LocalDateTime updateAt
 ) {
-        public static TopicDTO fromEntity(Topic topic) {
+        public static TopicDTO fromEntity(TopicEntity topic) {
                 return new TopicDTO(
                         topic.getId(),
                         topic.getTitle(),

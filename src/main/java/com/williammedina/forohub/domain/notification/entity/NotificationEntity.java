@@ -1,8 +1,8 @@
 package com.williammedina.forohub.domain.notification.entity;
 
-import com.williammedina.forohub.domain.reply.entity.Reply;
-import com.williammedina.forohub.domain.topic.entity.Topic;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.reply.entity.ReplyEntity;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,7 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "Notification")
 @Table(name = "notifications")
 @Getter
 @Setter
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(of = "id")
-public class Notification {
+public class NotificationEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,15 +26,15 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "topic_id")
-    private Topic topic;
+    private TopicEntity topic;
 
     @ManyToOne
     @JoinColumn(name = "reply_id")
-    private Reply reply;
+    private ReplyEntity reply;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -61,7 +61,7 @@ public class Notification {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Notification(User user, Topic topic, Reply reply, String title, String message, Type type, Subtype subtype) {
+    public NotificationEntity(UserEntity user, TopicEntity topic, ReplyEntity reply, String title, String message, Type type, Subtype subtype) {
         this.user = user;
         this.topic = topic;
         this.reply = reply;

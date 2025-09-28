@@ -1,8 +1,8 @@
 package com.williammedina.forohub.domain.common;
 
-import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.topic.repository.TopicRepository;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.domain.user.repository.UserRepository;
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import lombok.AllArgsConstructor;
@@ -20,18 +20,18 @@ public class CommonHelperService {
     private final TopicRepository topicRepository;
     private final UserRepository userRepository;
 
-    public User getAuthenticatedUser() {
+    public UserEntity getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication.getPrincipal() instanceof User) {
-            return (User) authentication.getPrincipal();
+        if (authentication.getPrincipal() instanceof UserEntity) {
+            return (UserEntity) authentication.getPrincipal();
         }
 
         log.error("Failed to retrieve a valid authenticated user");
         throw new IllegalStateException("El usuario autenticado no es válido.");
     }
 
-    public Topic findTopicById(Long topicId) {
+    public TopicEntity findTopicById(Long topicId) {
         return topicRepository.findByIdAndNotDeleted(topicId)
                 .orElseThrow(() -> {
                     log.warn("Topic not found with ID: {}", topicId);
@@ -39,7 +39,7 @@ public class CommonHelperService {
                 });
     }
 
-    public User findUserByEmailOrUsername(String identifier) {
+    public UserEntity findUserByEmailOrUsername(String identifier) {
         return userRepository.findByEmailOrUsername(identifier, identifier)
                 .orElseThrow(() -> {
                     log.error("User not registered: {}", identifier);

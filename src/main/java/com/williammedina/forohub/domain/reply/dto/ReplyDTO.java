@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.reply.dto;
 
-import com.williammedina.forohub.domain.reply.entity.Reply;
+import com.williammedina.forohub.domain.reply.entity.ReplyEntity;
 import com.williammedina.forohub.domain.user.dto.UserDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -30,7 +30,7 @@ public record ReplyDTO(
         @Schema(description = "Fecha de la última edición", example = "2025-07-01T08:30:00")
         LocalDateTime updatedAt
 ) {
-        public static ReplyDTO fromEntity(Reply reply) {
+        public static ReplyDTO fromEntity(ReplyEntity reply) {
 
                 UserDTO author = new UserDTO(
                         reply.getUser().getId(),

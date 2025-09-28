@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.course;
 
-import com.williammedina.forohub.domain.course.entity.Course;
+import com.williammedina.forohub.domain.course.entity.CourseEntity;
 import com.williammedina.forohub.domain.course.repository.CourseRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +34,7 @@ class CourseRepositoryTest {
         createAndPersistCourse("2 Advanced Java");
 
         // Act
-        List<Course> courses = courseRepository.findAllByOrderByNameAsc();
+        List<CourseEntity> courses = courseRepository.findAllByOrderByNameAsc();
 
         // Assert
         assertThat(courses).isNotEmpty();
@@ -44,7 +44,7 @@ class CourseRepositoryTest {
     }
 
     private void createAndPersistCourse(String name) {
-        Course course = new Course(name, "Category");
+        CourseEntity course = new CourseEntity(name, "Category");
         entityManager.persist(course);
     }
 }

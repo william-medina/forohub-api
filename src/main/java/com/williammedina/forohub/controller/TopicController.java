@@ -1,6 +1,6 @@
 package com.williammedina.forohub.controller;
 
-import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.topic.service.TopicService;
 import com.williammedina.forohub.domain.topic.dto.InputTopicDTO;
 import com.williammedina.forohub.domain.topic.dto.TopicDTO;
@@ -66,7 +66,7 @@ public class TopicController {
             @RequestParam(defaultValue = "6") int size,
             @RequestParam(required = false) Long courseId,
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Topic.Status status
+            @RequestParam(required = false) TopicEntity.Status status
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<TopicDTO> topics = topicService.getAllTopics(pageable, courseId, keyword, status);

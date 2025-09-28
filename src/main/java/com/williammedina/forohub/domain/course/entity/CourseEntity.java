@@ -1,14 +1,14 @@
 package com.williammedina.forohub.domain.course.entity;
 
 
-import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(name = "Course")
 @Table(name = "courses")
 @Getter
 @Setter
@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(of = "id")
-public class Course {
+public class CourseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +29,9 @@ public class Course {
     private String category;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Topic> topics = new ArrayList<>();
+    private List<TopicEntity> topics = new ArrayList<>();
 
-    public Course(String name, String category) {
+    public CourseEntity(String name, String category) {
         this.name = name;
         this.category = category;
     }

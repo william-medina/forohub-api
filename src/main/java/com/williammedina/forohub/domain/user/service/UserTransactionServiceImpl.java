@@ -2,7 +2,7 @@ package com.williammedina.forohub.domain.user.service;
 
 import com.williammedina.forohub.domain.common.CommonHelperService;
 import com.williammedina.forohub.domain.email.EmailService;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.domain.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class UserTransactionServiceImpl implements UserTransactionService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleAccountDisabled(String username) throws MessagingException {
-        User user = commonHelperService.findUserByEmailOrUsername(username);
+        UserEntity user = commonHelperService.findUserByEmailOrUsername(username);
         user.generateConfirmationToken();
         userRepository.save(user);
         emailService.sendConfirmationEmail(user.getEmail(), user);

@@ -1,8 +1,8 @@
 package com.williammedina.forohub.domain.notification;
 
-import com.williammedina.forohub.domain.notification.entity.Notification;
+import com.williammedina.forohub.domain.notification.entity.NotificationEntity;
 import com.williammedina.forohub.domain.notification.repository.NotificationRepository;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,25 +30,25 @@ class NotificationRepositoryTest {
     @DisplayName("Debe devolver las notificaciones de un usuario")
     void findAllByUserOrderByCreatedAtDesc_ReturnsNotificationsSortedByDate() {
         // Arrange
-        User user = createAndPersistUser();
+        UserEntity user = createAndPersistUser();
         createAndPersistNotification(user);
         createAndPersistNotification(user);
 
         // Act
-        List<Notification> notifications = notificationRepository.findAllByUserOrderByCreatedAtDesc(user);
+        List<NotificationEntity> notifications = notificationRepository.findAllByUserOrderByCreatedAtDesc(user);
 
         // Assert
         assertThat(notifications).isNotEmpty();
         assertThat(notifications).hasSize(2);
     }
 
-    private void createAndPersistNotification(User user) {
-        Notification notification = new Notification(user, null, null,"New Notify", "Retry Topic", Notification.Type.TOPIC, Notification.Subtype.REPLY);
+    private void createAndPersistNotification(UserEntity user) {
+        NotificationEntity notification = new NotificationEntity(user, null, null,"New Notify", "Retry Topic", NotificationEntity.Type.TOPIC, NotificationEntity.Subtype.REPLY);
         entityManager.persist(notification);
     }
 
-    private User createAndPersistUser() {
-        User user = new User("WilliamM", "williamM@example.com", "password");
+    private UserEntity createAndPersistUser() {
+        UserEntity user = new UserEntity("WilliamM", "williamM@example.com", "password");
         entityManager.persist(user);
         return user;
     }

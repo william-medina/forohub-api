@@ -1,18 +1,18 @@
 package com.williammedina.forohub.domain.topic.service;
 
 import com.williammedina.forohub.domain.contentvalidation.ContentValidationService;
-import com.williammedina.forohub.domain.course.entity.Course;
+import com.williammedina.forohub.domain.course.entity.CourseEntity;
 import com.williammedina.forohub.domain.course.repository.CourseRepository;
 import com.williammedina.forohub.domain.common.CommonHelperService;
 import com.williammedina.forohub.domain.notification.service.NotificationService;
 import com.williammedina.forohub.domain.topic.dto.InputTopicDTO;
 import com.williammedina.forohub.domain.topic.dto.TopicDTO;
 import com.williammedina.forohub.domain.topic.dto.TopicDetailsDTO;
-import com.williammedina.forohub.domain.reply.entity.Reply;
+import com.williammedina.forohub.domain.reply.entity.ReplyEntity;
 import com.williammedina.forohub.domain.reply.dto.ReplyDTO;
-import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.topic.repository.TopicRepository;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.domain.email.EmailService;
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import jakarta.mail.MessagingException;
@@ -42,7 +42,7 @@ public class TopicServiceImpl implements TopicService {
     @Override
     @Transactional
     public TopicDTO createTopic(InputTopicDTO data) {
-        User user = getAuthenticatedUser();
+        UserEntity user = getAuthenticatedUser();
         log.info("Creating topic by user ID: {}", user.getId());
 
         existsByTitle(data.title());
@@ -52,9 +52,9 @@ public class TopicServiceImpl implements TopicService {
         validateTitleContent(data.title());
         validateDescriptionContent(data.description());
 
-        Course course = findCourseById(data.courseId());
+        CourseEntity course = findCourseById(data.courseId());
 
-        Topic topic = topicRepository.save(new Topic(user, data.title(), data.description(), course));
+        TopicEntity topic = topicRepository.save(new TopicEntity(user, data.title(), data.description(), course));
         log.info("Topic created with ID: {} for course ID: {} by user ID: {}", topic.getId(), course.getId(), user.getId());
 
         return TopicDTO.fromEntity(topic);
@@ -62,7 +62,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TopicDTO> getAllTopics(Pageable pageable, Long courseId, String keyword, Topic.Status status) {
+    public Page<TopicDTO> getAllTopics(Pageable pageable, Long courseId, String keyword, TopicEntity.Status status) {
         log.debug("Fetching topics - page: {}, size: {}, courseId: {}, keyword: {}, status: {}",
                 pageable.getPageNumber(), pageable.getPageSize(), courseId, keyword, status);
 
@@ -75,7 +75,7 @@ public class TopicServiceImpl implements TopicService {
     @Override
     @Transactional(readOnly = true)
     public Page<TopicDTO> getAllTopicsByUser(Pageable pageable, String keyword) {
-        User user = getAuthenticatedUser();
+        UserEntity user = getAuthenticatedUser();
         log.debug("Fetching topics for user ID: {} - keyword: {}", user.getId(), keyword);
 
         if (keyword != null ) {
@@ -88,9 +88,9 @@ public class TopicServiceImpl implements TopicService {
     @Transactional(readOnly = true)
     public TopicDetailsDTO getTopicById(Long topicId) {
         log.debug("Fetching topic details with ID: {}", topicId);
-        Topic topic = findTopicById(topicId);
+        TopicEntity topic = findTopicById(topicId);
         List<ReplyDTO> replies = topic.getReplies().stream()
-                .sorted(Comparator.comparing(Reply::getCreatedAt))
+                .sorted(Comparator.comparing(ReplyEntity::getCreatedAt))
                 .map(ReplyDTO::fromEntity)
                 .toList();
 
@@ -100,11 +100,11 @@ public class TopicServiceImpl implements TopicService {
     @Override
     @Transactional
     public TopicDetailsDTO updateTopic(InputTopicDTO data, Long topicId) throws MessagingException {
-        Topic topic = findTopicById(topicId);
-        User user = checkModificationPermission(topic);
+        TopicEntity topic = findTopicById(topicId);
+        UserEntity user = checkModificationPermission(topic);
         log.info("Updating topic ID: {} by user ID: {}", topicId, user.getId());
 
-        Course course = findCourseById(data.courseId());
+        CourseEntity course = findCourseById(data.courseId());
 
         if(!data.title().equals(topic.getTitle())) {
             existsByTitle(data.title());
@@ -120,7 +120,7 @@ public class TopicServiceImpl implements TopicService {
         topic.setDescription(data.description());
         topic.setCourse(course);
 
-        Topic updatedTopic = topicRepository.save(topic);
+        TopicEntity updatedTopic = topicRepository.save(topic);
         log.info("Topic updated ID: {} by user ID: {}", updatedTopic.getId(), user.getId());
 
         if(!user.getUsername().equals(topic.getUser().getUsername())) {
@@ -140,8 +140,8 @@ public class TopicServiceImpl implements TopicService {
     @Override
     @Transactional
     public void deleteTopic(Long topicId) throws MessagingException {
-        Topic topic = findTopicById(topicId);
-        User user = checkModificationPermission(topic);
+        TopicEntity topic = findTopicById(topicId);
+        UserEntity user = checkModificationPermission(topic);
         topic.setIsDeleted(true); //topicRepository.delete(topic);
         log.info("Topic marked as deleted - ID: {} by user ID: {}", topicId, user.getId());
 
@@ -152,15 +152,15 @@ public class TopicServiceImpl implements TopicService {
         }
     }
 
-    private User getAuthenticatedUser() {
+    private UserEntity getAuthenticatedUser() {
         return commonHelperService.getAuthenticatedUser();
     }
 
-    private Topic findTopicById(Long topicId) {
+    private TopicEntity findTopicById(Long topicId) {
         return commonHelperService.findTopicById(topicId);
     }
 
-    private Course findCourseById(Long courseId) {
+    private CourseEntity findCourseById(Long courseId) {
         return courseRepository.findById(courseId)
                 .orElseThrow(() -> {
                     log.error("Course not found with ID: {}", courseId);
@@ -168,8 +168,8 @@ public class TopicServiceImpl implements TopicService {
                 });
     }
 
-    private User checkModificationPermission(Topic topic) {
-        User user = getAuthenticatedUser();
+    private UserEntity checkModificationPermission(TopicEntity topic) {
+        UserEntity user = getAuthenticatedUser();
         // If the user is the owner OR has elevated permissions, they are allowed to modify the topic
         if (!topic.getUser().equals(getAuthenticatedUser()) && !getAuthenticatedUser().hasElevatedPermissions()) {
             log.warn("User ID: {} attempted to modify topic ID: {} without permission", user.getId(), topic.getId());

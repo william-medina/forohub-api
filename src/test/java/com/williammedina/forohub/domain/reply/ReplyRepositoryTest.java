@@ -1,10 +1,10 @@
 package com.williammedina.forohub.domain.reply;
 
-import com.williammedina.forohub.domain.course.entity.Course;
-import com.williammedina.forohub.domain.reply.entity.Reply;
+import com.williammedina.forohub.domain.course.entity.CourseEntity;
+import com.williammedina.forohub.domain.reply.entity.ReplyEntity;
 import com.williammedina.forohub.domain.reply.repository.ReplyRepository;
-import com.williammedina.forohub.domain.topic.entity.Topic;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,13 +36,13 @@ class ReplyRepositoryTest {
     @DisplayName("Debe devolver las respuestas de un tópico específico")
     void findByTopicId_ReturnsRepliesForTopic() {
         // Arrange
-        User user = createAndPersistUser();
-        Topic topic = createAndPersistTopic(user);
+        UserEntity user = createAndPersistUser();
+        TopicEntity topic = createAndPersistTopic(user);
         createAndPersistReply(user, topic);
         createAndPersistReply(user, topic);
 
         // Act
-        List<Reply> responses = replyRepository.findByTopicId(topic.getId());
+        List<ReplyEntity> responses = replyRepository.findByTopicId(topic.getId());
 
         // Assert
         assertThat(responses).hasSize(2);
@@ -52,15 +52,15 @@ class ReplyRepositoryTest {
     @DisplayName("Debe devolver respuestas de un usuario")
     void findByUserSortedByCreationDate_ReturnsRepliesForUser() {
         // Arrange
-        User user = createAndPersistUser();
-        Topic topic = createAndPersistTopic(user);
+        UserEntity user = createAndPersistUser();
+        TopicEntity topic = createAndPersistTopic(user);
         createAndPersistReply(user, topic);
         createAndPersistReply(user, topic);
 
         Pageable pageable = PageRequest.of(0, 10);
 
         // Act
-        Page<Reply> responsesPage = replyRepository.findByUserSortedByCreationDate(user, pageable);
+        Page<ReplyEntity> responsesPage = replyRepository.findByUserSortedByCreationDate(user, pageable);
 
         // Assert
         assertThat(responsesPage).isNotEmpty();
@@ -71,8 +71,8 @@ class ReplyRepositoryTest {
     @DisplayName("Debe contar las respuestas de un usuario")
     void countByUserId_ReturnsRepliesCount() {
         // Arrange
-        User user = createAndPersistUser();
-        Topic topic = createAndPersistTopic(user);
+        UserEntity user = createAndPersistUser();
+        TopicEntity topic = createAndPersistTopic(user);
         createAndPersistReply(user, topic);
         createAndPersistReply(user, topic);
 
@@ -87,38 +87,38 @@ class ReplyRepositoryTest {
     @DisplayName("Debe devolver una respuesta por id")
     void findByIdAndIsDeletedFalse_ReturnsReply() {
         // Arrange
-        User user = createAndPersistUser();
-        Topic topic = createAndPersistTopic(user);
-        Reply response = createAndPersistReply(user, topic);
+        UserEntity user = createAndPersistUser();
+        TopicEntity topic = createAndPersistTopic(user);
+        ReplyEntity response = createAndPersistReply(user, topic);
 
         // Act
-        Optional<Reply> foundResponse = replyRepository.findByIdAndIsDeletedFalse(response.getId());
+        Optional<ReplyEntity> foundResponse = replyRepository.findByIdAndIsDeletedFalse(response.getId());
 
         // Assert
         assertThat(foundResponse).isPresent();
         assertThat(foundResponse.get()).isEqualTo(response);
     }
 
-    private Topic createAndPersistTopic(User user) {
-        Topic topic = new Topic(user, "Topic Title", "Topic Description", createAndPersistCourse());
+    private TopicEntity createAndPersistTopic(UserEntity user) {
+        TopicEntity topic = new TopicEntity(user, "Topic Title", "Topic Description", createAndPersistCourse());
         entityManager.persist(topic);
         return topic;
     }
 
-    private Course createAndPersistCourse() {
-        Course course = new Course("Course 1", "Category 1");
+    private CourseEntity createAndPersistCourse() {
+        CourseEntity course = new CourseEntity("Course 1", "Category 1");
         entityManager.persist(course);
         return course;
     }
 
-    private User createAndPersistUser() {
-        User user = new User("WilliamM", "williamM@example.com", "password");
+    private UserEntity createAndPersistUser() {
+        UserEntity user = new UserEntity("WilliamM", "williamM@example.com", "password");
         entityManager.persist(user);
         return user;
     }
 
-    private Reply createAndPersistReply(User user, Topic topic) {
-        Reply reply = new Reply(user, topic, "Reply Content" );
+    private ReplyEntity createAndPersistReply(UserEntity user, TopicEntity topic) {
+        ReplyEntity reply = new ReplyEntity(user, topic, "Reply Content" );
         entityManager.persist(reply);
         return reply;
     }

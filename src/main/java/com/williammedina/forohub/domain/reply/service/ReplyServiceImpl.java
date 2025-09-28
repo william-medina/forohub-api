@@ -3,13 +3,13 @@ package com.williammedina.forohub.domain.reply.service;
 import com.williammedina.forohub.domain.common.CommonHelperService;
 import com.williammedina.forohub.domain.contentvalidation.ContentValidationService;
 import com.williammedina.forohub.domain.notification.service.NotificationService;
-import com.williammedina.forohub.domain.reply.entity.Reply;
+import com.williammedina.forohub.domain.reply.entity.ReplyEntity;
 import com.williammedina.forohub.domain.reply.repository.ReplyRepository;
-import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.reply.dto.CreateReplyDTO;
 import com.williammedina.forohub.domain.reply.dto.ReplyDTO;
 import com.williammedina.forohub.domain.reply.dto.UpdateReplyDTO;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.domain.email.EmailService;
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import jakarta.mail.MessagingException;
@@ -39,14 +39,14 @@ public class ReplyServiceImpl implements ReplyService {
     @Override
     @Transactional
     public ReplyDTO createReply(CreateReplyDTO data) throws MessagingException {
-        User user = getAuthenticatedUser();
-        Topic topic = findTopicById(data.topicId());
+        UserEntity user = getAuthenticatedUser();
+        TopicEntity topic = findTopicById(data.topicId());
         log.info("User ID: {} creating reply for topic ID: {}", user.getId(), topic.getId());
 
         isTopicClosed(topic);
         validateReplyContent(data.content()); // Validate the reply content using AI
 
-        Reply reply = replyRepository.save(new Reply(user, topic, data.content()));
+        ReplyEntity reply = replyRepository.save(new ReplyEntity(user, topic, data.content()));
         log.info("Reply created with ID: {} by user ID: {}", reply.getId(), user.getId());
 
         if(!user.getUsername().equals(topic.getUser().getUsername())) {
@@ -66,7 +66,7 @@ public class ReplyServiceImpl implements ReplyService {
     @Override
     @Transactional(readOnly = true)
     public Page<ReplyDTO> getAllRepliesByUser(Pageable pageable) {
-        User user = getAuthenticatedUser();
+        UserEntity user = getAuthenticatedUser();
         log.debug("Fetching replies for user ID: {}", user.getId());
         return replyRepository.findByUserSortedByCreationDate(user, pageable).map(ReplyDTO::fromEntity);
     }
@@ -74,28 +74,28 @@ public class ReplyServiceImpl implements ReplyService {
     @Override
     @Transactional
     public ReplyDTO updateReply(UpdateReplyDTO data, Long replyId) throws MessagingException {
-        Reply reply = findReplyById(replyId);
-        User user = checkModificationPermission(reply);
-        log.info("User ID: {} updating response ID: {}", user.getId(), replyId);
+        ReplyEntity reply = findReplyById(replyId);
+        UserEntity user = checkModificationPermission(reply);
+        log.info("User ID: {} updating reply ID: {}", user.getId(), replyId);
 
         validateReplyContent(data.content()); // Validate the updated reply content using AI
 
         reply.setContent(data.content());
-        Reply updatedResponse = replyRepository.save(reply);
+        ReplyEntity updatedReply = replyRepository.save(reply);
 
         if(!user.getUsername().equals(reply.getUser().getUsername())) {
-            log.debug("Notifying response owner ID: {}", replyId);
+            log.debug("Notifying reply owner ID: {}", replyId);
             notificationService.notifyReplyEdited(reply);
             emailService.notifyReplyEdited(reply);
         }
-        return ReplyDTO.fromEntity(updatedResponse);
+        return ReplyDTO.fromEntity(updatedReply);
     }
 
     @Override
     @Transactional
     public void deleteReply(Long replyId) throws MessagingException {
-        Reply reply = findReplyById(replyId);
-        User user = checkModificationPermission(reply);
+        ReplyEntity reply = findReplyById(replyId);
+        UserEntity user = checkModificationPermission(reply);
         if (reply.getSolution()) {
            throw new AppException("No puedes eliminar una respuesta marcada como solución", HttpStatus.CONFLICT);
         }
@@ -114,32 +114,32 @@ public class ReplyServiceImpl implements ReplyService {
     @Transactional(readOnly = true)
     public ReplyDTO getReplyById(Long replyId) {
         log.debug("Fetching reply ID: {}", replyId);
-        Reply reply = findReplyById(replyId);
+        ReplyEntity reply = findReplyById(replyId);
         return ReplyDTO.fromEntity(reply);
     }
 
     @Override
     @Transactional
     public ReplyDTO setCorrectReply(Long replyId) throws MessagingException {
-        User user = getAuthenticatedUser();
+        UserEntity user = getAuthenticatedUser();
         if (!user.hasElevatedPermissions()) {
             log.warn("User ID: {} attempted to modify topic state without permission for reply ID: {}", user.getId(), replyId);
             throw new AppException("No tienes permiso para modificar el estado de la respuesta", HttpStatus.FORBIDDEN);
         }
 
-        Reply reply = findReplyById(replyId);
+        ReplyEntity reply = findReplyById(replyId);
         log.info("User ID: {} changing state of reply ID: {}", user.getId(), replyId);
-        List<Reply> replies = replyRepository.findByTopicId(reply.getTopic().getId());
+        List<ReplyEntity> replies = replyRepository.findByTopicId(reply.getTopic().getId());
 
         boolean isCurrentlySolution = reply.getSolution();
         replies.forEach(re -> re.setSolution(false)); // Deactivate all solutions
 
         if (!isCurrentlySolution) {
             reply.setSolution(true);
-            reply.getTopic().setStatus(Topic.Status.CLOSED);
+            reply.getTopic().setStatus(TopicEntity.Status.CLOSED);
             log.info("Reply ID: {} marked as solution for topic ID: {}", reply.getId(), reply.getTopic().getId());
         } else {
-            reply.getTopic().setStatus(Topic.Status.ACTIVE);
+            reply.getTopic().setStatus(TopicEntity.Status.ACTIVE);
             log.info("Reply ID: {} unmarked as solution for topic ID: {}", reply.getId(), reply.getTopic().getId());
         }
 
@@ -158,15 +158,15 @@ public class ReplyServiceImpl implements ReplyService {
         return ReplyDTO.fromEntity(reply);
     }
 
-    private User getAuthenticatedUser() {
+    private UserEntity getAuthenticatedUser() {
         return commonHelperService.getAuthenticatedUser();
     }
 
-    private Topic findTopicById(Long topicId) {
+    private TopicEntity findTopicById(Long topicId) {
         return commonHelperService.findTopicById(topicId);
     }
 
-    private Reply findReplyById(Long replyId) {
+    private ReplyEntity findReplyById(Long replyId) {
         return replyRepository.findByIdAndIsDeletedFalse(replyId)
                 .orElseThrow(() ->  {
                     log.error("Reply not found with ID: {}", replyId);
@@ -174,8 +174,8 @@ public class ReplyServiceImpl implements ReplyService {
                 });
     }
 
-    private User checkModificationPermission(Reply reply) {
-        User user = getAuthenticatedUser();
+    private UserEntity checkModificationPermission(ReplyEntity reply) {
+        UserEntity user = getAuthenticatedUser();
         // If the user is the owner OR has elevated permissions, they are allowed to modify the reply
         if (!reply.getUser().equals(getAuthenticatedUser()) && !getAuthenticatedUser().hasElevatedPermissions()) {
             log.warn("User ID: {} without permissions attempted to modify reply ID: {}", user.getId(), reply.getId());
@@ -185,7 +185,7 @@ public class ReplyServiceImpl implements ReplyService {
         return user;
     }
 
-    private void isTopicClosed(Topic topic) {
+    private void isTopicClosed(TopicEntity topic) {
         if(topic.isTopicClosed()) {
             log.warn("Attempt to reply to closed topic ID: {}", topic.getId());
             throw new AppException("No se puede crear una respuesta. El tópico está cerrado.", HttpStatus.FORBIDDEN);

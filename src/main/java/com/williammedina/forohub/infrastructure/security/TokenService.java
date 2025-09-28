@@ -5,7 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,15 +27,15 @@ public class TokenService {
         return Algorithm.HMAC256(jwtSecret);
     }
 
-    public String generateAccessToken(User user) {
+    public String generateAccessToken(UserEntity user) {
         return generateToken(user, ACCESS_TOKEN_EXPIRATION * 1000);
     }
 
-    public String generateRefreshToken(User user) {
+    public String generateRefreshToken(UserEntity user) {
         return generateToken(user, REFRESH_TOKEN_EXPIRATION * 1000);
     }
 
-    public String generateToken(User user, long expirationMillis) {
+    public String generateToken(UserEntity user, long expirationMillis) {
         try {
             return JWT.create()
                     .withIssuer(ISSUER)

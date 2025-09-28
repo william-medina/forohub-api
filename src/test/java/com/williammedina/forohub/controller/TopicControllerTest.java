@@ -2,13 +2,13 @@ package com.williammedina.forohub.controller;
 
 import com.williammedina.forohub.config.TestConfig;
 import com.williammedina.forohub.config.TestUtil;
-import com.williammedina.forohub.domain.course.entity.Course;
+import com.williammedina.forohub.domain.course.entity.CourseEntity;
 import com.williammedina.forohub.domain.course.repository.CourseRepository;
-import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.topic.repository.TopicRepository;
 import com.williammedina.forohub.domain.topic.dto.InputTopicDTO;
 import com.williammedina.forohub.domain.topicfollow.service.TopicFollowServiceImpl;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,7 +64,7 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 201 cuando se crea un tópico exitosamente")
     void createTopic_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         InputTopicDTO input = new InputTopicDTO("Valid Title", "Valid Description", 1L);
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
@@ -81,7 +81,7 @@ class TopicControllerTest {
     @DisplayName("Debería devolver HTTP 400 cuando los inputs son inválidos")
     @WithUserDetails("William")
     void createTopic_InvalidInput() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         InputTopicDTO input = new InputTopicDTO("", "", 0L);
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
@@ -98,7 +98,7 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando el curso no existe")
     void createTopic_CourseNotFound() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         InputTopicDTO input = new InputTopicDTO("Valid Title", "Valid Description", 0L);
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
@@ -115,7 +115,7 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Deberia devolver HTTP 409 cuando el título o la descripción ya existen")
     void createTopic_TitleOrDescriptionExist() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         createTopic("William", 1L, "Duplicate Title", "Duplicate Description");
         InputTopicDTO input = new InputTopicDTO("Duplicate Title", "Duplicate Description", 1L);
         var mvcResponse  = mvc.perform(
@@ -149,7 +149,7 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando se obtiene un tópico por ID exitosamente")
     void getTopicById_Success() throws Exception {
-        Topic topic = createTopic("William", 1L, "Title", "Description");
+        TopicEntity topic = createTopic("William", 1L, "Title", "Description");
         var mvcResponse  = mvc.perform(get("/api/topic/{topicId}", topic.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
@@ -160,7 +160,7 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando el tópico no existe")
     void getTopicById_NotFound() throws Exception {
-        Topic topic = createTopic("William", 1L, "Title", "Description");
+        TopicEntity topic = createTopic("William", 1L, "Title", "Description");
         topic.setIsDeleted(true);
         var mvcResponse  = mvc.perform(get("/api/topic/{topicId}", topic.getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -172,8 +172,8 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando el tópico se actualiza exitosamente")
     void updateTopic_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Initial Title", "Initial Description");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("William", 1L, "Initial Title", "Initial Description");
         InputTopicDTO input = new InputTopicDTO("Updated Valid Title", "Updated Valid Description", 1L);
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
@@ -190,7 +190,7 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 400 cuando los datos de entrada son inválidos")
     void updateTopic_InvalidInput() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         InputTopicDTO input = new InputTopicDTO("", "", 1L);
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
@@ -207,7 +207,7 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando el tópico no existe")
     void updateTopic_NotFound() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         InputTopicDTO input = new InputTopicDTO("Updated Title", "Updated Description", 1L);
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
@@ -224,9 +224,9 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 409 cuando el título o la descripción ya existen en otro tópico")
     void updateTopic_Conflict() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         createTopic("William", 1L, "Existing Title", "Existing Description");
-        Topic topic = createTopic("William", 1L, "Title to Update", "Description to Update");
+        TopicEntity topic = createTopic("William", 1L, "Title to Update", "Description to Update");
         InputTopicDTO input = new InputTopicDTO("Existing Title", "Existing Description", 1L);
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
@@ -243,8 +243,8 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario no tiene permiso para modificar el tópico")
     void updateTopic_NoPermission() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("Admin", 1L, "Title", "Description");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("Admin", 1L, "Title", "Description");
         InputTopicDTO input = new InputTopicDTO("Updated Title", "Updated Description", 1L);
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
@@ -261,8 +261,8 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 204 cuando un tópico se elimina exitosamente")
     void deleteTopic_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Title to Delete", "Description to Delete");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("William", 1L, "Title to Delete", "Description to Delete");
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
                         delete("/api/topic/{topicId}", topic.getId())
@@ -277,8 +277,8 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario no tiene permiso para eliminar este tópico")
     void deleteTopic_Forbidden() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("Admin", 1L, "Title", "Description");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("Admin", 1L, "Title", "Description");
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
                         delete("/api/topic/{topicId}", topic.getId())
@@ -293,7 +293,7 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando el tópico no existe")
     void deleteTopic_NotFound() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
                         delete("/api/topic/{topicId}", 0L)
@@ -308,8 +308,8 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando un usuario sigue o deja de seguir un tópico exitosamente")
     void toggleFollowTopic_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("Admin", 1L, "Topic to Follow", "Description");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("Admin", 1L, "Topic to Follow", "Description");
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
                         post("/api/topic/follow/{topicId}", topic.getId())
@@ -324,7 +324,7 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando el tópico no existe")
     void toggleFollowTopic_NotFound() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
                         post("/api/topic/follow/{topicId}", 0L)
@@ -339,8 +339,8 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 409 cuando un usuario intenta seguir un tópico creado por él mismo")
     void toggleFollowTopic_Conflict() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic Created by User", "Description");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("William", 1L, "Topic Created by User", "Description");
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
                         post("/api/topic/follow/{topicId}", topic.getId())
@@ -355,9 +355,9 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando los tópicos seguidos por el usuario se recuperan exitosamente")
     void getFollowedTopicsByUser_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic1 = createTopic("Admin", 1L, "Followed Topic 1", "Description 1");
-        Topic topic2 = createTopic("Admin", 1L, "Followed Topic 2", "Description 2");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic1 = createTopic("Admin", 1L, "Followed Topic 1", "Description 1");
+        TopicEntity topic2 = createTopic("Admin", 1L, "Followed Topic 2", "Description 2");
         topicFollowService.toggleFollowTopic(topic1.getId());
         topicFollowService.toggleFollowTopic(topic2.getId());
         var mvcResponse  = mvc.perform(
@@ -376,9 +376,9 @@ class TopicControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 con paginación y filtrado de palabras clave")
     void getFollowedTopicsByUser_WithPaginationAndKeyword() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic1 = createTopic("Admin", 1L, "Followed Topic 1", "Description 1");
-        Topic topic2 = createTopic("Admin", 1L, "Followed Topic 2", "Description 2");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic1 = createTopic("Admin", 1L, "Followed Topic 1", "Description 1");
+        TopicEntity topic2 = createTopic("Admin", 1L, "Followed Topic 2", "Description 2");
         topicFollowService.toggleFollowTopic(topic1.getId());
         topicFollowService.toggleFollowTopic(topic2.getId());
         var mvcResponse  = mvc.perform(
@@ -394,12 +394,12 @@ class TopicControllerTest {
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
-    public Topic createTopic(String username, Long courseId, String title, String description) {
-        User user = testUtil.getAuthenticatedUser(username);
-        Optional<Course> course = courseRepository.findById(courseId);
+    public TopicEntity createTopic(String username, Long courseId, String title, String description) {
+        UserEntity user = testUtil.getAuthenticatedUser(username);
+        Optional<CourseEntity> course = courseRepository.findById(courseId);
 
         if (user != null && course.isPresent()) {
-            Topic topic = new Topic(user, title, description, course.get());
+            TopicEntity topic = new TopicEntity(user, title, description, course.get());
             return topicRepository.save(topic);
         } else {
             throw new IllegalArgumentException("Usuario o curso no encontrado");

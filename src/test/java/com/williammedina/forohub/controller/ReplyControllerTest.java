@@ -2,15 +2,15 @@ package com.williammedina.forohub.controller;
 
 import com.williammedina.forohub.config.TestConfig;
 import com.williammedina.forohub.config.TestUtil;
-import com.williammedina.forohub.domain.course.entity.Course;
+import com.williammedina.forohub.domain.course.entity.CourseEntity;
 import com.williammedina.forohub.domain.course.repository.CourseRepository;
-import com.williammedina.forohub.domain.reply.entity.Reply;
+import com.williammedina.forohub.domain.reply.entity.ReplyEntity;
 import com.williammedina.forohub.domain.reply.repository.ReplyRepository;
 import com.williammedina.forohub.domain.reply.dto.CreateReplyDTO;
 import com.williammedina.forohub.domain.reply.dto.UpdateReplyDTO;
-import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.topic.repository.TopicRepository;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,8 +68,8 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 201 cuando se crea una respuesta exitosamente")
     void createReply_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
         CreateReplyDTO createReplyDTO = new CreateReplyDTO(topic.getId(), "This is a test reply.");
         var mvcResponse  = mvc.perform(
                 testUtil.withAuth(
@@ -86,8 +86,8 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 400 cuando los datos de entrada son inválidos")
     void createReply_InvalidData() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
         CreateReplyDTO createReplyDTO = new CreateReplyDTO(topic.getId(), "");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
@@ -104,9 +104,9 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando se intenta agregar una respuesta a un tópico cerrado")
     void createReply_ClosedTopic() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
-        topic.setStatus(Topic.Status.CLOSED);
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        topic.setStatus(TopicEntity.Status.CLOSED);
         CreateReplyDTO createReplyDTO = new CreateReplyDTO(topic.getId(), "This is a test reply.");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
@@ -123,7 +123,7 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando el tópico no existe")
     void createReply_TopicNotFound() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         createTopic("William", 1L, "Topic for Reply", "Topic Description");
         CreateReplyDTO createReplyDTO = new CreateReplyDTO(0L, "This is a test reply.");
         var mvcResponse = mvc.perform(
@@ -141,8 +141,8 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 y las respuestas del usuario autenticado")
     void getAllRepliesByUser_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
         createReply("William", topic, "First reply");
         createReply("William", topic, "Second reply");
         var mvcResponse = mvc.perform(
@@ -159,9 +159,9 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando se obtiene una respuesta por ID exitosamente")
     void getReplyById_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
-        Reply reply = createReply("William", topic, "Test reply message");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        ReplyEntity reply = createReply("William", topic, "Test reply message");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
                         get("/api/reply/{replyId}", reply.getId())
@@ -176,7 +176,7 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando no se encuentra la respuesta por ID")
     void getReplyById_NotFound() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         Long nonExistentReplyId = 0L;
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
@@ -192,9 +192,9 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando se actualiza una respuesta exitosamente")
     void updateReply_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
-        Reply reply = createReply("William", topic, "Original reply message");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        ReplyEntity reply = createReply("William", topic, "Original reply message");
         UpdateReplyDTO updateReplyDTO = new UpdateReplyDTO("This is a updated reply.");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
@@ -211,9 +211,9 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 400 cuando los datos de entrada son inválidos")
     void updateReply_InvalidData() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
-        Reply reply = createReply("William", topic, "Original reply message");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        ReplyEntity reply = createReply("William", topic, "Original reply message");
         UpdateReplyDTO updateReplyDTO = new UpdateReplyDTO("");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
@@ -230,9 +230,9 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario no tiene permiso para modificar la respuesta")
     void updateReply_Forbidden() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
-        Reply reply = createReply("Admin", topic, "Original reply message");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("William", 1L, "Topic for Reply", "Topic Description");
+        ReplyEntity reply = createReply("Admin", topic, "Original reply message");
         UpdateReplyDTO updateReplyDTO = new UpdateReplyDTO("Updated reply message");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
@@ -249,7 +249,7 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando la respuesta no existe")
     void updateReply_NotFound() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         Long nonExistentReplyId = 0L;
         UpdateReplyDTO updateReplyDTO = new UpdateReplyDTO("Updated reply message");
         var mvcResponse = mvc.perform(
@@ -267,9 +267,9 @@ class ReplyControllerTest {
     @WithUserDetails("Admin")
     @DisplayName("Debería devolver HTTP 200 cuando el estado de solución se actualiza correctamente")
     void setCorrectReply_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("Admin");
-        Topic topic = createTopic("William", 1L, "Topic for Reply Solution", "Topic Description");
-        Reply reply = createReply("William", topic, "Sample reply");
+        UserEntity user = testUtil.getAuthenticatedUser("Admin");
+        TopicEntity topic = createTopic("William", 1L, "Topic for Reply Solution", "Topic Description");
+        ReplyEntity reply = createReply("William", topic, "Sample reply");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
                         patch("/api/reply/{replyId}", reply.getId()),
@@ -283,9 +283,9 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario no tiene permiso para modificar la respuesta")
     void setCorrectReply_Forbidden() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic for Reply Solution", "Topic Description");
-        Reply reply = createReply("William", topic, "Sample reply");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("William", 1L, "Topic for Reply Solution", "Topic Description");
+        ReplyEntity reply = createReply("William", topic, "Sample reply");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
                         patch("/api/reply/{replyId}", reply.getId()),
@@ -299,7 +299,7 @@ class ReplyControllerTest {
     @WithUserDetails("Admin")
     @DisplayName("Debería devolver HTTP 404 cuando la respuesta no existe")
     void setCorrectReply_NotFound() throws Exception {
-        User user = testUtil.getAuthenticatedUser("Admin");
+        UserEntity user = testUtil.getAuthenticatedUser("Admin");
         Long nonExistentReplyId = 0L;
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
@@ -314,9 +314,9 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 204 cuando la respuesta se elimina exitosamente")
     void deleteReply_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("William", 1L, "Topic to Reply delete", "Topic Description");
-        Reply reply = createReply("William", topic, "Sample reply");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("William", 1L, "Topic to Reply delete", "Topic Description");
+        ReplyEntity reply = createReply("William", topic, "Sample reply");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
                         delete("/api/reply/{replyId}", reply.getId()),
@@ -330,9 +330,9 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario no tiene permiso para eliminar la respuesta")
     void deleteReply_Forbidden() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Topic topic = createTopic("Admin", 1L, "Topic to Reply delete", "Topic Description");
-        Reply reply = createReply("Admin", topic, "Sample reply");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        TopicEntity topic = createTopic("Admin", 1L, "Topic to Reply delete", "Topic Description");
+        ReplyEntity reply = createReply("Admin", topic, "Sample reply");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
                         delete("/api/reply/{replyId}", reply.getId()),
@@ -346,7 +346,7 @@ class ReplyControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando la respuesta no existe")
     void deleteReply_NotFound() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         Long nonExistentReplyId = 0L;
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(
@@ -358,24 +358,24 @@ class ReplyControllerTest {
     }
 
 
-    public Topic createTopic(String username, Long courseId, String title, String description) {
-        User user = testUtil.getAuthenticatedUser(username);
+    public TopicEntity createTopic(String username, Long courseId, String title, String description) {
+        UserEntity user = testUtil.getAuthenticatedUser(username);
 
-        Optional<Course> course = courseRepository.findById(courseId);
+        Optional<CourseEntity> course = courseRepository.findById(courseId);
 
         if (user != null && course.isPresent()) {
-            Topic topic = new Topic(user, title, description, course.get());
+            TopicEntity topic = new TopicEntity(user, title, description, course.get());
             return topicRepository.save(topic);
         } else {
             throw new IllegalArgumentException("Usuario o curso no encontrado");
         }
     }
 
-    public Reply createReply(String username, Topic topic, String message) {
-        User user = testUtil.getAuthenticatedUser(username);
+    public ReplyEntity createReply(String username, TopicEntity topic, String message) {
+        UserEntity user = testUtil.getAuthenticatedUser(username);
 
         if (user != null) {
-            Reply reply = new Reply(user, topic, message);
+            ReplyEntity reply = new ReplyEntity(user, topic, message);
             return replyRepository.save(reply);
         } else {
             throw new IllegalArgumentException("Usuario o curso no encontrado");

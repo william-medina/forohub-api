@@ -1,15 +1,15 @@
 package com.williammedina.forohub.domain.topicfollow.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.williammedina.forohub.domain.topic.entity.Topic;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "TopicFollow")
 @Table(name = "topic_followers")
 @Getter
 @Setter
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(of = "id")
-public class TopicFollow {
+public class TopicFollowEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,18 +25,18 @@ public class TopicFollow {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
-    private User user;
+    private UserEntity user;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "topic_id", nullable = false)
     @JsonIgnore
-    private Topic topic;
+    private TopicEntity topic;
 
     @Column(name = "followed_at", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime followedAt;
 
-    public TopicFollow(User user, Topic topic) {
+    public TopicFollowEntity(UserEntity user, TopicEntity topic) {
         this.user = user;
         this.topic = topic;
     }

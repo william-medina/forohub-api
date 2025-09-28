@@ -1,6 +1,6 @@
 package com.williammedina.forohub.domain.notification.dto;
 
-import com.williammedina.forohub.domain.notification.entity.Notification;
+import com.williammedina.forohub.domain.notification.entity.NotificationEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
@@ -18,10 +18,10 @@ public record NotificationDTO(
         Long topicId,
 
         @Schema(description = "Tipo de notificación", example = "TOPIC")
-        Notification.Type type,
+        NotificationEntity.Type type,
 
         @Schema(description = "Subtipo de notificación", example = "REPLY")
-        Notification.Subtype subtype,
+        NotificationEntity.Subtype subtype,
 
         @Schema(description = "Título de la notificación", example = "Nueva respuesta a tu tópico")
         String title,
@@ -36,7 +36,7 @@ public record NotificationDTO(
         LocalDateTime createdAt
 ) {
 
-        public static NotificationDTO fromEntity(Notification notification) {
+        public static NotificationDTO fromEntity(NotificationEntity notification) {
 
                 // Long topicId = (notification.getTopic() != null) ? notification.getTopic().getId() : null;
                 Long topicId = (notification.getTopic() == null || notification.getTopic().getIsDeleted()) ? null : notification.getTopic().getId();

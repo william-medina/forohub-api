@@ -1,7 +1,7 @@
 package com.williammedina.forohub.controller;
 
 import com.williammedina.forohub.config.TestConfig;
-import com.williammedina.forohub.domain.course.entity.Course;
+import com.williammedina.forohub.domain.course.entity.CourseEntity;
 import com.williammedina.forohub.domain.course.repository.CourseRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,6 +48,6 @@ class CourseControllerTest {
     }
 
     private void createCourse(String name, String category) {
-        courseRepository.save(new Course(name, category));
+        courseRepository.save(new CourseEntity(name, category));
     }
 }

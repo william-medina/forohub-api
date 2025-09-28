@@ -2,7 +2,7 @@ package com.williammedina.forohub.domain.topic.dto;
 
 import com.williammedina.forohub.domain.course.dto.CourseDTO;
 import com.williammedina.forohub.domain.reply.dto.ReplyDTO;
-import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.topicfollow.dto.TopicFollowerDTO;
 import com.williammedina.forohub.domain.user.dto.UserDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,7 +32,7 @@ public record TopicDetailsDTO(
         List<ReplyDTO> replies,
 
         @Schema(description = "Estado actual del tópico", example = "ACTIVE")
-        Topic.Status status,
+        TopicEntity.Status status,
 
         @Schema(description = "Fecha de creación del tópico", example = "2025-05-31T15:45:00")
         LocalDateTime createdAt,
@@ -43,7 +43,7 @@ public record TopicDetailsDTO(
         @Schema(description = "Lista de seguidores del tópico")
         List<TopicFollowerDTO> followers
 ) {
-        public static TopicDetailsDTO fromEntity(Topic topic, List<ReplyDTO> replies) {
+        public static TopicDetailsDTO fromEntity(TopicEntity topic, List<ReplyDTO> replies) {
 
                 UserDTO author = new UserDTO(
                         topic.getUser().getId(),

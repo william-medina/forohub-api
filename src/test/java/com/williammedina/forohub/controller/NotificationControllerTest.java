@@ -2,13 +2,13 @@ package com.williammedina.forohub.controller;
 
 import com.williammedina.forohub.config.TestConfig;
 import com.williammedina.forohub.config.TestUtil;
-import com.williammedina.forohub.domain.course.entity.Course;
+import com.williammedina.forohub.domain.course.entity.CourseEntity;
 import com.williammedina.forohub.domain.course.repository.CourseRepository;
-import com.williammedina.forohub.domain.notification.entity.Notification;
+import com.williammedina.forohub.domain.notification.entity.NotificationEntity;
 import com.williammedina.forohub.domain.notification.repository.NotificationRepository;
-import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.topic.repository.TopicRepository;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,7 +60,7 @@ class NotificationControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando las notificaciones se recuperan exitosamente")
     void getAllNotificationsByUser_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
         createNotification("William", "Notification 1");
         createNotification("William", "Notification 2");
         var mvcResponse = mvc.perform(
@@ -74,15 +74,15 @@ class NotificationControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 204 cuando la notificación se elimina exitosamente")
     void deleteNotification_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Notification notification = createNotification("William", "Notification to Delete");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        NotificationEntity notification = createNotification("William", "Notification to Delete");
 
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(delete("/api/notify/{notifyId}", notification.getId()), user)
         ).andReturn().getResponse();
 
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
-        Optional<Notification> deletedNotification = notificationRepository.findById(notification.getId());
+        Optional<NotificationEntity> deletedNotification = notificationRepository.findById(notification.getId());
         assertThat(deletedNotification).isEmpty();
     }
 
@@ -90,8 +90,8 @@ class NotificationControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario intenta eliminar una notificación que no le pertenece")
     void deleteNotification_Forbidden() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Notification notification = createNotification("Admin", "Notification to Delete");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        NotificationEntity notification = createNotification("Admin", "Notification to Delete");
 
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(delete("/api/notify/{notifyId}", notification.getId()), user)
@@ -104,7 +104,7 @@ class NotificationControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando la notificación no existe")
     void deleteNotification_NotFound() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
 
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(delete("/api/notify/{notifyId}", 0L), user)
@@ -117,15 +117,15 @@ class NotificationControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 200 cuando la notificación se marca como leída exitosamente")
     void markNotificationAsRead_Success() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
-        Notification notification = createNotification("William", "Notification to Mark as Read");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
+        NotificationEntity notification = createNotification("William", "Notification to Mark as Read");
 
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(patch("/api/notify/{notifyId}", notification.getId()), user)
         ).andReturn().getResponse();
 
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
-        Notification updatedNotification = notificationRepository.findById(notification.getId()).orElseThrow();
+        NotificationEntity updatedNotification = notificationRepository.findById(notification.getId()).orElseThrow();
         assertThat(updatedNotification.getIsRead()).isTrue();
     }
 
@@ -134,9 +134,9 @@ class NotificationControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 403 cuando el usuario intenta marcar como leída una notificación que no le pertenece")
     void markNotificationAsRead_Forbidden() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
 
-        Notification notification = createNotification("Admin", "Notification to Mark as Read");
+        NotificationEntity notification = createNotification("Admin", "Notification to Mark as Read");
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(patch("/api/notify/{notifyId}", notification.getId()), user)
         ).andReturn().getResponse();
@@ -148,7 +148,7 @@ class NotificationControllerTest {
     @WithUserDetails("William")
     @DisplayName("Debería devolver HTTP 404 cuando la notificación no existe")
     void markNotificationAsRead_NotFound() throws Exception {
-        User user = testUtil.getAuthenticatedUser("William");
+        UserEntity user = testUtil.getAuthenticatedUser("William");
 
         var mvcResponse = mvc.perform(
                 testUtil.withAuth(patch("/api/notify/{notifyId}", 0L), user)
@@ -157,14 +157,14 @@ class NotificationControllerTest {
         assertThat(mvcResponse.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
-    public Notification createNotification(String username, String title) {
-        User user = testUtil.getAuthenticatedUser(username);
-        Optional<Course> course = courseRepository.findById(1L);
+    public NotificationEntity createNotification(String username, String title) {
+        UserEntity user = testUtil.getAuthenticatedUser(username);
+        Optional<CourseEntity> course = courseRepository.findById(1L);
 
         if (user != null && course.isPresent()) {
-            Topic topic = new Topic(user, "title", "description", course.get());
-            Topic topicSaved = topicRepository.save(topic);
-            Notification notification = new Notification(user, topicSaved, null, title, "Content", Notification.Type.TOPIC, Notification.Subtype.REPLY);
+            TopicEntity topic = new TopicEntity(user, "title", "description", course.get());
+            TopicEntity topicSaved = topicRepository.save(topic);
+            NotificationEntity notification = new NotificationEntity(user, topicSaved, null, title, "Content", NotificationEntity.Type.TOPIC, NotificationEntity.Subtype.REPLY);
             return notificationRepository.save(notification);
         } else {
             throw new IllegalArgumentException("Usuario o curso no encontrado");

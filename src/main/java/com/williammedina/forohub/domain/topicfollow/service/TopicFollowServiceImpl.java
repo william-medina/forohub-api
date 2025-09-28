@@ -1,12 +1,12 @@
 package com.williammedina.forohub.domain.topicfollow.service;
 
 import com.williammedina.forohub.domain.common.CommonHelperService;
-import com.williammedina.forohub.domain.topic.entity.Topic;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.topic.dto.TopicDTO;
 import com.williammedina.forohub.domain.topicfollow.dto.TopicFollowDetailsDTO;
-import com.williammedina.forohub.domain.topicfollow.entity.TopicFollow;
+import com.williammedina.forohub.domain.topicfollow.entity.TopicFollowEntity;
 import com.williammedina.forohub.domain.topicfollow.repository.TopicFollowRepository;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +27,8 @@ public class TopicFollowServiceImpl implements TopicFollowService {
     @Override
     @Transactional
     public TopicFollowDetailsDTO toggleFollowTopic(Long topicId) {
-        User user = getAuthenticatedUser();
-        Topic topic = findTopicById(topicId);
+        UserEntity user = getAuthenticatedUser();
+        TopicEntity topic = findTopicById(topicId);
 
         if (user.getUsername().equals(topic.getUser().getUsername())) {
             log.warn("User ID: {} attempted to follow their own topic with ID: {}", user.getId(), topicId);
@@ -42,7 +42,7 @@ public class TopicFollowServiceImpl implements TopicFollowService {
             log.info("User ID: {} unfollowed topic ID: {}", user.getId(), topicId);
             return new TopicFollowDetailsDTO(TopicDTO.fromEntity(topic), null);
         } else {
-            TopicFollow newFollow = topicFollowRepository.save(new TopicFollow(user, topic));
+            TopicFollowEntity newFollow = topicFollowRepository.save(new TopicFollowEntity(user, topic));
             log.info("User ID: {} followed topic ID: {}", user.getId(), topicId);
             return new TopicFollowDetailsDTO(TopicDTO.fromEntity(newFollow.getTopic()), newFollow.getFollowedAt());
         }
@@ -52,7 +52,7 @@ public class TopicFollowServiceImpl implements TopicFollowService {
     @Override
     @Transactional(readOnly = true)
     public Page<TopicFollowDetailsDTO> getFollowedTopicsByUser(Pageable pageable, String keyword) {
-        User user = getAuthenticatedUser();
+        UserEntity user = getAuthenticatedUser();
         log.debug("Fetching followed topics for user ID: {}", user.getId());
 
         if (keyword != null ) {
@@ -61,15 +61,15 @@ public class TopicFollowServiceImpl implements TopicFollowService {
         return topicFollowRepository.findByUserSortedByCreationDate(user, pageable).map(this::toTopicFollowDetailsDTO);
     }
 
-    private User getAuthenticatedUser() {
+    private UserEntity getAuthenticatedUser() {
         return commonHelperService.getAuthenticatedUser();
     }
 
-    private Topic findTopicById(Long topicId) {
+    private TopicEntity findTopicById(Long topicId) {
         return commonHelperService.findTopicById(topicId);
     }
 
-    private TopicFollowDetailsDTO toTopicFollowDetailsDTO(TopicFollow topicFollow) {
+    private TopicFollowDetailsDTO toTopicFollowDetailsDTO(TopicFollowEntity topicFollow) {
         return new TopicFollowDetailsDTO(TopicDTO.fromEntity(topicFollow.getTopic()), topicFollow.getFollowedAt());
     }
 }

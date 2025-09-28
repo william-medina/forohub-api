@@ -1,10 +1,10 @@
 package com.williammedina.forohub.infrastructure.email;
 
 import com.williammedina.forohub.domain.email.EmailService;
-import com.williammedina.forohub.domain.reply.entity.Reply;
-import com.williammedina.forohub.domain.topic.entity.Topic;
-import com.williammedina.forohub.domain.topicfollow.entity.TopicFollow;
-import com.williammedina.forohub.domain.user.entity.User;
+import com.williammedina.forohub.domain.reply.entity.ReplyEntity;
+import com.williammedina.forohub.domain.topic.entity.TopicEntity;
+import com.williammedina.forohub.domain.topicfollow.entity.TopicFollowEntity;
+import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -41,7 +41,7 @@ public class SmtpEmailService implements EmailService {
     private String frontendUrl;
 
     @Override
-    public void sendConfirmationEmail(String to, User user) throws MessagingException {
+    public void sendConfirmationEmail(String to, UserEntity user) throws MessagingException {
         String subject = "Confirmación de cuenta";
         String url = frontendUrl + "/confirm-account/" + user.getToken();
         String title = "¡Bienvenido a Foro Hub!";
@@ -55,7 +55,7 @@ public class SmtpEmailService implements EmailService {
     }
 
     @Override
-    public void sendPasswordResetEmail(String to, User user) throws MessagingException {
+    public void sendPasswordResetEmail(String to, UserEntity user) throws MessagingException {
         String subject = "Restablecimiento de password";
         String url = frontendUrl + "/reset-password/" + user.getToken();
         String title = "Restablecimiento de Password";
@@ -70,7 +70,7 @@ public class SmtpEmailService implements EmailService {
 
     @Override
     @Async
-    public void notifyTopicReply(Topic topic, User user) throws MessagingException {
+    public void notifyTopicReply(TopicEntity topic, UserEntity user) throws MessagingException {
         String subject = "Nueva respuesta a tu tópico";
         String actionMessage = "<b style='color: #03dac5;'>" + user.getUsername() + "</b> respondió a tu tópico ";
         String topicDetails = "<b style='color: #03dac5;'>" + topic.getTitle() + "</b> del curso: <b>" + topic.getCourse().getName() + "</b>.";
@@ -84,7 +84,7 @@ public class SmtpEmailService implements EmailService {
 
     @Override
     @Async
-    public void notifyTopicSolved(Topic topic) throws MessagingException {
+    public void notifyTopicSolved(TopicEntity topic) throws MessagingException {
         String subject = "Tu tópico ha sido marcado como solucionado";
         String actionMessage = "Tu tópico <b style='color: #03dac5;'>" + topic.getTitle() + "</b> del curso: <b>" + topic.getCourse().getName() + "</b> ha sido marcado como solucionado.";
         String url = frontendUrl + "/topic/" + topic.getId();
@@ -95,7 +95,7 @@ public class SmtpEmailService implements EmailService {
 
     @Override
     @Async
-    public void notifyTopicEdited(Topic topic) throws MessagingException {
+    public void notifyTopicEdited(TopicEntity topic) throws MessagingException {
         String subject = "Tu tópico ha sido editado";
         String actionMessage = "Se ha realizado cambios en tu tópico titulado <b style='color: #03dac5;'>\"" + topic.getTitle() + "</b> del curso: <b>" + topic.getCourse().getName() + "</b>. Puedes revisar los detalles haciendo clic en el siguiente botón.";
         String url = frontendUrl + "/topic/" + topic.getId();
@@ -106,7 +106,7 @@ public class SmtpEmailService implements EmailService {
 
     @Override
     @Async
-    public void notifyTopicDeleted(Topic topic) throws MessagingException {
+    public void notifyTopicDeleted(TopicEntity topic) throws MessagingException {
         String subject = "Tu tópico ha sido eliminado";
         String actionMessage = "Lamentamos informarte que tu tópico titulado <b style='color: #03dac5;'>" + topic.getTitle() + "</b> del curso: <b>" + topic.getCourse().getName() + "</b> ha sido eliminado. Si tienes alguna pregunta o inquietud, por favor contacta a nuestro equipo de soporte para más detalles.";
         String footer = "Gracias por ser parte de ForoHub.";
@@ -116,7 +116,7 @@ public class SmtpEmailService implements EmailService {
 
     @Override
     @Async
-    public void notifyReplySolved(Reply reply, Topic topic) throws MessagingException {
+    public void notifyReplySolved(ReplyEntity reply, TopicEntity topic) throws MessagingException {
         String subject = "Tu respuesta ha sido marcada como solución";
         String actionMessage = "Tu respuesta en el tópico <b style='color: #03dac5;'>" + reply.getTopic().getTitle() + "</b> del curso: <b>" + topic.getCourse().getName() + "</b> ha sido marcada como solución.";
 
@@ -128,7 +128,7 @@ public class SmtpEmailService implements EmailService {
 
     @Override
     @Async
-    public void notifyReplyEdited(Reply reply) throws MessagingException {
+    public void notifyReplyEdited(ReplyEntity reply) throws MessagingException {
         String subject = "Tu respuesta ha sido editada";
         String actionMessage = "Se ha realizado cambios en tu respuesta del tópico <b style='color: #03dac5;'>\"" + reply.getTopic().getTitle() + "</b> del curso: <b>" + reply.getTopic().getCourse().getName() + "</b>. Puedes revisar los detalles haciendo clic en el siguiente botón.";
         String url = frontendUrl + "/topic/" + reply.getTopic().getId();
@@ -139,7 +139,7 @@ public class SmtpEmailService implements EmailService {
 
     @Override
     @Async
-    public void notifyReplyDeleted(Reply reply) throws MessagingException {
+    public void notifyReplyDeleted(ReplyEntity reply) throws MessagingException {
         String subject = "Tu respuesta ha sido eliminada";
         String actionMessage = "Lamentamos informarte que tu respuesta del tópico <b style='color: #03dac5;'>" + reply.getTopic().getTitle() + "</b> del curso: <b>" + reply.getTopic().getCourse().getName() + "</b> ha sido eliminada. Si tienes alguna pregunta o inquietud, por favor contacta a nuestro equipo de soporte para más detalles.";
         String footer = "Gracias por ser parte de ForoHub.";
@@ -149,13 +149,13 @@ public class SmtpEmailService implements EmailService {
 
     @Override
     @Async
-    public void notifyFollowersTopicReply(Topic topic, User user) throws MessagingException {
+    public void notifyFollowersTopicReply(TopicEntity topic, UserEntity user) throws MessagingException {
         String subject = "Nueva respuesta en un tópico que sigues";
         String actionMessage = "Se ha añadido una nueva respuesta al tópico <b style='color: #03dac5;'>" + topic.getTitle() + "</b> del curso: <b>" + topic.getCourse().getName() + "</b> que sigues.";
         String url = frontendUrl + "/topic/" + topic.getId();
         String footer = "Gracias por ser parte de ForoHub.";
 
-        for (TopicFollow follower : topic.getFollowedTopics()) {
+        for (TopicFollowEntity follower : topic.getFollowedTopics()) {
             if (!follower.getUser().getUsername().equals(user.getUsername())) {
                 sendEmail(follower.getUser().getEmail(), subject, subject, actionMessage, "Ver Tópico", url, footer);
             }
@@ -164,13 +164,13 @@ public class SmtpEmailService implements EmailService {
 
     @Override
     @Async
-    public void notifyFollowersTopicSolved(Topic topic) throws MessagingException {
+    public void notifyFollowersTopicSolved(TopicEntity topic) throws MessagingException {
         String subject = "Un tópico que sigues ha sido marcado como solucionado";
         String actionMessage = "El tópico <b style='color: #03dac5;'>" + topic.getTitle() + "</b> del curso: <b>" + topic.getCourse().getName() + "</b> que sigues ha sido marcado como solucionado.";
         String url = frontendUrl + "/topic/" + topic.getId();
         String footer = "Gracias por ser parte de ForoHub.";
 
-        for (TopicFollow follower : topic.getFollowedTopics()) {
+        for (TopicFollowEntity follower : topic.getFollowedTopics()) {
             sendEmail(follower.getUser().getEmail(), subject, subject, actionMessage, "Ver Tópico", url, footer);
         }
     }
