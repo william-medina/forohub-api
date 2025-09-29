@@ -1,14 +1,17 @@
 package com.williammedina.forohub.infrastructure.security;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.williammedina.forohub.domain.user.repository.UserRepository;
+import com.williammedina.forohub.infrastructure.exception.ApiErrorResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,18 +19,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SecurityFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private TokenService tokenService;
-    @Autowired
-    private UserRepository userRepository;
+    private final TokenService tokenService;
+    private final UserRepository userRepository;
+    private final ObjectMapper objectMapper;
 
     private static final List<PublicEndpoint> PUBLIC_ENDPOINTS = SecurityConfigurations.PUBLIC_ENDPOINTS;
 
@@ -70,7 +74,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             log.warn("Missing or malformed Authorization header in request: {} {}", requestMethod, requestUri);
-            sendUnauthorizedResponse(response, "Token inválido o ausente.");
+            sendUnauthorizedResponse(request, response, "Token inválido o ausente.");
             return;
         }
 
@@ -80,7 +84,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             authenticateUser(token);
         } catch (JWTVerificationException e) {
             log.warn("Token verification error: {}", e.getMessage());
-            sendUnauthorizedResponse(response, "Token inválido o expirado.");
+            sendUnauthorizedResponse(request, response, "Token inválido o expirado.");
             return;
         }
 
@@ -104,10 +108,20 @@ public class SecurityFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    private void sendUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {
+    private void sendUnauthorizedResponse(HttpServletRequest request, HttpServletResponse response, String message) throws IOException {
         log.warn("Authentication failure response: {}", message);
+
+        ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpServletResponse.SC_UNAUTHORIZED)
+                .error(HttpStatus.UNAUTHORIZED.name())
+                .message(message)
+                .errors(null)
+                .path(request.getRequestURI())
+                .build();
+
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json; charset=UTF-8");
-        response.getWriter().write(String.format("{\"error\": \"%s\"}", message));
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }

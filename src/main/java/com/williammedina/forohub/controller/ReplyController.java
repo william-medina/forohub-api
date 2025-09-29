@@ -4,7 +4,7 @@ import com.williammedina.forohub.domain.reply.service.ReplyService;
 import com.williammedina.forohub.domain.reply.dto.CreateReplyDTO;
 import com.williammedina.forohub.domain.reply.dto.ReplyDTO;
 import com.williammedina.forohub.domain.reply.dto.UpdateReplyDTO;
-import com.williammedina.forohub.infrastructure.exception.ErrorResponse;
+import com.williammedina.forohub.infrastructure.exception.ApiErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,11 +35,11 @@ public class ReplyController {
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Respuesta creada exitosamente"),
-                    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "403", description = "No se pueden agregar respuestas a un tópico cerrado o contenido inapropiado detectado por la IA.", content = { @Content( schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "404", description = "Tópico no encontrado", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "503", description = "Error al validar el contenido con el servicio de IA.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "403", description = "No se pueden agregar respuestas a un tópico cerrado o contenido inapropiado detectado por la IA.", content = { @Content( schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "404", description = "Tópico no encontrado", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "503", description = "Error al validar el contenido con el servicio de IA.", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
             }
     )
     @PostMapping
@@ -54,7 +54,7 @@ public class ReplyController {
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Respuestas recuperadas exitosamente"),
-                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
             }
     )
     @GetMapping("/user/replies")
@@ -72,7 +72,7 @@ public class ReplyController {
             description = "Recupera una respuesta específica utilizando su identificador único.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Respuesta recuperada exitosamente"),
-                    @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
+                    @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) })
             }
     )
     @GetMapping("/{replyId}")
@@ -87,11 +87,11 @@ public class ReplyController {
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Respuesta actualizada exitosamente"),
-                    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para modificar esta respuesta o contenido inapropiado detectado por la IA.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "503", description = "Error al validar el contenido con el servicio de IA.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para modificar esta respuesta o contenido inapropiado detectado por la IA.", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "503", description = "Error al validar el contenido con el servicio de IA.", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
             }
     )
     @PutMapping("/{replyId}")
@@ -106,9 +106,9 @@ public class ReplyController {
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Estado de solución actualizado exitosamente"),
-                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para modificar esta respuesta.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
+                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para modificar esta respuesta.", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) })
             }
     )
     @PatchMapping("/{replyId}")
@@ -123,10 +123,10 @@ public class ReplyController {
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "204", description = "Respuesta eliminada exitosamente"),
-                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para eliminar esta respuesta.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "409", description = "No se puede eliminar una respuesta marcada como solución", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
+                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para eliminar esta respuesta.", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "404", description = "Respuesta no encontrada", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "409", description = "No se puede eliminar una respuesta marcada como solución", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) })
             }
     )
     @DeleteMapping("/{replyId}")

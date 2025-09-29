@@ -238,7 +238,7 @@ public class UserServiceImpl implements UserService {
         String refreshToken = securityFilter.getTokenFromCookies(request, "refresh_token")
                 .orElseThrow(() -> {
                     log.warn("Refresh token not present in cookies");
-                    return new AppException("Unauthorized", HttpStatus.UNAUTHORIZED);
+                    return new AppException("Refresh token no presente", HttpStatus.UNAUTHORIZED);
                 });
 
         try {
@@ -251,7 +251,7 @@ public class UserServiceImpl implements UserService {
 
         } catch (TokenExpiredException e) {
             log.warn("Refresh token expired");
-            throw new AppException("Unauthorized", HttpStatus.UNAUTHORIZED);
+            throw new AppException("El refresh token expiró, inicia sesión nuevamente", HttpStatus.UNAUTHORIZED);
         }
     }
 

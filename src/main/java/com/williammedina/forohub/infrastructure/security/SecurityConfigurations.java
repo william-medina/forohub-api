@@ -1,6 +1,6 @@
 package com.williammedina.forohub.infrastructure.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +25,10 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfigurations {
+
+    private final SecurityFilter securityFilter;
 
     @Value("${frontend.url:http://localhost:5173}")
     private String frontendUrl;
@@ -48,9 +51,6 @@ public class SecurityConfigurations {
             new PublicEndpoint("/api/v3/api-docs/**", HttpMethod.GET)
     );
 
-    @Autowired
-    private SecurityFilter securityFilter;
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -70,7 +70,6 @@ public class SecurityConfigurations {
     }
 
 
-    // Configuración de CORS dentro de la seguridad
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

@@ -2,7 +2,7 @@ package com.williammedina.forohub.controller;
 
 import com.williammedina.forohub.domain.notification.service.NotificationService;
 import com.williammedina.forohub.domain.notification.dto.NotificationDTO;
-import com.williammedina.forohub.infrastructure.exception.ErrorResponse;
+import com.williammedina.forohub.infrastructure.exception.ApiErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,7 +29,7 @@ public class NotificationController {
             description = "Devuelve una lista de todas las notificaciones del usuario autenticado, ordenadas por fecha de creación.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Lista de notificaciones devuelta exitosamente"),
-                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
             }
     )
     @GetMapping
@@ -43,9 +43,9 @@ public class NotificationController {
             description = "Elimina una notificación específica por su ID, si pertenece al usuario autenticado.",
             responses = {
                     @ApiResponse(responseCode = "204", description = "Notificación eliminada exitosamente."),
-                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para eliminar esta notificación.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-                    @ApiResponse(responseCode = "404", description = "Notificación no encontrada.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para eliminar esta notificación.", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "Notificación no encontrada.", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
             }
     )
     @DeleteMapping("/{notifyId}")
@@ -60,9 +60,9 @@ public class NotificationController {
             description = "Marca como leída una notificación específica por su ID, si pertenece al usuario autenticado.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Notificación marcada como leída exitosamente."),
-                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para modificar esta notificación.",  content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) }),
-                    @ApiResponse(responseCode = "404", description = "Notificación no encontrada.",  content = { @Content(schema = @Schema(implementation = ErrorResponse.class)) })
+                    @ApiResponse(responseCode = "401", description = "El usuario no está autenticado.", content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para modificar esta notificación.",  content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) }),
+                    @ApiResponse(responseCode = "404", description = "Notificación no encontrada.",  content = { @Content(schema = @Schema(implementation = ApiErrorResponse.class)) })
             }
     )
     @PatchMapping("/{notifyId}")

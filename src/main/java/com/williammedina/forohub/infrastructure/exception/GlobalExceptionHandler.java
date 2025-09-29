@@ -1,17 +1,18 @@
 package com.williammedina.forohub.infrastructure.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.lang.reflect.Field;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,30 +20,47 @@ import java.util.stream.Stream;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private ApiErrorResponse buildError(HttpStatus status, String message, String path, Map<String, String> errors) {
+        return ApiErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(status.value())
+                .error(status.name())
+                .message(message)
+                .errors(errors)
+                .path(path)
+                .build();
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
+    public ResponseEntity<ApiErrorResponse> handleBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
         log.warn("Failed authentication attempt: {}", ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse("Las credenciales proporcionadas son incorrectas.");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                buildError(HttpStatus.UNAUTHORIZED, "Las credenciales proporcionadas son incorrectas.", request.getRequestURI(), null)
+        );
     }
 
     @ExceptionHandler(AppException.class)
-    public ResponseEntity<ErrorResponse> handleAppException(AppException ex) {
-        log.error("Application error: {}", ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
-        return ResponseEntity.status(ex.getHttpStatus()).body(errorResponse);
+    public ResponseEntity<ApiErrorResponse> handleAppException(AppException ex, HttpServletRequest request) {
+        log.error("AppException: {}", ex.getMessage());
+        return ResponseEntity.status(ex.getHttpStatus()).body(
+                buildError(ex.getHttpStatus(), ex.getMessage(), request.getRequestURI(), null)
+        );
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleUnknownHostException(Exception ex) {
-        log.error("Unexpected error: {}", ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse("Internal Server Error: " + ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    public ResponseEntity<ApiErrorResponse> handleGeneric(Exception ex, HttpServletRequest request) {
+        log.error("Unexpected error", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", request.getRequestURI(), null)
+        );
     }
 
     // Handles form validation errors (MethodArgumentNotValidException)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException exception,
+            HttpServletRequest request
+    ) {
         log.warn("Field validation error in DTO: {}", exception.getMessage());
 
         // Gets the class of the DTO associated with the current request
@@ -50,25 +68,45 @@ public class GlobalExceptionHandler {
                 .map(Object::getClass)
                 .orElse(null);
 
-        // If the DTO class cannot be determined, return the first error without sorting
-        if (dtoClass == null) {
-            return exception.getFieldErrors().stream()
-                    .findFirst()
-                    .map(fieldError -> ResponseEntity.badRequest().body(new ErrorResponse(fieldError.getDefaultMessage())))
-                    .orElseGet(() -> ResponseEntity.badRequest().build());
+        List<FieldError> fieldErrors = exception.getFieldErrors();
+
+        Map<String, String> orderedErrors;
+
+        if (dtoClass != null) {
+            // Get the declared field order of the DTO
+            List<String> fieldPriorityOrder = getFieldOrder(dtoClass);
+
+            // Sort errors according to the DTO field order
+            orderedErrors = fieldErrors.stream()
+                    .sorted(Comparator.comparingInt(fieldError -> {
+                        int index = fieldPriorityOrder.indexOf(fieldError.getField());
+                        return index == -1 ? Integer.MAX_VALUE : index;
+                    }))
+                    .collect(Collectors.toMap(
+                            FieldError::getField,
+                            fe -> Optional.ofNullable(fe.getDefaultMessage()).orElse("Validation error"),
+                            (first, second) -> first,
+                            LinkedHashMap::new
+                    ));
+        } else {
+            // Fallback if DTO class is unknown
+            orderedErrors = fieldErrors.stream()
+                    .collect(Collectors.toMap(
+                            FieldError::getField,
+                            fe -> Optional.ofNullable(fe.getDefaultMessage()).orElse("Validation error"),
+                            (first, second) -> first,
+                            LinkedHashMap::new
+                    ));
         }
 
-        // Gets the list of field names in the order they were defined in the DTO
-        List<String> fieldPriorityOrder = getFieldOrder(dtoClass);
+        // Take the first error as the main message
+        String mainMessage = orderedErrors.isEmpty()
+                ? "Validation failed"
+                : orderedErrors.values().iterator().next();
 
-        // Sorts validation errors according to the order of the fields in the DTO and returns only the first one
-        return exception.getFieldErrors().stream()
-                .min(Comparator.comparingInt(fieldError -> {
-                    int index = fieldPriorityOrder.indexOf(fieldError.getField());
-                    return index == -1 ? Integer.MAX_VALUE : index;
-                }))
-                .map(fieldError -> ResponseEntity.badRequest().body(new ErrorResponse(fieldError.getDefaultMessage())))
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+        ApiErrorResponse response = buildError(HttpStatus.BAD_REQUEST, mainMessage, request.getRequestURI(), orderedErrors);
+
+        return ResponseEntity.badRequest().body(response);
     }
 
     // Gets the field names of a DTO in the order they were defined
