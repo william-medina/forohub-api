@@ -20,6 +20,6 @@ public interface UserService {
     UserStatsDTO getUserStats();
     UserDTO getCurrentUser();
     JwtTokenResponse refreshAccessToken(HttpServletRequest request, HttpServletResponse response);
-    MessageResponse logout(HttpServletResponse response);
+    MessageResponse logout(HttpServletRequest request, HttpServletResponse response);
 
 }

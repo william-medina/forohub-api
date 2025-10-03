@@ -111,6 +111,7 @@ Este diagrama proporciona una visión clara de la estructura de datos de la apli
 - **Topic Followers**: Representa los usuarios que siguen un tópico.
 - **Notifications**: Administra las notificaciones generadas por actividades en el foro.
 - **Profiles**: Define los perfiles y roles asociados a los usuarios.
+- **RefreshTokens**: Almacena los refresh tokens generados para cada usuario, incluyendo su fecha de expiración (`expires_at`) y el estado de revocación (`revoked`). Esta tabla permite validar y revocar tokens sin depender únicamente de las cookies del cliente.
 
 Cada tabla está conectada de acuerdo con las relaciones necesarias para garantizar la consistencia de los datos.
 
@@ -292,21 +293,20 @@ A continuación, se presenta la lista completa de endpoints disponibles en la AP
 ### Endpoints de Autenticación
 Estos endpoints permiten gestionar las cuentas de usuario, desde la creación hasta la actualización de password y nombres de usuario, así como la obtención de detalles y estadísticas del usuario autenticado.
 
-| Endpoint                            | Método      | Descripción                                                                                                                |
-|-------------------------------------|-------------|----------------------------------------------------------------------------------------------------------------------------|
-| `/auth/create-account`              | `POST`      | Crea una cuenta de usuario en el sistema.                                                                                  |
-| `/auth/confirm-account/{token}`     | `GET`       | Confirma la cuenta de usuario utilizando un token proporcionado.                                                           |
-| `/auth/login`                       | `POST`      | Inicia sesión, autentica al usuario y generando un JWT de acceso y uno de actualización, almacenados en cookies HTTP-only. |
-| `/auth/request-code`                | `POST`      | Solicita un nuevo código de confirmación y lo envía al email del usuario.                                                  |
-| `/auth/forgot-password`             | `POST`      | Genera un token de restablecimiento de contraseña y lo envía al email del usuario.                                         |
-| `/auth/update-password/{token}`     | `POST`      | Permite actualizar el password utilizando un token de restablecimiento.                                                    |
-| `/auth/update-password`             | `PATCH`     | Permite al usuario autenticado actualizar su password actual.                                                              |
-| `/auth/update-username`             | `PATCH`     | Permite al usuario autenticado actualizar su nombre de usuario.                                                            |
-| `/auth/stats`                       | `GET`       | Obtiene estadísticas del usuario autenticado.                                                                              |
-| `/auth/me`                          | `GET`       | Obtiene los detalles del usuario actualmente autenticado.                                                                  |
-| `/auth/refresh-token`               | `POST`      | Genera un nuevo token de acceso utilizando el token de actualización enviado en la solicitud.                                        |
-| `/auth/logout`                      | `POST`      | Cierra la sesión del usuario eliminando los tokens de acceso y actualización de las cookies.                                    |
-
+| Endpoint                        | Método      | Descripción                                                                                                                |
+|---------------------------------|-------------|----------------------------------------------------------------------------------------------------------------------------|
+| `/auth/create-account`          | `POST`      | Crea una cuenta de usuario en el sistema.                                                                                  |
+| `/auth/confirm-account/{token}` | `GET`       | Confirma la cuenta de usuario utilizando un token proporcionado.                                                           |
+| `/auth/login`                   | `POST`      | Inicia sesión, autentica al usuario y genera un JWT de acceso (devuelto en la respuesta) y un refresh token (almacenado en cookie HTTP-only). |
+| `/auth/request-code`            | `POST`      | Solicita un nuevo código de confirmación y lo envía al email del usuario.                                                  |
+| `/auth/forgot-password`         | `POST`      | Genera un token de restablecimiento de contraseña y lo envía al email del usuario.                                         |
+| `/auth/update-password/{token}` | `POST`      | Permite actualizar la contraseña utilizando un token de restablecimiento.                                                  |
+| `/auth/update-password`         | `PATCH`     | Permite al usuario autenticado actualizar su contraseña actual.                                                            |
+| `/auth/update-username`         | `PATCH`     | Permite al usuario autenticado actualizar su nombre de usuario.                                                            |
+| `/auth/stats`                   | `GET`       | Obtiene estadísticas del usuario autenticado.                                                                              |
+| `/auth/me`                      | `GET`       | Obtiene los detalles del usuario actualmente autenticado.                                                                  |
+| `/auth/token/refresh`           | `POST`      | Genera un nuevo JWT de acceso utilizando el refresh token enviado en la cookie HTTP-only.                                   |
+| `/auth/token/logout`            | `POST`      | Cierra la sesión del usuario eliminando el refresh token de la cookie y marcando como revocado en la base de datos.         |
 ---
 ### Endpoints de Tópicos
 Estos endpoints gestionan la creación, obtención, actualización y eliminación de tópicos, así como el seguimiento de los mismos por parte de los usuarios. La eliminación de un tópico es lógica, es decir, no se elimina físicamente de la base de datos, sino que se marca como eliminado.

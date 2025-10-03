@@ -1,13 +1,14 @@
 package com.williammedina.forohub.domain.user.service;
 
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.williammedina.forohub.domain.common.CommonHelperService;
 import com.williammedina.forohub.domain.contentvalidation.ContentValidationService;
 import com.williammedina.forohub.domain.reply.repository.ReplyRepository;
 import com.williammedina.forohub.domain.topic.repository.TopicRepository;
 import com.williammedina.forohub.domain.topicfollow.repository.TopicFollowRepository;
+import com.williammedina.forohub.domain.user.entity.RefreshTokenEntity;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.domain.user.dto.*;
+import com.williammedina.forohub.domain.user.repository.RefreshTokenRepository;
 import com.williammedina.forohub.domain.user.repository.UserRepository;
 import com.williammedina.forohub.domain.email.EmailService;
 import com.williammedina.forohub.infrastructure.exception.*;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -49,6 +51,7 @@ public class UserServiceImpl implements UserService {
     private final ContentValidationService contentValidationService;
     private final SecurityFilter securityFilter;
     private final UserTransactionService userTransactionService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     @Transactional
@@ -68,9 +71,10 @@ public class UserServiceImpl implements UserService {
 
         // Generate authentication tokens (access and refresh)
         String accessToken = tokenService.generateAccessToken(user);
-        String refreshToken = tokenService.generateRefreshToken(user);
+        RefreshTokenEntity refreshToken = tokenService.createRefreshToken(user);
 
-        response.addCookie(createCookie("refresh_token", refreshToken, "/api/auth/refresh-token", TokenService.REFRESH_TOKEN_EXPIRATION));
+        refreshTokenRepository.save(refreshToken);
+        response.addCookie(createCookie("refresh_token", refreshToken.getToken(), "/api/auth/token", TokenService.REFRESH_TOKEN_EXPIRATION_SECONDS));
         log.info("User successfully authenticated - ID: {}", user.getId());
 
         return new JwtTokenResponse(accessToken);
@@ -235,33 +239,44 @@ public class UserServiceImpl implements UserService {
     public JwtTokenResponse refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
         log.info("Requesting refresh token");
 
-        String refreshToken = securityFilter.getTokenFromCookies(request, "refresh_token")
+        String token = securityFilter.getTokenFromCookies(request, "refresh_token")
                 .orElseThrow(() -> {
                     log.warn("Refresh token not present in cookies");
                     return new AppException("Refresh token no presente", HttpStatus.UNAUTHORIZED);
                 });
 
-        try {
-            String userId = tokenService.getSubjectFromToken(refreshToken);
-            String newAccessToken = tokenService.generateAccessToken(findUserById(Long.valueOf(userId)));
+        RefreshTokenEntity refreshToken = refreshTokenRepository.findByToken(token)
+                .orElseThrow(() -> {
+                    log.warn("Refresh token not found");
+                    return new AppException("Refresh token no encontrado", HttpStatus.UNAUTHORIZED);
+                });
 
-            log.info("New access token generated for user ID: {}", userId);
-
-            return new JwtTokenResponse(newAccessToken);
-
-        } catch (TokenExpiredException e) {
+        if (refreshToken.getRevoked() || refreshToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+            refreshToken.setRevoked(true);
             log.warn("Refresh token expired");
             throw new AppException("El refresh token expiró, inicia sesión nuevamente", HttpStatus.UNAUTHORIZED);
         }
+
+        String newAccessToken = tokenService.generateAccessToken(refreshToken.getUser());
+        log.info("New access token generated for user ID: {}", refreshToken.getUser().getId());
+        return new JwtTokenResponse(newAccessToken);
     }
 
     @Override
     @Transactional
-    public MessageResponse logout(HttpServletResponse response) {
+    public MessageResponse logout(HttpServletRequest request, HttpServletResponse response) {
         UserEntity user = getAuthenticatedUser();
         log.info("Logging out user ID: {}", user.getId());
 
-        response.addCookie(deleteCookie("refresh_token", "/api/auth/refresh-token"));
+        Optional<String> token = securityFilter.getTokenFromCookies(request, "refresh_token");
+
+        token.flatMap(refreshTokenRepository::findByToken).ifPresent(rt -> {
+            rt.setRevoked(true);
+            refreshTokenRepository.save(rt);
+            log.info("Refresh token revoked for user ID: {}", user.getId());
+        });
+
+        response.addCookie(deleteCookie("refresh_token", "/api/auth/token"));
         return new MessageResponse("Sesión cerrada exitosamente.");
     }
 

@@ -321,7 +321,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTk1MDgwNDR9.Kv4cY3FlFwgmhdvnM-Ap5WAXwE5qCFGM--4h-6QlwAs",
 									"type": "string"
 								}
 							]
@@ -329,13 +329,14 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{forohub_api_url}}/auth/refresh-token",
+							"raw": "{{forohub_api_url}}/auth/token/refresh",
 							"host": [
 								"{{forohub_api_url}}"
 							],
 							"path": [
 								"auth",
-								"refresh-token"
+								"token",
+								"refresh"
 							]
 						}
 					},
@@ -349,7 +350,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTU5OTAzMDl9.aues84WapcExJhSuaig0QZrsAeBQ55Yl-dukhxkUk5I",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJGb3JvSHViIiwic3ViIjoiMSIsInVzZXJuYW1lIjoiV2lsbGlhbSBNZWRpbmEiLCJleHAiOjE3NTk1MDc5MzV9.O_0CZ99w4SkLDBMOnpss2VlZ-SBJItb7jz9fohf6yVQ",
 									"type": "string"
 								}
 							]
@@ -357,12 +358,13 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{forohub_api_url}}/auth/logout",
+							"raw": "{{forohub_api_url}}/auth/token/logout",
 							"host": [
 								"{{forohub_api_url}}"
 							],
 							"path": [
 								"auth",
+								"token",
 								"logout"
 							]
 						}

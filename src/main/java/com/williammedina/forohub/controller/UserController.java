@@ -198,7 +198,7 @@ public class UserController {
                     @ApiResponse(responseCode = "401", description = "No autorizado - token inválido", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
             }
     )
-    @PostMapping("/refresh-token")
+    @PostMapping("/token/refresh")
     public ResponseEntity<JwtTokenResponse> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
         JwtTokenResponse TokenResponse = userService.refreshAccessToken(request, response);
         return ResponseEntity.ok(TokenResponse);
@@ -213,9 +213,9 @@ public class UserController {
                     @ApiResponse(responseCode = "401", description = "No autorizado - token inválido", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
             }
     )
-    @PostMapping("/logout")
-    public ResponseEntity<MessageResponse> logout(HttpServletResponse response) {
-        MessageResponse TokenResponse = userService.logout(response);
+    @PostMapping("/token/logout")
+    public ResponseEntity<MessageResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+        MessageResponse TokenResponse = userService.logout(request, response);
         return ResponseEntity.ok(TokenResponse);
     }
 

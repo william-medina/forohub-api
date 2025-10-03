@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.williammedina.forohub.domain.user.entity.RefreshTokenEntity;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,28 +21,24 @@ public class TokenService {
     private String jwtSecret;
 
     private static final String ISSUER = "ForoHub";
-    public static final long ACCESS_TOKEN_EXPIRATION = ( 15 ) * 60; // 15 minutes in seconds
-    public static final long REFRESH_TOKEN_EXPIRATION = ( 30 ) * 24 * 60 * 60; // 30 days in seconds
+    public static final long ACCESS_TOKEN_EXPIRATION_SECONDS = ( 15 ) * 60; // 15 minutes in seconds
+    public static final long REFRESH_TOKEN_EXPIRATION_SECONDS = ( 30 ) * 24 * 60 * 60; // 30 days in seconds
 
     private Algorithm getAlgorithm() {
         return Algorithm.HMAC256(jwtSecret);
     }
 
+    public RefreshTokenEntity createRefreshToken(UserEntity user) {
+        return new RefreshTokenEntity(user);
+    }
+
     public String generateAccessToken(UserEntity user) {
-        return generateToken(user, ACCESS_TOKEN_EXPIRATION * 1000);
-    }
-
-    public String generateRefreshToken(UserEntity user) {
-        return generateToken(user, REFRESH_TOKEN_EXPIRATION * 1000);
-    }
-
-    public String generateToken(UserEntity user, long expirationMillis) {
         try {
             return JWT.create()
                     .withIssuer(ISSUER)
                     .withSubject(String.valueOf(user.getId()))
                     .withClaim("username", user.getUsername())
-                    .withExpiresAt(new Date(System.currentTimeMillis() + expirationMillis))
+                    .withExpiresAt(new Date(System.currentTimeMillis() + ( ACCESS_TOKEN_EXPIRATION_SECONDS * 1000 )))
                     .sign(getAlgorithm());
         } catch (JWTCreationException e) {
             log.error("Error generating token for user {}: {}", user.getUsername(), e.getMessage());

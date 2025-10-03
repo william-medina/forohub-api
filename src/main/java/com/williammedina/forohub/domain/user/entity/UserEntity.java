@@ -68,6 +68,9 @@ public class UserEntity implements UserDetails {
     @JoinColumn(name = "profile_id")
     private ProfileEntity profile;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RefreshTokenEntity> refreshTokens = new ArrayList<>();
+
     public UserEntity(String username, String email, String password) {
         this.username = username;
         this.email = email;
