@@ -1,6 +1,8 @@
 package com.williammedina.forohub.config;
 
+import com.williammedina.forohub.domain.user.entity.RefreshTokenEntity;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
+import com.williammedina.forohub.domain.user.repository.RefreshTokenRepository;
 import com.williammedina.forohub.domain.user.repository.UserRepository;
 import com.williammedina.forohub.infrastructure.security.TokenService;
 import jakarta.servlet.http.Cookie;
@@ -17,6 +19,7 @@ public class TestUtil {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public UserEntity createUser(String email, String username) {
         return userRepository.save(new UserEntity(username, email, passwordEncoder.encode("password")));
@@ -34,9 +37,11 @@ public class TestUtil {
 
     // Method to generate an authentication cookie with JWT
     public Cookie createCookie(UserEntity user, String name, String path, int expired) {
-        String token = tokenService.generateToken(user, expired);
+        RefreshTokenEntity token = tokenService.createRefreshToken(user);
 
-        Cookie cookie = new Cookie(name, token);
+        refreshTokenRepository.save(token);
+
+        Cookie cookie = new Cookie(name, token.getToken());
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath(path);
