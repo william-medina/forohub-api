@@ -36,7 +36,7 @@ public record TopicDTO(
         LocalDateTime createdAt,
 
         @Schema(description = "Fecha de última actualización del tópico", example = "2025-07-01T10:15:00")
-        LocalDateTime updateAt
+        LocalDateTime updatedAt
 ) {
         public static TopicDTO fromEntity(TopicEntity topic) {
                 return new TopicDTO(

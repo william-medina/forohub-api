@@ -38,7 +38,7 @@ public record TopicDetailsDTO(
         LocalDateTime createdAt,
 
         @Schema(description = "Fecha de última actualización del tópico", example = "2025-07-01T10:15:00")
-        LocalDateTime updateAt,
+        LocalDateTime updatedAt,
 
         @Schema(description = "Lista de seguidores del tópico")
         List<TopicFollowerDTO> followers
