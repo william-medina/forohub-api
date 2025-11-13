@@ -34,8 +34,9 @@
     - [Endpoints de Cursos](#endpoints-de-cursos)
 12. [✅ Testing](#-testing)
 13. [🎨 Frontend](#-frontend)
-14. [📜 Licencia](#-licencia)
-15. [👨‍💻 Autor](#-autor)
+14. [🔄 Arquitectura de Microservicios](#-arquitectura-de-microservicios)
+15. [📜 Licencia](#-licencia)
+16. [👨‍💻 Autor](#-autor)
 
 ## 📝 Descripción
 
@@ -150,7 +151,7 @@ La API utiliza **inteligencia artificial generativa**  para detectar contenido i
 
 Para habilitar la detección de contenido inapropiado, es necesario configurar la **API key** de OpenAI y el modelo que se utilizará para procesar las solicitudes. Asegúrate de tener la **API key** activa y accesible.
 
-2. **Configura la API key de OpenAI:**
+1. **Configura la API key de OpenAI:**
 
     - En el archivo `application.properties`, se presenta la siguiente línea para configurar la **API key**:
 
@@ -159,7 +160,6 @@ Para habilitar la detección de contenido inapropiado, es necesario configurar l
       ```
 
     - Luego, asegúrate de que la variable de entorno `AI_API_KEY` esté configurada en tu sistema operativo o IDE con la **API key** proporcionada por OpenAI.
-
 
 2. **Configura el modelo de IA:**
 
@@ -414,6 +414,25 @@ A continuación, se presentan algunas capturas de pantalla del frontend de algun
 
 #### Notificaciones:
 <img src="./src/main/resources/static/images/frontend-notify.png" alt="Frontend Notify Page" width="600" style="display: block;" />
+
+## 🔄 Arquitectura de Microservicios
+
+Además de esta versión monolítica de **ForoHub API**, también existe una **versión con arquitectura de microservicios**.  
+
+Esta versión divide la aplicación en múltiples servicios independientes que se comunican entre sí mediante **REST API**, **Kafka** y **Spring Cloud** para la gestión de configuración y descubrimiento de servicios.
+
+### Beneficios de la versión de microservicios:
+- **Escalabilidad:** Cada servicio puede escalar de manera independiente según la carga.
+- **Desarrollo independiente:** Los equipos pueden trabajar en servicios específicos sin afectar al resto de la aplicación.
+- **Despliegue flexible:** Los microservicios pueden desplegarse en contenedores Docker de manera individual o conjunta.
+- **Resiliencia:** Fallos en un microservicio no afectan a toda la aplicación, aumentando la disponibilidad del sistema.
+
+### Repositorio de la versión de microservicios
+
+El código fuente de la versión de microservicios se encuentra disponible en GitHub:
+
+👉 [ForoHub Microservices](https://github.com/william-medina/forohub-microservices)
+
 
 ## 📜 Licencia
 
