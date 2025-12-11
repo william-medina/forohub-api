@@ -1,5 +1,5 @@
 # Usar una imagen base con OpenJDK 21
-FROM openjdk:21-jdk-slim AS build
+FROM eclipse-temurin:21 AS build
 
 # Instalar Maven manualmente
 RUN apt-get update && apt-get install -y maven
@@ -19,7 +19,7 @@ COPY src /app/src
 RUN mvn clean package -DskipTests
 
 # Usar la misma imagen de OpenJDK 21 para ejecutar la aplicación
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21
 
 # Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
