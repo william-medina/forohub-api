@@ -1,7 +1,10 @@
 package com.williammedina.forohub.controller;
 
-import com.williammedina.forohub.domain.user.service.UserService;
+import com.williammedina.forohub.domain.user.service.account.UserAccountService;
+import com.williammedina.forohub.domain.user.service.auth.UserAuthService;
 import com.williammedina.forohub.domain.user.dto.*;
+import com.williammedina.forohub.domain.user.service.profile.UserProfileService;
+import com.williammedina.forohub.domain.user.service.stats.UserStatsService;
 import com.williammedina.forohub.infrastructure.exception.ApiErrorResponse;
 import com.williammedina.forohub.infrastructure.response.MessageResponse;
 import com.williammedina.forohub.infrastructure.security.JwtTokenResponse;
@@ -26,7 +29,10 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final UserAuthService userAuthService;
+    private final UserAccountService userAccountService;
+    private final UserProfileService userProfileService;
+    private final UserStatsService userStatsService;
 
     @Operation(
             summary = "Crear una cuenta de usuario",
@@ -40,8 +46,8 @@ public class UserController {
             }
     )
     @PostMapping("/create-account")
-    public ResponseEntity<UserDTO> createAccount(@RequestBody @Valid CreateUserDTO data) throws MessagingException {
-        UserDTO user = userService.createAccount(data);
+    public ResponseEntity<UserDTO> createAccount(@RequestBody @Valid CreateUserDTO userRequest) throws MessagingException {
+        UserDTO user = userAccountService.createAccount(userRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
@@ -56,7 +62,7 @@ public class UserController {
     )
     @GetMapping("/confirm-account/{token}")
     public ResponseEntity<UserDTO> confirmAccount(@PathVariable String token) {
-        UserDTO user = userService.confirmAccount(token);
+        UserDTO user = userAccountService.confirmAccount(token);
         return ResponseEntity.ok(user);
     }
 
@@ -72,8 +78,8 @@ public class UserController {
             }
     )
     @PostMapping("/login")
-    public ResponseEntity<JwtTokenResponse> login(@RequestBody @Valid LoginUserDTO data, HttpServletResponse response) throws MessagingException {
-        JwtTokenResponse responseToken = userService.authenticateAndGenerateToken(data, response);
+    public ResponseEntity<JwtTokenResponse> login(@RequestBody @Valid LoginUserDTO request, HttpServletResponse response) throws MessagingException {
+        JwtTokenResponse responseToken = userAuthService.authenticateAndGenerateToken(request, response);
         return ResponseEntity.ok(responseToken);
     }
 
@@ -88,8 +94,8 @@ public class UserController {
             }
     )
     @PostMapping("/request-code")
-    public ResponseEntity<UserDTO> requestConfirmationCode(@RequestBody @Valid EmailUserDTO data) throws MessagingException {
-        UserDTO user = userService.requestConfirmationCode(data);
+    public ResponseEntity<UserDTO> requestConfirmationCode(@RequestBody @Valid EmailUserDTO request) throws MessagingException {
+        UserDTO user = userAccountService.requestConfirmationCode(request);
         return ResponseEntity.ok(user);
     }
 
@@ -104,8 +110,8 @@ public class UserController {
             }
     )
     @PostMapping("/forgot-password")
-    public ResponseEntity<UserDTO> forgotPassword(@RequestBody @Valid EmailUserDTO data) throws MessagingException {
-        UserDTO user = userService.forgotPassword(data);
+    public ResponseEntity<UserDTO> forgotPassword(@RequestBody @Valid EmailUserDTO request) throws MessagingException {
+        UserDTO user = userAccountService.forgotPassword(request);
         return ResponseEntity.ok(user);
     }
 
@@ -120,8 +126,8 @@ public class UserController {
             }
     )
     @PostMapping("/update-password/{token}")
-    public ResponseEntity<UserDTO> updatePasswordWithToken(@PathVariable String token, @RequestBody @Valid UpdatePasswordWithTokenDTO data) {
-        UserDTO user = userService.updatePasswordWithToken(token, data);
+    public ResponseEntity<UserDTO> updatePasswordWithToken(@PathVariable String token, @RequestBody @Valid UpdatePasswordWithTokenDTO request) {
+        UserDTO user = userAccountService.updatePasswordWithToken(token, request);
         return ResponseEntity.ok(user);
     }
 
@@ -136,8 +142,8 @@ public class UserController {
             }
     )
     @PatchMapping("/update-password")
-    public ResponseEntity<UserDTO> updateCurrentUserPassword(@RequestBody @Valid UpdateCurrentUserPasswordDTO data) {
-        UserDTO user = userService.updateCurrentUserPassword(data);
+    public ResponseEntity<UserDTO> updateCurrentUserPassword(@RequestBody @Valid UpdateCurrentUserPasswordDTO request) {
+        UserDTO user = userProfileService.updateCurrentUserPassword(request);
         return ResponseEntity.ok(user);
     }
 
@@ -155,8 +161,8 @@ public class UserController {
             }
     )
     @PatchMapping("/update-username")
-    public ResponseEntity<UserDTO> updateUsername(@RequestBody @Valid UpdateUsernameDTO data) {
-        UserDTO user = userService.updateUsername(data);
+    public ResponseEntity<UserDTO> updateUsername(@RequestBody @Valid UpdateUsernameDTO request) {
+        UserDTO user = userProfileService.updateUsername(request);
         return ResponseEntity.ok(user);
     }
 
@@ -171,7 +177,7 @@ public class UserController {
     )
     @GetMapping("/stats")
     public ResponseEntity<UserStatsDTO> getUserStats() {
-        UserStatsDTO userStats = userService.getUserStats();
+        UserStatsDTO userStats = userStatsService.getUserStats();
         return ResponseEntity.ok(userStats);
     }
 
@@ -186,7 +192,7 @@ public class UserController {
     )
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getCurrentUser() {
-        UserDTO user = userService.getCurrentUser();
+        UserDTO user = userProfileService.getCurrentUser();
         return ResponseEntity.ok(user);
     }
 
@@ -200,7 +206,7 @@ public class UserController {
     )
     @PostMapping("/token/refresh")
     public ResponseEntity<JwtTokenResponse> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
-        JwtTokenResponse TokenResponse = userService.refreshAccessToken(request, response);
+        JwtTokenResponse TokenResponse = userAuthService.refreshAccessToken(request, response);
         return ResponseEntity.ok(TokenResponse);
     }
 
@@ -215,7 +221,7 @@ public class UserController {
     )
     @PostMapping("/token/logout")
     public ResponseEntity<MessageResponse> logout(HttpServletRequest request, HttpServletResponse response) {
-        MessageResponse TokenResponse = userService.logout(request, response);
+        MessageResponse TokenResponse = userAuthService.logout(request, response);
         return ResponseEntity.ok(TokenResponse);
     }
 

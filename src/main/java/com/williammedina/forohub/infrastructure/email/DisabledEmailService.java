@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service;
 public class DisabledEmailService implements EmailService {
 
     @Override
-    public void sendConfirmationEmail(String to, UserEntity user) throws MessagingException {
-        log.info("[DISABLED EMAIL] Account confirmation for user: {} ({})", user.getUsername(), to);
+    public void sendConfirmationEmail(UserEntity user) throws MessagingException {
+        log.info("[DISABLED EMAIL] Account confirmation for user: {} ({})", user.getUsername(), user.getEmail());
     }
 
     @Override
-    public void sendPasswordResetEmail(String to, UserEntity user) throws MessagingException {
-        log.info("[DISABLED EMAIL] Password reset requested by user: {} ({})", user.getUsername(), to);
+    public void sendPasswordResetEmail(UserEntity user) throws MessagingException {
+        log.info("[DISABLED EMAIL] Password reset requested by user: {} ({})", user.getUsername(),user.getEmail());
     }
 
     @Override

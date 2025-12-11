@@ -1,4 +1,4 @@
-package com.williammedina.forohub.domain.user.service;
+package com.williammedina.forohub.domain.user.service.transaction;
 
 import jakarta.mail.MessagingException;
 

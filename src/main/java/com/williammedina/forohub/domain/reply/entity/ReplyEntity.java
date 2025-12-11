@@ -57,4 +57,8 @@ public class ReplyEntity {
         this.content = content;
     }
 
+    public void markAsDeleted() {
+        this.isDeleted = true;
+    }
+
 }

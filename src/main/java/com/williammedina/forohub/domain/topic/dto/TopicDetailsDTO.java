@@ -43,43 +43,28 @@ public record TopicDetailsDTO(
         @Schema(description = "Lista de seguidores del tópico")
         List<TopicFollowerDTO> followers
 ) {
-        public static TopicDetailsDTO fromEntity(TopicEntity topic, List<ReplyDTO> replies) {
+        public static TopicDetailsDTO fromEntity(TopicEntity topic) {
 
-                UserDTO author = new UserDTO(
-                        topic.getUser().getId(),
-                        topic.getUser().getUsername(),
-                        topic.getUser().getProfile().getName()
-                );
+            List<ReplyDTO> replies = topic.getReplies().stream()
+                    .filter(response -> !response.getIsDeleted())
+                    .map(ReplyDTO::fromEntity)
+                    .toList();
 
-                CourseDTO course = new CourseDTO(
-                        topic.getCourse().getId(),
-                        topic.getCourse().getName(),
-                        topic.getCourse().getCategory()
-                );
+            List<TopicFollowerDTO> followers = topic.getFollowedTopics().stream()
+                    .map(TopicFollowerDTO::fromEntity)
+                    .toList();
 
-                List<TopicFollowerDTO> followers = topic.getFollowedTopics().stream()
-                        .map(topicFollow -> new TopicFollowerDTO(
-                                new UserDTO(
-                                        topicFollow.getUser().getId(),
-                                        topicFollow.getUser().getUsername(),
-                                        topicFollow.getUser().getProfile().getName()
-                                ),
-                                topicFollow.getFollowedAt()
-                        ))
-                        .toList();
-
-
-                return new TopicDetailsDTO(
-                        topic.getId(),
-                        topic.getTitle(),
-                        topic.getDescription(),
-                        course,
-                        author,
-                        replies,
-                        topic.getStatus(),
-                        topic.getCreatedAt(),
-                        topic.getUpdatedAt(),
-                        followers
-                );
+            return new TopicDetailsDTO(
+                    topic.getId(),
+                    topic.getTitle(),
+                    topic.getDescription(),
+                    CourseDTO.fromEntity(topic.getCourse()),
+                    UserDTO.fromEntity(topic.getUser()),
+                    replies,
+                    topic.getStatus(),
+                    topic.getCreatedAt(),
+                    topic.getUpdatedAt(),
+                    followers
+            );
         }
 }

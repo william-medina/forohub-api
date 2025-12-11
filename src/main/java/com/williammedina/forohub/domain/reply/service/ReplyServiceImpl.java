@@ -1,24 +1,24 @@
 package com.williammedina.forohub.domain.reply.service;
 
-import com.williammedina.forohub.domain.common.CommonHelperService;
-import com.williammedina.forohub.domain.contentvalidation.ContentValidationService;
-import com.williammedina.forohub.domain.notification.service.NotificationService;
 import com.williammedina.forohub.domain.reply.entity.ReplyEntity;
 import com.williammedina.forohub.domain.reply.repository.ReplyRepository;
+import com.williammedina.forohub.domain.reply.service.finder.ReplyFinder;
+import com.williammedina.forohub.domain.reply.service.notifier.ReplyNotifier;
+import com.williammedina.forohub.domain.reply.service.permission.ReplyPermissionService;
+import com.williammedina.forohub.domain.reply.service.validator.ReplyValidator;
 import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.reply.dto.CreateReplyDTO;
 import com.williammedina.forohub.domain.reply.dto.ReplyDTO;
 import com.williammedina.forohub.domain.reply.dto.UpdateReplyDTO;
+import com.williammedina.forohub.domain.topic.service.finder.TopicFinderImpl;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
-import com.williammedina.forohub.domain.email.EmailService;
-import com.williammedina.forohub.infrastructure.exception.AppException;
+import com.williammedina.forohub.domain.user.service.AuthenticatedUserProvider;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,175 +29,107 @@ import java.util.List;
 @AllArgsConstructor
 public class ReplyServiceImpl implements ReplyService {
 
+    private final AuthenticatedUserProvider authenticatedUserProvider;
     private final ReplyRepository replyRepository;
-    private final CommonHelperService commonHelperService;
-    private final NotificationService notificationService;
-    private final EmailService emailService;
-    private final ContentValidationService contentValidationService;
+    private final ReplyFinder replyFinder;
+    private final TopicFinderImpl topicFinder;
+    private final ReplyPermissionService replyPermissionService;
+    private final ReplyValidator validator;
+    private final ReplyNotifier notifier;
 
 
     @Override
     @Transactional
-    public ReplyDTO createReply(CreateReplyDTO data) throws MessagingException {
-        UserEntity user = getAuthenticatedUser();
-        TopicEntity topic = findTopicById(data.topicId());
-        log.info("User ID: {} creating reply for topic ID: {}", user.getId(), topic.getId());
+    public ReplyDTO createReply(CreateReplyDTO replyRequest) throws MessagingException {
+        UserEntity currentUser = authenticatedUserProvider.getAuthenticatedUser();
+        TopicEntity topicToReply = topicFinder.findTopicById(replyRequest.topicId());
+        log.info("User ID: {} creating reply for topic ID: {}", currentUser.getId(), topicToReply.getId());
 
-        isTopicClosed(topic);
-        validateReplyContent(data.content()); // Validate the reply content using AI
+        validator.checkTopicClosed(topicToReply);
+        validator.validateContent(replyRequest.content()); // Validate the reply content using AI
 
-        ReplyEntity reply = replyRepository.save(new ReplyEntity(user, topic, data.content()));
-        log.info("Reply created with ID: {} by user ID: {}", reply.getId(), user.getId());
+        ReplyEntity newReply = replyRepository.save(new ReplyEntity(currentUser, topicToReply, replyRequest.content()));
+        log.info("Reply created with ID: {} by user ID: {}", newReply.getId(), currentUser.getId());
 
-        if(!user.getUsername().equals(topic.getUser().getUsername())) {
-            log.debug("Notifying topic owner ID: {} about new reply", topic.getId());
-            notificationService.notifyTopicReply(topic, user);
-            emailService.notifyTopicReply(topic, user);
-        }
+        Hibernate.initialize(topicToReply.getFollowedTopics());
+        notifier.notifyNewReply(topicToReply, currentUser);
 
-        Hibernate.initialize(topic.getFollowedTopics());
-        log.debug("Notifying followers of topic ID: {}", topic.getId());
-        notificationService.notifyFollowersTopicReply(topic, user);
-        emailService.notifyFollowersTopicReply(topic, user);
-
-        return ReplyDTO.fromEntity(reply);
+        return ReplyDTO.fromEntity(newReply);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ReplyDTO> getAllRepliesByUser(Pageable pageable) {
-        UserEntity user = getAuthenticatedUser();
-        log.debug("Fetching replies for user ID: {}", user.getId());
-        return replyRepository.findByUserSortedByCreationDate(user, pageable).map(ReplyDTO::fromEntity);
+        UserEntity currentUser = authenticatedUserProvider.getAuthenticatedUser();
+        log.debug("Fetching replies for user ID: {}", currentUser.getId());
+        return replyRepository.findByUserSortedByCreationDate(currentUser, pageable).map(ReplyDTO::fromEntity);
     }
 
     @Override
     @Transactional
-    public ReplyDTO updateReply(UpdateReplyDTO data, Long replyId) throws MessagingException {
-        ReplyEntity reply = findReplyById(replyId);
-        UserEntity user = checkModificationPermission(reply);
-        log.info("User ID: {} updating reply ID: {}", user.getId(), replyId);
+    public ReplyDTO updateReply(UpdateReplyDTO replyRequest, Long replyId) throws MessagingException {
+        ReplyEntity replyToUpdate = replyFinder.findReplyById(replyId);
+        UserEntity currentUser = replyPermissionService.checkCanModify(replyToUpdate);
+        log.info("User ID: {} updating reply ID: {}", currentUser.getId(), replyId);
 
-        validateReplyContent(data.content()); // Validate the updated reply content using AI
+        validator.validateContent(replyRequest.content()); // Validate the updated reply content using AI
 
-        reply.setContent(data.content());
-        ReplyEntity updatedReply = replyRepository.save(reply);
+        replyToUpdate.setContent(replyRequest.content());
+        ReplyEntity updatedReply = replyRepository.save(replyToUpdate);
 
-        if(!user.getUsername().equals(reply.getUser().getUsername())) {
-            log.debug("Notifying reply owner ID: {}", replyId);
-            notificationService.notifyReplyEdited(reply);
-            emailService.notifyReplyEdited(reply);
-        }
+        notifier.notifyReplyUpdated(replyToUpdate, currentUser);
+
         return ReplyDTO.fromEntity(updatedReply);
     }
 
     @Override
     @Transactional
     public void deleteReply(Long replyId) throws MessagingException {
-        ReplyEntity reply = findReplyById(replyId);
-        UserEntity user = checkModificationPermission(reply);
-        if (reply.getSolution()) {
-           throw new AppException("No puedes eliminar una respuesta marcada como solución", HttpStatus.CONFLICT);
-        }
+        ReplyEntity replyToDelete = replyFinder.findReplyById(replyId);
+        UserEntity currentUser = replyPermissionService.checkCanModify(replyToDelete);
 
-        reply.setIsDeleted(true); //replyRepository.delete(reply);
-        log.info("Reply ID: {} marked as deleted by user ID: {}", replyId, user.getId());
+        replyPermissionService.checkCannotDeleteSolution(replyToDelete);
 
-        if(!user.getUsername().equals(reply.getUser().getUsername())) {
-            log.debug("Notifying reply owner ID: {} about deletion", replyId);
-            notificationService.notifyReplyDeleted(reply);
-            emailService.notifyReplyDeleted(reply);
-        }
+        replyToDelete.markAsDeleted(); //replyRepository.delete(reply);
+        log.info("Reply ID: {} marked as deleted by user ID: {}", replyId, currentUser.getId());
+
+        notifier.notifyReplyDeleted(replyToDelete, currentUser);
     }
 
     @Override
     @Transactional(readOnly = true)
     public ReplyDTO getReplyById(Long replyId) {
         log.debug("Fetching reply ID: {}", replyId);
-        ReplyEntity reply = findReplyById(replyId);
+        ReplyEntity reply = replyFinder.findReplyById(replyId);
         return ReplyDTO.fromEntity(reply);
     }
 
     @Override
     @Transactional
     public ReplyDTO setCorrectReply(Long replyId) throws MessagingException {
-        UserEntity user = getAuthenticatedUser();
-        if (!user.hasElevatedPermissions()) {
-            log.warn("User ID: {} attempted to modify topic state without permission for reply ID: {}", user.getId(), replyId);
-            throw new AppException("No tienes permiso para modificar el estado de la respuesta", HttpStatus.FORBIDDEN);
-        }
+        UserEntity currentUser = authenticatedUserProvider.getAuthenticatedUser();
+        replyPermissionService.checkElevatedPermissionsForSolution(currentUser, replyId);
 
-        ReplyEntity reply = findReplyById(replyId);
-        log.info("User ID: {} changing state of reply ID: {}", user.getId(), replyId);
-        List<ReplyEntity> replies = replyRepository.findByTopicId(reply.getTopic().getId());
+        ReplyEntity replyToSet = replyFinder.findReplyById(replyId);
+        log.info("User ID: {} changing state of reply ID: {}", currentUser.getId(), replyId);
+        List<ReplyEntity> replies = replyRepository.findByTopicId(replyToSet.getTopic().getId());
 
-        boolean isCurrentlySolution = reply.getSolution();
+        boolean isCurrentlySolution = replyToSet.getSolution();
         replies.forEach(re -> re.setSolution(false)); // Deactivate all solutions
 
         if (!isCurrentlySolution) {
-            reply.setSolution(true);
-            reply.getTopic().setStatus(TopicEntity.Status.CLOSED);
-            log.info("Reply ID: {} marked as solution for topic ID: {}", reply.getId(), reply.getTopic().getId());
+            replyToSet.setSolution(true);
+            replyToSet.getTopic().setStatus(TopicEntity.Status.CLOSED);
+            log.info("Reply ID: {} marked as solution for topic ID: {}", replyToSet.getId(), replyToSet.getTopic().getId());
         } else {
-            reply.getTopic().setStatus(TopicEntity.Status.ACTIVE);
-            log.info("Reply ID: {} unmarked as solution for topic ID: {}", reply.getId(), reply.getTopic().getId());
+            replyToSet.getTopic().setStatus(TopicEntity.Status.ACTIVE);
+            log.info("Reply ID: {} unmarked as solution for topic ID: {}", replyToSet.getId(), replyToSet.getTopic().getId());
         }
 
         replyRepository.saveAll(replies);
+        notifier.notifyReplySolution(replyToSet);
 
-        if(reply.getSolution()) {
-            log.debug("Sending notifications for reply solution");
-            notificationService.notifyTopicSolved(reply.getTopic());
-            notificationService.notifyReplySolved(reply, reply.getTopic());
-            notificationService.notifyFollowersTopicSolved(reply.getTopic());
-            emailService.notifyTopicSolved(reply.getTopic());
-            emailService.notifyReplySolved(reply, reply.getTopic());
-            emailService.notifyFollowersTopicSolved(reply.getTopic());
-        }
-
-        return ReplyDTO.fromEntity(reply);
-    }
-
-    private UserEntity getAuthenticatedUser() {
-        return commonHelperService.getAuthenticatedUser();
-    }
-
-    private TopicEntity findTopicById(Long topicId) {
-        return commonHelperService.findTopicById(topicId);
-    }
-
-    private ReplyEntity findReplyById(Long replyId) {
-        return replyRepository.findByIdAndIsDeletedFalse(replyId)
-                .orElseThrow(() ->  {
-                    log.error("Reply not found with ID: {}", replyId);
-                    return new AppException("Respuesta no encontrada", HttpStatus.NOT_FOUND);
-                });
-    }
-
-    private UserEntity checkModificationPermission(ReplyEntity reply) {
-        UserEntity user = getAuthenticatedUser();
-        // If the user is the owner OR has elevated permissions, they are allowed to modify the reply
-        if (!reply.getUser().equals(getAuthenticatedUser()) && !getAuthenticatedUser().hasElevatedPermissions()) {
-            log.warn("User ID: {} without permissions attempted to modify reply ID: {}", user.getId(), reply.getId());
-            throw new AppException("No tienes permiso para realizar cambios en esta respuesta", HttpStatus.FORBIDDEN);
-        }
-
-        return user;
-    }
-
-    private void isTopicClosed(TopicEntity topic) {
-        if(topic.isTopicClosed()) {
-            log.warn("Attempt to reply to closed topic ID: {}", topic.getId());
-            throw new AppException("No se puede crear una respuesta. El tópico está cerrado.", HttpStatus.FORBIDDEN);
-        }
-    }
-
-    private void validateReplyContent(String content) {
-        String validationResult = contentValidationService.validateContent(content);
-        if (!"approved".equals(validationResult)) {
-            log.warn("Reply content not approved: {}", validationResult);
-            throw new AppException("La respuesta " + validationResult, HttpStatus.FORBIDDEN);
-        }
+        return ReplyDTO.fromEntity(replyToSet);
     }
 
 }

@@ -1,12 +1,13 @@
 package com.williammedina.forohub.domain.topicfollow.service;
 
-import com.williammedina.forohub.domain.common.CommonHelperService;
 import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.topic.dto.TopicDTO;
+import com.williammedina.forohub.domain.topic.service.finder.TopicFinder;
 import com.williammedina.forohub.domain.topicfollow.dto.TopicFollowDetailsDTO;
 import com.williammedina.forohub.domain.topicfollow.entity.TopicFollowEntity;
 import com.williammedina.forohub.domain.topicfollow.repository.TopicFollowRepository;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
+import com.williammedina.forohub.domain.user.service.AuthenticatedUserProvider;
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,55 +22,45 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 public class TopicFollowServiceImpl implements TopicFollowService {
 
+    private final AuthenticatedUserProvider authenticatedUserProvider;
     private final TopicFollowRepository topicFollowRepository;
-    private final CommonHelperService commonHelperService;
+    private final TopicFinder topicFinder;
 
     @Override
     @Transactional
     public TopicFollowDetailsDTO toggleFollowTopic(Long topicId) {
-        UserEntity user = getAuthenticatedUser();
-        TopicEntity topic = findTopicById(topicId);
+        UserEntity currentUser = authenticatedUserProvider.getAuthenticatedUser();
+        TopicEntity topic = topicFinder.findTopicById(topicId);
 
-        if (user.getUsername().equals(topic.getUser().getUsername())) {
-            log.warn("User ID: {} attempted to follow their own topic with ID: {}", user.getId(), topicId);
+        if (currentUser.equals(topic.getUser())) {
+            log.warn("User ID: {} attempted to follow their own topic with ID: {}", currentUser.getId(), topicId);
             throw new AppException("No puedes seguir un tópico que has creado." , HttpStatus.CONFLICT);
         }
 
-        boolean isFollowing = topicFollowRepository.existsByUserIdAndTopicId(user.getId(), topic.getId());
+        boolean alreadyFollowing = topicFollowRepository.existsByUserIdAndTopicId(currentUser.getId(), topic.getId());
 
-        if (isFollowing) {
-            topicFollowRepository.deleteByUserIdAndTopicId(user.getId(), topicId);
-            log.info("User ID: {} unfollowed topic ID: {}", user.getId(), topicId);
+        if (alreadyFollowing) {
+            topicFollowRepository.deleteByUserIdAndTopicId(currentUser.getId(), topicId);
+            log.info("User ID: {} unfollowed topic ID: {}", currentUser.getId(), topicId);
             return new TopicFollowDetailsDTO(TopicDTO.fromEntity(topic), null);
-        } else {
-            TopicFollowEntity newFollow = topicFollowRepository.save(new TopicFollowEntity(user, topic));
-            log.info("User ID: {} followed topic ID: {}", user.getId(), topicId);
-            return new TopicFollowDetailsDTO(TopicDTO.fromEntity(newFollow.getTopic()), newFollow.getFollowedAt());
         }
+
+        TopicFollowEntity newFollow = topicFollowRepository.save(new TopicFollowEntity(currentUser, topic));
+        log.info("User ID: {} followed topic ID: {}", currentUser.getId(), topicId);
+        return new TopicFollowDetailsDTO(TopicDTO.fromEntity(newFollow.getTopic()), newFollow.getFollowedAt());
 
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TopicFollowDetailsDTO> getFollowedTopicsByUser(Pageable pageable, String keyword) {
-        UserEntity user = getAuthenticatedUser();
-        log.debug("Fetching followed topics for user ID: {}", user.getId());
+        UserEntity currentUser = authenticatedUserProvider.getAuthenticatedUser();
+        log.debug("Fetching followed topics for user ID: {}", currentUser.getId());
 
         if (keyword != null ) {
-            return topicFollowRepository.findByUserFilters(user, keyword, pageable).map(this::toTopicFollowDetailsDTO);
+            return topicFollowRepository.findByUserFilters(currentUser, keyword, pageable).map(TopicFollowDetailsDTO::fromEntity);
         }
-        return topicFollowRepository.findByUserSortedByCreationDate(user, pageable).map(this::toTopicFollowDetailsDTO);
+        return topicFollowRepository.findByUserSortedByCreationDate(currentUser, pageable).map(TopicFollowDetailsDTO::fromEntity);
     }
 
-    private UserEntity getAuthenticatedUser() {
-        return commonHelperService.getAuthenticatedUser();
-    }
-
-    private TopicEntity findTopicById(Long topicId) {
-        return commonHelperService.findTopicById(topicId);
-    }
-
-    private TopicFollowDetailsDTO toTopicFollowDetailsDTO(TopicFollowEntity topicFollow) {
-        return new TopicFollowDetailsDTO(TopicDTO.fromEntity(topicFollow.getTopic()), topicFollow.getFollowedAt());
-    }
 }

@@ -48,8 +48,8 @@ public class TopicController {
             }
     )
     @PostMapping
-    public ResponseEntity<TopicDTO> createTopic(@RequestBody @Valid InputTopicDTO data) {
-        TopicDTO topic = topicService.createTopic(data);
+    public ResponseEntity<TopicDTO> createTopic(@RequestBody @Valid InputTopicDTO topicRequest) {
+        TopicDTO topic = topicService.createTopic(topicRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(topic);
     }
 
@@ -122,8 +122,8 @@ public class TopicController {
             }
     )
     @PutMapping("/{topicId}")
-    public ResponseEntity<TopicDetailsDTO> updateTopic(@RequestBody @Valid InputTopicDTO data, @PathVariable Long topicId) throws MessagingException {
-        TopicDetailsDTO topic = topicService.updateTopic(data, topicId);
+    public ResponseEntity<TopicDetailsDTO> updateTopic(@RequestBody @Valid InputTopicDTO topicRequest, @PathVariable Long topicId) throws MessagingException {
+        TopicDetailsDTO topic = topicService.updateTopic(topicRequest, topicId);
         return ResponseEntity.ok(topic);
     }
 

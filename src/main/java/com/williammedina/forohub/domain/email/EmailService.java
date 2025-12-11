@@ -7,8 +7,8 @@ import jakarta.mail.MessagingException;
 
 public interface EmailService {
 
-    void sendConfirmationEmail(String to, UserEntity user) throws MessagingException;
-    void sendPasswordResetEmail(String to, UserEntity user) throws MessagingException;
+    void sendConfirmationEmail(UserEntity user) throws MessagingException;
+    void sendPasswordResetEmail(UserEntity user) throws MessagingException;
     void notifyTopicReply(TopicEntity topic, UserEntity user) throws MessagingException;
     void notifyTopicSolved(TopicEntity topic) throws MessagingException;
     void notifyTopicEdited(TopicEntity topic) throws MessagingException;

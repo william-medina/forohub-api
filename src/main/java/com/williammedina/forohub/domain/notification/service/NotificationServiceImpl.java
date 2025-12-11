@@ -1,17 +1,17 @@
 package com.williammedina.forohub.domain.notification.service;
 
-import com.williammedina.forohub.domain.common.CommonHelperService;
 import com.williammedina.forohub.domain.notification.dto.NotificationDTO;
 import com.williammedina.forohub.domain.notification.entity.NotificationEntity;
 import com.williammedina.forohub.domain.notification.repository.NotificationRepository;
+import com.williammedina.forohub.domain.notification.service.finder.NotificationFinder;
+import com.williammedina.forohub.domain.notification.service.permission.NotificationPermissionService;
 import com.williammedina.forohub.domain.reply.entity.ReplyEntity;
 import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.topicfollow.entity.TopicFollowEntity;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
-import com.williammedina.forohub.infrastructure.exception.AppException;
+import com.williammedina.forohub.domain.user.service.AuthenticatedUserProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +22,15 @@ import java.util.List;
 @AllArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
+    private final AuthenticatedUserProvider authenticatedUserProvider;
     private final NotificationRepository notificationRepository;
-    private final CommonHelperService commonHelperService;
+    private final NotificationFinder notificationFinder;
+    private final NotificationPermissionService notificationPermissionService;
 
     @Override
     @Transactional(readOnly = true)
     public List<NotificationDTO> getAllNotificationsByUser() {
-        UserEntity user = getAuthenticatedUser();
+        UserEntity user = authenticatedUserProvider.getAuthenticatedUser();
         log.debug("Fetching all notifications for user ID: {}", user.getId());
         return notificationRepository.findAllByUserOrderByCreatedAtDesc(user).stream().map(NotificationDTO::fromEntity).toList();
     }
@@ -36,21 +38,21 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public void deleteNotification(Long notifyId) {
-        NotificationEntity notification = findNotificationById(notifyId);
-        checkModificationPermission(notification);
+        NotificationEntity notification = notificationFinder.findNotificationById(notifyId);
+        notificationPermissionService.checkModificationPermission(notification);
 
         notificationRepository.delete(notification);
-        log.info("Notification ID: {} deleted by user ID: {}", notifyId, getAuthenticatedUser().getId());
+        log.info("Notification ID: {} deleted by user ID: {}", notifyId, authenticatedUserProvider.getAuthenticatedUser().getId());
     }
 
     @Override
     @Transactional
     public NotificationDTO markNotificationAsRead(Long notifyId) {
-        NotificationEntity notification = findNotificationById(notifyId);
-        checkModificationPermission(notification);
+        NotificationEntity notification = notificationFinder.findNotificationById(notifyId);
+        notificationPermissionService.checkModificationPermission(notification);
 
         notification.setIsRead(true);
-        log.debug("Notification ID: {} marked as read by user ID: {}", notifyId, getAuthenticatedUser().getId());
+        log.debug("Notification ID: {} marked as read by user ID: {}", notifyId, authenticatedUserProvider.getAuthenticatedUser().getId());
 
         return NotificationDTO.fromEntity(notification);
     }
@@ -155,27 +157,5 @@ public class NotificationServiceImpl implements NotificationService {
         NotificationEntity notification = new NotificationEntity(user, topic, response, title, message, type, subtype);
         notificationRepository.save(notification);
     }
-
-    private UserEntity getAuthenticatedUser() {
-        return commonHelperService.getAuthenticatedUser();
-    }
-
-    private void checkModificationPermission(NotificationEntity notification) {
-        UserEntity user = getAuthenticatedUser();
-        if (!notification.getUser().equals(getAuthenticatedUser())) {
-            log.warn("User ID: {} attempted to modify a notification they do not own (ID: {})", user.getId(), notification.getId());
-            throw new AppException("No tienes permiso para eliminar esta notificación", HttpStatus.FORBIDDEN);
-        }
-    }
-
-    private NotificationEntity findNotificationById(Long notifyId) {
-        return notificationRepository.findById(notifyId)
-                .orElseThrow(() -> {
-                    log.warn("Notification not found with ID: {}", notifyId);
-                    return new AppException("Notificación no encontrada", HttpStatus.NOT_FOUND);
-                });
-    }
-
-
 
 }

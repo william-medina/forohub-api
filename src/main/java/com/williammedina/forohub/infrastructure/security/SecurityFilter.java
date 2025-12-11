@@ -6,7 +6,6 @@ import com.williammedina.forohub.domain.user.repository.UserRepository;
 import com.williammedina.forohub.infrastructure.exception.ApiErrorResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -45,17 +42,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             return requestUri.matches(uriPattern) && requestMethod.equals(endpoint.method().name());
         });
-    }
-
-    public Optional<String> getTokenFromCookies(HttpServletRequest request, String name) {
-
-        if (request.getCookies() == null) {
-            return Optional.empty();
-        }
-        return Arrays.stream(request.getCookies())
-                .filter(cookie -> name.equals(cookie.getName()))
-                .map(Cookie::getValue)
-                .findFirst();
     }
 
     @Override

@@ -12,11 +12,11 @@ import org.springframework.data.domain.Pageable;
 
 public interface TopicService {
 
-    TopicDTO createTopic(InputTopicDTO data);
+    TopicDTO createTopic(InputTopicDTO topicRequest);
     Page<TopicDTO> getAllTopics(Pageable pageable, Long courseId, String keyword, TopicEntity.Status status);
     Page<TopicDTO> getAllTopicsByUser(Pageable pageable, String keyword);
     TopicDetailsDTO getTopicById(Long topicId);
-    TopicDetailsDTO updateTopic(@Valid InputTopicDTO data, Long topicId) throws MessagingException;
+    TopicDetailsDTO updateTopic(@Valid InputTopicDTO topicRequest, Long topicId) throws MessagingException;
     void deleteTopic(Long topicId) throws MessagingException;
 
 }

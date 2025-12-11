@@ -75,6 +75,10 @@ public class TopicEntity {
         return this.status == Status.CLOSED;
     }
 
+    public void markAsDeleted() {
+        this.isDeleted = true;
+    }
+
     public enum Status {
         ACTIVE,
         CLOSED,

@@ -43,8 +43,8 @@ public class ReplyController {
             }
     )
     @PostMapping
-    public ResponseEntity<ReplyDTO> createReply(@RequestBody @Valid CreateReplyDTO data) throws MessagingException {
-        ReplyDTO reply = replyService.createReply(data);
+    public ResponseEntity<ReplyDTO> createReply(@RequestBody @Valid CreateReplyDTO replyRequest) throws MessagingException {
+        ReplyDTO reply = replyService.createReply(replyRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(reply);
     }
 
@@ -95,8 +95,8 @@ public class ReplyController {
             }
     )
     @PutMapping("/{replyId}")
-    public ResponseEntity<ReplyDTO> updateReply(@RequestBody @Valid UpdateReplyDTO data, @PathVariable Long replyId) throws MessagingException {
-        ReplyDTO reply = replyService.updateReply(data, replyId);
+    public ResponseEntity<ReplyDTO> updateReply(@RequestBody @Valid UpdateReplyDTO replyRequest, @PathVariable Long replyId) throws MessagingException {
+        ReplyDTO reply = replyService.updateReply(replyRequest, replyId);
         return ResponseEntity.ok(reply);
     }
 

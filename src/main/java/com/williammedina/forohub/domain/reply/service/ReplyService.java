@@ -11,9 +11,9 @@ import org.springframework.data.domain.Pageable;
 
 public interface ReplyService {
 
-    ReplyDTO createReply(@Valid CreateReplyDTO data) throws MessagingException;
+    ReplyDTO createReply(@Valid CreateReplyDTO replyRequest) throws MessagingException;
     Page<ReplyDTO> getAllRepliesByUser(Pageable pageable);
-    ReplyDTO updateReply(@Valid UpdateReplyDTO data, Long replyId) throws MessagingException;
+    ReplyDTO updateReply(@Valid UpdateReplyDTO replyRequest, Long replyId) throws MessagingException;
     void deleteReply(Long replyId) throws MessagingException;
     ReplyDTO getReplyById(Long replyId);
     ReplyDTO setCorrectReply(Long replyId) throws MessagingException;
