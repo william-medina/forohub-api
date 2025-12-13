@@ -4,6 +4,6 @@ import com.williammedina.forohub.domain.notification.entity.NotificationEntity;
 
 public interface NotificationPermissionService {
 
-    void checkModificationPermission(NotificationEntity notification);
+    void checkCanModify(NotificationEntity notification);
 
 }

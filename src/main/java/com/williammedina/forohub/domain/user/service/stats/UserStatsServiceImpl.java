@@ -5,7 +5,7 @@ import com.williammedina.forohub.domain.topic.repository.TopicRepository;
 import com.williammedina.forohub.domain.topicfollow.repository.TopicFollowRepository;
 import com.williammedina.forohub.domain.user.dto.UserStatsDTO;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
-import com.williammedina.forohub.domain.user.service.AuthenticatedUserProvider;
+import com.williammedina.forohub.domain.user.service.context.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -12,7 +12,7 @@ import com.williammedina.forohub.domain.reply.dto.ReplyDTO;
 import com.williammedina.forohub.domain.reply.dto.UpdateReplyDTO;
 import com.williammedina.forohub.domain.topic.service.finder.TopicFinderImpl;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
-import com.williammedina.forohub.domain.user.service.AuthenticatedUserProvider;
+import com.williammedina.forohub.domain.user.service.context.AuthenticatedUserProvider;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

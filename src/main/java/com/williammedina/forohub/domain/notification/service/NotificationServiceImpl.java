@@ -9,7 +9,7 @@ import com.williammedina.forohub.domain.reply.entity.ReplyEntity;
 import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.topicfollow.entity.TopicFollowEntity;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
-import com.williammedina.forohub.domain.user.service.AuthenticatedUserProvider;
+import com.williammedina.forohub.domain.user.service.context.AuthenticatedUserProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     public void deleteNotification(Long notifyId) {
         NotificationEntity notification = notificationFinder.findNotificationById(notifyId);
-        notificationPermissionService.checkModificationPermission(notification);
+        notificationPermissionService.checkCanModify(notification);
 
         notificationRepository.delete(notification);
         log.info("Notification ID: {} deleted by user ID: {}", notifyId, authenticatedUserProvider.getAuthenticatedUser().getId());
@@ -49,9 +49,9 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     public NotificationDTO markNotificationAsRead(Long notifyId) {
         NotificationEntity notification = notificationFinder.findNotificationById(notifyId);
-        notificationPermissionService.checkModificationPermission(notification);
+        notificationPermissionService.checkCanModify(notification);
 
-        notification.setIsRead(true);
+        notification.markAsRead();
         log.debug("Notification ID: {} marked as read by user ID: {}", notifyId, authenticatedUserProvider.getAuthenticatedUser().getId());
 
         return NotificationDTO.fromEntity(notification);

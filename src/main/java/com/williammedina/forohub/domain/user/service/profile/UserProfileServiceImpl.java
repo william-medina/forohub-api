@@ -5,7 +5,7 @@ import com.williammedina.forohub.domain.user.dto.UpdateUsernameDTO;
 import com.williammedina.forohub.domain.user.dto.UserDTO;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.domain.user.repository.UserRepository;
-import com.williammedina.forohub.domain.user.service.AuthenticatedUserProvider;
+import com.williammedina.forohub.domain.user.service.context.AuthenticatedUserProvider;
 import com.williammedina.forohub.domain.user.service.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

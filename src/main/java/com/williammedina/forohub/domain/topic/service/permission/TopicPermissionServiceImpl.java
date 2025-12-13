@@ -2,7 +2,7 @@ package com.williammedina.forohub.domain.topic.service.permission;
 
 import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
-import com.williammedina.forohub.domain.user.service.AuthenticatedUserProvider;
+import com.williammedina.forohub.domain.user.service.context.AuthenticatedUserProvider;
 import com.williammedina.forohub.infrastructure.exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
