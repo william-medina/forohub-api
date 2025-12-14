@@ -42,17 +42,17 @@ public class ReplyServiceImpl implements ReplyService {
     @Transactional
     public ReplyDTO createReply(CreateReplyDTO replyRequest) throws MessagingException {
         UserEntity currentUser = authenticatedUserProvider.getAuthenticatedUser();
-        TopicEntity topicToReply = topicFinder.findTopicById(replyRequest.topicId());
-        log.info("User ID: {} creating reply for topic ID: {}", currentUser.getId(), topicToReply.getId());
+        TopicEntity topic = topicFinder.findTopicById(replyRequest.topicId());
+        log.info("User ID: {} creating reply for topic ID: {}", currentUser.getId(), topic.getId());
 
-        validator.checkTopicClosed(topicToReply);
-        validator.validateContent(replyRequest.content()); // Validate the reply content using AI
+        validator.ensureTopicIsOpen(topic);
+        validator.ensureReplyContentIsValid(replyRequest.content()); // Validate the reply content using AI
 
-        ReplyEntity newReply = replyRepository.save(new ReplyEntity(currentUser, topicToReply, replyRequest.content()));
+        ReplyEntity newReply = replyRepository.save(new ReplyEntity(currentUser, topic, replyRequest.content()));
         log.info("Reply created with ID: {} by user ID: {}", newReply.getId(), currentUser.getId());
 
-        Hibernate.initialize(topicToReply.getFollowedTopics());
-        notifier.notifyNewReply(topicToReply, currentUser);
+        Hibernate.initialize(topic.getFollowedTopics());
+        notifier.notifyNewReply(topic, currentUser);
 
         return ReplyDTO.fromEntity(newReply);
     }
@@ -72,7 +72,7 @@ public class ReplyServiceImpl implements ReplyService {
         UserEntity currentUser = replyPermissionService.checkCanModify(replyToUpdate);
         log.info("User ID: {} updating reply ID: {}", currentUser.getId(), replyId);
 
-        validator.validateContent(replyRequest.content()); // Validate the updated reply content using AI
+        validator.ensureReplyContentIsValid(replyRequest.content()); // Validate the updated reply content using AI
 
         replyToUpdate.setContent(replyRequest.content());
         ReplyEntity updatedReply = replyRepository.save(replyToUpdate);

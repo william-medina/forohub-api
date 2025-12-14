@@ -33,10 +33,10 @@ public class UserAccountServiceImpl implements UserAccountService {
     public UserDTO createAccount(CreateUserDTO request) throws MessagingException {
         log.info("Creating account for: {}", request.username());
 
-        validator.validatePasswordsMatch(request.password(), request.password_confirmation());
-        validator.existsByUsername(request.username());
-        validator.existsByEmail(request.email());
-        validator.validateUsernameContent(request.username()); // Validate the username with AI
+        validator.ensurePasswordsMatch(request.password(), request.password_confirmation());
+        validator.ensureUsernameIsUnique(request.username());
+        validator.ensureEmailIsUnique(request.email());
+        validator.ensureUsernameContentIsValid(request.username()); // Validate the username with AI
 
         UserEntity newUserEntity = new UserEntity(request.username(), request.email().trim().toLowerCase(), passwordEncoder.encode(request.password()));
         UserEntity userCreated = userRepository.save(newUserEntity);
@@ -52,9 +52,9 @@ public class UserAccountServiceImpl implements UserAccountService {
     public UserDTO confirmAccount(String token) {
         log.info("Confirming account with token");
 
-        UserEntity user = userFinder.findUserByToken(token);
-        validator.validateTokenExpiration(user);
-        validator.checkIfAccountConfirmed(user);
+        UserEntity user = userFinder.findUserByValidToken(token);
+        validator.ensureTokenIsNotExpired(user);
+        validator.ensureAccountIsConfirmed(user);
 
         user.setAccountConfirmed(true);
         user.clearTokenData();
@@ -70,8 +70,8 @@ public class UserAccountServiceImpl implements UserAccountService {
         log.info("Requesting confirmation code for email: {}", request.email());
 
         UserEntity user = userFinder.findUserByEmail(request.email());
-        validator.checkIfAccountConfirmed(user);
-        validator.ensureAllowedRequestInterval(user, RequestType.CONFIRMATION);
+        validator.ensureAccountIsConfirmed(user);
+        validator.ensureRequestIntervalIsAllowed(user, RequestType.CONFIRMATION);
 
         user.generateConfirmationToken();
         notifier.notifyConfirmationEmail(user);
@@ -86,8 +86,8 @@ public class UserAccountServiceImpl implements UserAccountService {
         log.info("Password reset requested for: {}", request.email());
 
         UserEntity user = userFinder.findUserByEmail(request.email());
-        validator.checkIfAccountNotConfirmed(user);
-        validator.ensureAllowedRequestInterval(user, RequestType.PASSWORD_RESET);
+        validator.ensureAccountIsNotConfirmed(user);
+        validator.ensureRequestIntervalIsAllowed(user, RequestType.PASSWORD_RESET);
 
         user.generateConfirmationToken();
         notifier.notifyPasswordResetEmail(user);
@@ -101,11 +101,11 @@ public class UserAccountServiceImpl implements UserAccountService {
     public UserDTO updatePasswordWithToken(String token, UpdatePasswordWithTokenDTO request) {
         log.info("Updating password using token");
 
-        validator.validatePasswordsMatch(request.password(), request.password_confirmation());
+        validator.ensurePasswordsMatch(request.password(), request.password_confirmation());
 
-        UserEntity user = userFinder.findUserByToken(token);
-        validator.validateTokenExpiration(user);
-        validator.checkIfAccountNotConfirmed(user);
+        UserEntity user = userFinder.findUserByValidToken(token);
+        validator.ensureTokenIsNotExpired(user);
+        validator.ensureAccountIsNotConfirmed(user);
 
         user.setPassword(passwordEncoder.encode(request.password()));
         user.clearTokenData();

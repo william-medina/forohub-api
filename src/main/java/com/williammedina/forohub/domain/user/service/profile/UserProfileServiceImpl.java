@@ -26,10 +26,10 @@ public class UserProfileServiceImpl implements UserProfileService{
     @Override
     @Transactional
     public UserDTO updateCurrentUserPassword(UpdateCurrentUserPasswordDTO request) {
-        validator.validatePasswordsMatch(request.password(), request.password_confirmation());
+        validator.ensurePasswordsMatch(request.password(), request.password_confirmation());
 
         UserEntity currentUser = authenticatedUserProvider.getAuthenticatedUser();
-        validator.validateCurrentPassword(currentUser, request.current_password());
+        validator.ensureCurrentPasswordIsValid(currentUser, request.current_password());
 
         currentUser.setPassword(passwordEncoder.encode(request.password()));
         userRepository.save(currentUser);
@@ -43,9 +43,9 @@ public class UserProfileServiceImpl implements UserProfileService{
     public UserDTO updateUsername(UpdateUsernameDTO request) {
         UserEntity currentUser = authenticatedUserProvider.getAuthenticatedUser();
 
-        validator.ensureNewUsername(currentUser, request.username());
-        validator.validateUsernameContent(request.username()); // Validate the new username with AI
-        validator.existsByUsername(request.username());
+        validator.ensureUsernameIsDifferent(currentUser, request.username());
+        validator.ensureUsernameIsUnique(request.username());
+        validator.ensureUsernameContentIsValid(request.username()); // Validate the new username with AI
 
         currentUser.setUsername(request.username());
         userRepository.save(currentUser);

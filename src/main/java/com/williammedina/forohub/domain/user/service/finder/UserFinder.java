@@ -6,6 +6,6 @@ public interface UserFinder {
 
     UserEntity findUserById(Long userId);
     UserEntity findUserByEmail(String email);
-    UserEntity findUserByToken(String token);
+    UserEntity findUserByValidToken(String token);
 
 }

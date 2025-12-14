@@ -17,7 +17,7 @@ public class TopicValidatorImpl implements TopicValidator {
     private final ContentValidationService contentValidationService;
 
     @Override
-    public void validateTitle(String title) {
+    public void ensureTitleIsValid(String title) {
         if (topicRepository.existsByTitle(title)) {
             log.warn("Topic already exists with title: {}", title);
             throw new AppException("El título ya existe.", HttpStatus.CONFLICT);
@@ -31,7 +31,7 @@ public class TopicValidatorImpl implements TopicValidator {
     }
 
     @Override
-    public void validateDescription(String description) {
+    public void ensureDescriptionIsValid(String description) {
         if (topicRepository.existsByDescription(description)) {
             log.warn("Topic already exists with description: {}", description);
             throw new AppException("La descripción ya existe.", HttpStatus.CONFLICT);

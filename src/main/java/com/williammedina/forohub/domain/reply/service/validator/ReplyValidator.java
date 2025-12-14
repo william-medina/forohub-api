@@ -4,7 +4,7 @@ import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 
 public interface ReplyValidator {
 
-    void validateContent(String content);
-    void checkTopicClosed(TopicEntity topic);
+    void ensureReplyContentIsValid(String content);
+    void ensureTopicIsOpen(TopicEntity topic);
 
 }

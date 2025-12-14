@@ -16,7 +16,7 @@ public class ReplyValidatorImpl implements ReplyValidator{
     private final ContentValidationService contentValidationService;
 
     @Override
-    public void validateContent(String content) {
+    public void ensureReplyContentIsValid(String content) {
         String validationResult = contentValidationService.validateContent(content);
         if (!"approved".equals(validationResult)) {
             log.warn("Reply content not approved: {}", validationResult);
@@ -25,7 +25,7 @@ public class ReplyValidatorImpl implements ReplyValidator{
     }
 
     @Override
-    public void checkTopicClosed(TopicEntity topic) {
+    public void ensureTopicIsOpen(TopicEntity topic) {
         if(topic.isTopicClosed()) {
             log.warn("Attempt to reply to closed topic ID: {}", topic.getId());
             throw new AppException("No se puede crear una respuesta. El tópico está cerrado.", HttpStatus.FORBIDDEN);

@@ -15,7 +15,7 @@ public class UserNotifierImpl implements UserNotifier {
     private final EmailService emailService;
 
     @Override
-    public void notifyConfirmationEmail(UserEntity user)throws MessagingException {
+    public void notifyConfirmationEmail(UserEntity user) throws MessagingException {
         emailService.sendConfirmationEmail(user);
     }
 

@@ -34,7 +34,7 @@ public class UserFinderImpl implements UserFinder {
     }
 
     @Override
-    public UserEntity findUserByToken(String token) {
+    public UserEntity findUserByValidToken(String token) {
         return userRepository.findByToken(token)
                 .orElseThrow(() -> {
                     log.error("Invalid or expired token");

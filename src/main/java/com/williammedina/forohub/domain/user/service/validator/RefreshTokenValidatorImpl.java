@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class RefreshTokenValidatorImpl implements RefreshTokenValidator {
 
     @Override
-    public void checkRefreshTokenValidity(RefreshTokenEntity refreshToken) {
+    public void ensureRefreshTokenIsValid(RefreshTokenEntity refreshToken) {
         if (refreshToken.getRevoked() || refreshToken.getExpiresAt().isBefore(LocalDateTime.now())) {
             refreshToken.setRevoked(true);
             log.warn("Refresh token expired");

@@ -16,7 +16,7 @@ public class RefreshTokenFinderImpl implements RefreshTokenFinder {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-    public RefreshTokenEntity findToken(String token) {
+    public RefreshTokenEntity findRefreshToken(String token) {
         return refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> {
                     log.warn("Refresh token not found");

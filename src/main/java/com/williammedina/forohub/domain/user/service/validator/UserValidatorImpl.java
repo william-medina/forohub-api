@@ -23,9 +23,8 @@ public class UserValidatorImpl implements UserValidator {
     private final ContentValidationService contentValidationService;
     private final BCryptPasswordEncoder passwordEncoder;
 
-
     @Override
-    public void validateTokenExpiration(UserEntity user) {
+    public void ensureTokenIsNotExpired(UserEntity user) {
         if (user.getTokenExpiration() == null || user.getTokenExpiration().isBefore(LocalDateTime.now())) {
             log.warn("Token expired for user ID: {}", user.getId());
             throw new AppException("El token de confirmación ha expirado.", HttpStatus.GONE);
@@ -33,7 +32,7 @@ public class UserValidatorImpl implements UserValidator {
     }
 
     @Override
-    public void checkIfAccountConfirmed(UserEntity user) {
+    public void ensureAccountIsNotConfirmed(UserEntity user) {
         if (user.isAccountConfirmed()) {
             log.warn("Account already confirmed for user ID: {}", user.getId());
             throw new AppException("La cuenta ya está confirmada.", HttpStatus.CONFLICT);
@@ -41,7 +40,7 @@ public class UserValidatorImpl implements UserValidator {
     }
 
     @Override
-    public void checkIfAccountNotConfirmed(UserEntity user) {
+    public void ensureAccountIsConfirmed(UserEntity user) {
         if (!user.isAccountConfirmed()) {
             log.warn("Account not yet confirmed for user ID: {}", user.getId());
             throw new AppException("La cuenta no está confirmada.", HttpStatus.CONFLICT);
@@ -49,7 +48,7 @@ public class UserValidatorImpl implements UserValidator {
     }
 
     @Override
-    public void validatePasswordsMatch(String password, String passwordConfirmation) {
+    public void ensurePasswordsMatch(String password, String passwordConfirmation) {
         if (!password.equals(passwordConfirmation)) {
             log.warn("Passwords do not match");
             throw new AppException("Los passwords no coinciden.", HttpStatus.BAD_REQUEST);
@@ -57,7 +56,7 @@ public class UserValidatorImpl implements UserValidator {
     }
 
     @Override
-    public void existsByUsername(String username) {
+    public void ensureUsernameIsUnique(String username) {
         if (userRepository.existsByUsername(username)) {
             log.warn("Username already registered: {}", username);
             throw new AppException("El nombre de usuario ya está registrado.", HttpStatus.CONFLICT);
@@ -65,7 +64,7 @@ public class UserValidatorImpl implements UserValidator {
     }
 
     @Override
-    public void existsByEmail(String email) {
+    public void ensureEmailIsUnique(String email) {
         if (userRepository.existsByEmail(email.trim().toLowerCase())) {
             log.warn("Email already registered: {}", email);
             throw new AppException("El email ya está registrado.", HttpStatus.CONFLICT);
@@ -73,7 +72,7 @@ public class UserValidatorImpl implements UserValidator {
     }
 
     @Override
-    public void validateUsernameContent(String username) {
+    public void ensureUsernameContentIsValid(String username) {
         String validationResponse = contentValidationService.validateUsername(username);
         if (!"approved".equals(validationResponse)) {
             log.warn("Username not approved: {} - Result: {}", username, validationResponse);
@@ -82,7 +81,7 @@ public class UserValidatorImpl implements UserValidator {
     }
 
     @Override
-    public void ensureNewUsername(UserEntity user, String newUsername) {
+    public void ensureUsernameIsDifferent(UserEntity user, String newUsername) {
         if (user.getUsername().equals(newUsername)) {
             log.warn("Attempt to update to same username - user ID: {}", user.getId());
             throw new AppException("Debes ingresa un nuevo nombre.", HttpStatus.BAD_REQUEST);
@@ -90,7 +89,7 @@ public class UserValidatorImpl implements UserValidator {
     }
 
     @Override
-    public void validateCurrentPassword(UserEntity user, String currentPassword) {
+    public void ensureCurrentPasswordIsValid(UserEntity user, String currentPassword) {
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             log.warn("Incorrect current password for user ID: {}", user.getId());
             throw new AppException("El password actual es incorrecto.", HttpStatus.UNAUTHORIZED);
@@ -98,7 +97,7 @@ public class UserValidatorImpl implements UserValidator {
     }
 
     @Override
-    public void ensureAllowedRequestInterval(UserEntity user, RequestType type) {
+    public void ensureRequestIntervalIsAllowed(UserEntity user, RequestType type) {
         if (isRecentRequest(user.getUpdatedAt()) && user.getToken() != null) {
             switch (type) {
                 case CONFIRMATION -> {

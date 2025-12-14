@@ -39,8 +39,8 @@ public class TopicServiceImpl implements TopicService {
         UserEntity currentUser = topicPermissionService.getCurrentUser();
         log.info("Creating topic by user ID: {}", currentUser.getId());
 
-        validator.validateTitle(topicRequest.title());
-        validator.validateDescription(topicRequest.description());
+        validator.ensureTitleIsValid(topicRequest.title());
+        validator.ensureDescriptionIsValid(topicRequest.description());
 
         CourseEntity course = courseFinder.findCourseById(topicRequest.courseId());
 
@@ -92,11 +92,11 @@ public class TopicServiceImpl implements TopicService {
         CourseEntity course = courseFinder.findCourseById(topicRequest.courseId());
 
         if (!topicRequest.title().equals(topicToUpdate.getTitle())) {
-            validator.validateTitle(topicRequest.title());
+            validator.ensureTitleIsValid(topicRequest.title());
         }
 
         if(!topicRequest.description().equals(topicToUpdate.getDescription())) {
-            validator.validateDescription(topicRequest.description());
+            validator.ensureDescriptionIsValid(topicRequest.description());
         }
 
         topicToUpdate.setTitle(topicRequest.title());

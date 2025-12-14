@@ -7,7 +7,6 @@ import com.williammedina.forohub.domain.user.repository.RefreshTokenRepository;
 import com.williammedina.forohub.domain.user.service.context.AuthenticatedUserProvider;
 import com.williammedina.forohub.domain.user.service.finder.RefreshTokenFinder;
 import com.williammedina.forohub.domain.user.service.handler.UnconfirmedAccountHandler;
-import com.williammedina.forohub.domain.user.service.transaction.UserTransactionService;
 import com.williammedina.forohub.domain.user.service.validator.RefreshTokenValidator;
 import com.williammedina.forohub.infrastructure.response.MessageResponse;
 import com.williammedina.forohub.infrastructure.security.CookieService;
@@ -34,7 +33,6 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final AuthenticatedUserProvider authenticatedUserProvider;
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
-    private final UserTransactionService userTransactionService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final CookieService cookieService;
     private final RefreshTokenFinder refreshTokenFinder;
@@ -53,7 +51,6 @@ public class UserAuthServiceImpl implements UserAuthService {
         UserEntity user = (UserEntity) authenticatedUser.getPrincipal();
         unconfirmedAccountHandler.handleIfUnconfirmed(user);
 
-        // Generate authentication tokens (access and refresh)
         String accessToken = tokenService.generateAccessToken(user);
         RefreshTokenEntity refreshToken = tokenService.createRefreshToken(user);
 
@@ -70,8 +67,8 @@ public class UserAuthServiceImpl implements UserAuthService {
         log.info("Requesting refresh token");
 
         String token = cookieService.extractRefreshToken(request);
-        RefreshTokenEntity refreshToken = refreshTokenFinder.findToken(token);
-        validator.checkRefreshTokenValidity(refreshToken);
+        RefreshTokenEntity refreshToken = refreshTokenFinder.findRefreshToken(token);
+        validator.ensureRefreshTokenIsValid(refreshToken);
 
         String newAccessToken = tokenService.generateAccessToken(refreshToken.getUser());
         log.info("New access token generated for user ID: {}", refreshToken.getUser().getId());

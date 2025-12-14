@@ -4,6 +4,6 @@ import com.williammedina.forohub.domain.user.entity.RefreshTokenEntity;
 
 public interface RefreshTokenFinder {
 
-    RefreshTokenEntity findToken(String token);
+    RefreshTokenEntity findRefreshToken(String token);
 
 }
