@@ -54,7 +54,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         UserEntity user = userFinder.findUserByValidToken(token);
         validator.ensureTokenIsNotExpired(user);
-        validator.ensureAccountIsConfirmed(user);
+        validator.ensureAccountIsNotConfirmed(user);
 
         user.setAccountConfirmed(true);
         user.clearTokenData();
@@ -70,7 +70,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         log.info("Requesting confirmation code for email: {}", request.email());
 
         UserEntity user = userFinder.findUserByEmail(request.email());
-        validator.ensureAccountIsConfirmed(user);
+        validator.ensureAccountIsNotConfirmed(user);
         validator.ensureRequestIntervalIsAllowed(user, RequestType.CONFIRMATION);
 
         user.generateConfirmationToken();
@@ -86,7 +86,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         log.info("Password reset requested for: {}", request.email());
 
         UserEntity user = userFinder.findUserByEmail(request.email());
-        validator.ensureAccountIsNotConfirmed(user);
+        validator.ensureAccountIsConfirmed(user);
         validator.ensureRequestIntervalIsAllowed(user, RequestType.PASSWORD_RESET);
 
         user.generateConfirmationToken();
@@ -105,7 +105,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         UserEntity user = userFinder.findUserByValidToken(token);
         validator.ensureTokenIsNotExpired(user);
-        validator.ensureAccountIsNotConfirmed(user);
+        validator.ensureAccountIsConfirmed(user);
 
         user.setPassword(passwordEncoder.encode(request.password()));
         user.clearTokenData();
