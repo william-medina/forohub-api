@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -43,7 +42,7 @@ public class ReplyController {
             }
     )
     @PostMapping
-    public ResponseEntity<ReplyDTO> createReply(@RequestBody @Valid CreateReplyDTO replyRequest) throws MessagingException {
+    public ResponseEntity<ReplyDTO> createReply(@RequestBody @Valid CreateReplyDTO replyRequest) {
         ReplyDTO reply = replyService.createReply(replyRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(reply);
     }
@@ -95,7 +94,7 @@ public class ReplyController {
             }
     )
     @PutMapping("/{replyId}")
-    public ResponseEntity<ReplyDTO> updateReply(@RequestBody @Valid UpdateReplyDTO replyRequest, @PathVariable Long replyId) throws MessagingException {
+    public ResponseEntity<ReplyDTO> updateReply(@RequestBody @Valid UpdateReplyDTO replyRequest, @PathVariable Long replyId) {
         ReplyDTO reply = replyService.updateReply(replyRequest, replyId);
         return ResponseEntity.ok(reply);
     }
@@ -112,7 +111,7 @@ public class ReplyController {
             }
     )
     @PatchMapping("/{replyId}")
-    public ResponseEntity<ReplyDTO> setCorrectReply(@PathVariable Long replyId) throws MessagingException {
+    public ResponseEntity<ReplyDTO> setCorrectReply(@PathVariable Long replyId) {
         ReplyDTO reply = replyService.setCorrectReply(replyId);
         return ResponseEntity.ok(reply);
     }
@@ -130,7 +129,7 @@ public class ReplyController {
             }
     )
     @DeleteMapping("/{replyId}")
-    public ResponseEntity<Void> deleteReply(@PathVariable Long replyId) throws MessagingException {
+    public ResponseEntity<Void> deleteReply(@PathVariable Long replyId) {
         replyService.deleteReply(replyId);
         return ResponseEntity.noContent().build();
     }

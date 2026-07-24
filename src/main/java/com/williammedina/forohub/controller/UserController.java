@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -46,7 +45,7 @@ public class UserController {
             }
     )
     @PostMapping("/create-account")
-    public ResponseEntity<UserDTO> createAccount(@RequestBody @Valid CreateUserDTO userRequest) throws MessagingException {
+    public ResponseEntity<UserDTO> createAccount(@RequestBody @Valid CreateUserDTO userRequest) {
         UserDTO user = userAccountService.createAccount(userRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
@@ -78,7 +77,7 @@ public class UserController {
             }
     )
     @PostMapping("/login")
-    public ResponseEntity<JwtTokenResponse> login(@RequestBody @Valid LoginUserDTO request, HttpServletResponse response) throws MessagingException {
+    public ResponseEntity<JwtTokenResponse> login(@RequestBody @Valid LoginUserDTO request, HttpServletResponse response) {
         JwtTokenResponse responseToken = userAuthService.authenticateAndGenerateToken(request, response);
         return ResponseEntity.ok(responseToken);
     }
@@ -94,7 +93,7 @@ public class UserController {
             }
     )
     @PostMapping("/request-code")
-    public ResponseEntity<UserDTO> requestConfirmationCode(@RequestBody @Valid EmailUserDTO request) throws MessagingException {
+    public ResponseEntity<UserDTO> requestConfirmationCode(@RequestBody @Valid EmailUserDTO request) {
         UserDTO user = userAccountService.requestConfirmationCode(request);
         return ResponseEntity.ok(user);
     }
@@ -110,7 +109,7 @@ public class UserController {
             }
     )
     @PostMapping("/forgot-password")
-    public ResponseEntity<UserDTO> forgotPassword(@RequestBody @Valid EmailUserDTO request) throws MessagingException {
+    public ResponseEntity<UserDTO> forgotPassword(@RequestBody @Valid EmailUserDTO request) {
         UserDTO user = userAccountService.forgotPassword(request);
         return ResponseEntity.ok(user);
     }

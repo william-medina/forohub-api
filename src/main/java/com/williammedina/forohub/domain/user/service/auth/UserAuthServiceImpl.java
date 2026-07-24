@@ -12,7 +12,6 @@ import com.williammedina.forohub.infrastructure.response.MessageResponse;
 import com.williammedina.forohub.infrastructure.security.CookieService;
 import com.williammedina.forohub.infrastructure.security.JwtTokenResponse;
 import com.williammedina.forohub.infrastructure.security.TokenService;
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -42,7 +41,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     @Transactional
-    public JwtTokenResponse authenticateAndGenerateToken(LoginUserDTO request, HttpServletResponse response) throws MessagingException {
+    public JwtTokenResponse authenticateAndGenerateToken(LoginUserDTO request, HttpServletResponse response) {
         log.info("Attempting to authenticate user: {}", request.username());
 
         Authentication authenticationToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());

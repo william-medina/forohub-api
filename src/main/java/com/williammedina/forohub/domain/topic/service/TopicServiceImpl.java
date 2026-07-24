@@ -12,7 +12,6 @@ import com.williammedina.forohub.domain.topic.service.notifier.TopicNotifier;
 import com.williammedina.forohub.domain.topic.service.permission.TopicPermissionService;
 import com.williammedina.forohub.domain.topic.service.validator.TopicValidator;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
-import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -84,7 +83,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     @Transactional
-    public TopicDetailsDTO updateTopic(InputTopicDTO topicRequest, Long topicId) throws MessagingException {
+    public TopicDetailsDTO updateTopic(InputTopicDTO topicRequest, Long topicId) {
         TopicEntity topicToUpdate = topicFinder.findTopicById(topicId);
         UserEntity currentUser = topicPermissionService.checkCanModify(topicToUpdate);
         log.info("Updating topic ID: {} by user ID: {}", topicId, currentUser.getId());
@@ -113,7 +112,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     @Transactional
-    public void deleteTopic(Long topicId) throws MessagingException {
+    public void deleteTopic(Long topicId) {
         TopicEntity topicToDelete = topicFinder.findTopicById(topicId);
         UserEntity currentUser = topicPermissionService.checkCanModify(topicToDelete);
         topicToDelete.markAsDeleted(); //topicRepository.delete(topic);

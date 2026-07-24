@@ -5,7 +5,6 @@ import com.williammedina.forohub.domain.notification.service.NotificationService
 import com.williammedina.forohub.domain.reply.entity.ReplyEntity;
 import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ public class ReplyNotifierImpl implements ReplyNotifier {
     private final EmailService emailService;
 
     @Override
-    public void notifyNewReply(TopicEntity topic, UserEntity editor) throws MessagingException {
+    public void notifyNewReply(TopicEntity topic, UserEntity editor) {
         if(!editor.equals(topic.getUser())) {
             log.debug("Notifying topic owner ID: {} about new reply", topic.getId());
             notificationService.notifyTopicReply(topic, editor);
@@ -32,7 +31,7 @@ public class ReplyNotifierImpl implements ReplyNotifier {
     }
 
     @Override
-    public void notifyReplyUpdated(ReplyEntity reply, UserEntity editor) throws MessagingException {
+    public void notifyReplyUpdated(ReplyEntity reply, UserEntity editor) {
         if(!editor.equals(reply.getUser())) {
             log.debug("Notifying reply owner ID: {}", reply.getId());
             notificationService.notifyReplyEdited(reply);
@@ -41,7 +40,7 @@ public class ReplyNotifierImpl implements ReplyNotifier {
     }
 
     @Override
-    public void notifyReplyDeleted(ReplyEntity reply, UserEntity editor) throws MessagingException {
+    public void notifyReplyDeleted(ReplyEntity reply, UserEntity editor) {
         if(!editor.equals(reply.getUser())) {
             log.debug("Notifying reply owner ID: {} about deletion", reply.getId());
             notificationService.notifyReplyDeleted(reply);
@@ -50,7 +49,7 @@ public class ReplyNotifierImpl implements ReplyNotifier {
     }
 
     @Override
-    public void notifyReplySolution(ReplyEntity reply) throws MessagingException {
+    public void notifyReplySolution(ReplyEntity reply) {
         if(reply.getSolution()) {
             log.debug("Sending notifications for reply solution");
             notificationService.notifyTopicSolved(reply.getTopic());

@@ -83,6 +83,7 @@ Para que la API funcione correctamente, asegúrate de incluir las siguientes dep
 - **Java JWT (java-jwt)**: Biblioteca que permite trabajar con tokens JWT (JSON Web Tokens) para la autenticación y autorización de usuarios.
 - **SpringDoc OpenAPI Starter**: Integra la especificación OpenAPI para documentar automáticamente los endpoints de la API.
 - **Spring Boot Starter Mail**: Proporciona las herramientas necesarias para enviar emails desde la API, útil para el envío de email de confirmación y restablecimiento  de password.
+- **Spring WebFlux**: Proporciona el cliente reactivo `WebClient` utilizado para realizar solicitudes HTTP hacia servicios externos como Resend para el envío de correos electrónicos mediante API.
 - **Spring AI**: Proporciona herramientas para incorporar capacidades de inteligencia artificial en aplicaciones Spring Boot, como análisis de texto, automatización de respuestas y tareas de procesamiento de lenguaje natural.
 
 Asegúrate de agregar las dependencias en el archivo `pom.xml` de tu proyecto Maven.
@@ -197,14 +198,21 @@ La inteligencia artificial se encarga de verificar el contenido ingresado por lo
 
    # 🔑 Clave Secreta para JWT
    JWT_SECRET=your_secret_jwt
+   
+   # 📮 Remitente de los correos
+   EMAIL_FROM=your_email_from
 
-   # 📧 Configuración del Servidor de Email
+   # 📧 Configuración del proveedor de Email (disabled | smtp | resend)
+   EMAIL_PROVIDER=disabled
+
+   # 📧 Configuración SMTP (si EMAIL_PROVIDER=smtp)
    EMAIL_HOST=your_email_host
    EMAIL_PORT=your_email_port
    EMAIL_USER=your_email_user
    EMAIL_PASS=your_email_password
-   EMAIL_FROM=your_email_from
-   EMAIL_ENABLED=true
+   
+   # 📧 Configuración Resend (si EMAIL_PROVIDER=resend)
+   RESEND_API_KEY=your_resend_api_key
 
    # 🌍 URL del Frontend - Habilita CORS para permitir peticiones desde esta URL
    FRONTEND_URL=http://localhost:5173
@@ -216,19 +224,23 @@ La inteligencia artificial se encarga de verificar el contenido ingresado por lo
    Reemplaza los valores de ejemplo con los detalles de tu configuración real.
 
 
-4. **Habilitar o deshabilitar el envío de email:**
+4. **Configuración del proveedor de envío de emails:**
 
-   Si no tienes un servidor de email o las credenciales correspondientes, puedes deshabilitar el envío de emails para evitar que el sistema intente enviar notificaciones por email, lo que podría generar errores debido a la falta de credenciales. Deshabilitar el envío de emails garantizará que el sistema no intente enviar los tokens para la confirmación de cuenta o el restablecimiento de password, ni las notificaciones sobre el seguimiento de tópicos o cambios en el estado de los mismos.
+   La API permite seleccionar diferentes proveedores para el envío de correos mediante la variable de entorno `EMAIL_PROVIDER`. Esta configuración permite cambiar fácilmente entre un servidor SMTP, el servicio Resend o deshabilitar completamente el envío de emails.
 
-   Para hacerlo, puedes utilizar la variable de entorno `EMAIL_ENABLED` y configurarla de la siguiente manera:
+   La variable acepta los siguientes valores:
+
+    - `disabled`: Deshabilita el envío de emails. La API no intentará enviar correos de confirmación de cuenta, restablecimiento de password ni otras notificaciones relacionadas con emails.
+    - `smtp`: Utiliza un servidor SMTP configurado mediante las credenciales correspondientes.
+    - `resend`: Utiliza la API de Resend para enviar emails mediante HTTP.
 
    - En el archivo `application.properties`, debes configurar la siguiente línea:
 
      ```properties
-     email.enabled=${EMAIL_ENABLED:true}
+     email.provider=${EMAIL_PROVIDER:disabled}
      ```
 
-   - Luego, configura la variable de entorno `EMAIL_ENABLED` en tu sistema operativo o IDE. Si deseas deshabilitar el envío de emails, establece la variable en `false`. Si quieres habilitarlo, configúralo en `true`.
+   - Luego configura la variable de entorno `EMAIL_PROVIDER` en tu sistema operativo o IDE:.
 
    > **⚠️ Importante:** Al deshabilitar el envío de emails, algunos procedimientos de la API, como el proceso de creación de cuentas, no podrán completarse correctamente, ya que no se enviará el email necesario para el envío del token de confirmación. Esto significa que la cuenta nunca será confirmada y no podrá ser activada.
 
@@ -373,7 +385,7 @@ DB_PASSWORD_TEST=your_password
 ### Comportamiento de servicios externos durante las pruebas
 
 - Durante la ejecución de los tests, el envío de emails y la validación de contenido con inteligencia artificial se **deshabilitan automáticamente** mediante configuraciones de Spring (`@ConditionalOnProperty`).
-    - La propiedad `email.enabled=false` activa la implementación `DisabledEmailService`, que solo registra las acciones en lugar de enviar correos reales.
+    - La propiedad `email.provider=disabled` activa la implementación `DisabledEmailSender`, que solo registra las acciones en lugar de enviar correos reales.
     - La propiedad `ai.enabled=false` activa la implementación `DisabledContentValidationService`, que simula la validación de contenido sin consumir recursos de IA.
 
 - Este enfoque reemplaza la lógica interna basada en variables de entorno, garantizando que los tests sean más claros, mantenibles y no dependan de servicios externos.

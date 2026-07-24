@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -122,7 +121,7 @@ public class TopicController {
             }
     )
     @PutMapping("/{topicId}")
-    public ResponseEntity<TopicDetailsDTO> updateTopic(@RequestBody @Valid InputTopicDTO topicRequest, @PathVariable Long topicId) throws MessagingException {
+    public ResponseEntity<TopicDetailsDTO> updateTopic(@RequestBody @Valid InputTopicDTO topicRequest, @PathVariable Long topicId) {
         TopicDetailsDTO topic = topicService.updateTopic(topicRequest, topicId);
         return ResponseEntity.ok(topic);
     }
@@ -139,7 +138,7 @@ public class TopicController {
             }
     )
     @DeleteMapping("/{topicId}")
-    public ResponseEntity<Void> deleteTopic(@PathVariable Long topicId) throws MessagingException {
+    public ResponseEntity<Void> deleteTopic(@PathVariable Long topicId) {
         topicService.deleteTopic(topicId);
         return ResponseEntity.noContent().build();
     }

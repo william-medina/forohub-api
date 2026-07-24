@@ -13,7 +13,6 @@ import com.williammedina.forohub.domain.reply.dto.UpdateReplyDTO;
 import com.williammedina.forohub.domain.topic.service.finder.TopicFinderImpl;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.domain.user.service.context.AuthenticatedUserProvider;
-import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
@@ -40,7 +39,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     @Transactional
-    public ReplyDTO createReply(CreateReplyDTO replyRequest) throws MessagingException {
+    public ReplyDTO createReply(CreateReplyDTO replyRequest) {
         UserEntity currentUser = authenticatedUserProvider.getAuthenticatedUser();
         TopicEntity topic = topicFinder.findTopicById(replyRequest.topicId());
         log.info("User ID: {} creating reply for topic ID: {}", currentUser.getId(), topic.getId());
@@ -67,7 +66,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     @Transactional
-    public ReplyDTO updateReply(UpdateReplyDTO replyRequest, Long replyId) throws MessagingException {
+    public ReplyDTO updateReply(UpdateReplyDTO replyRequest, Long replyId) {
         ReplyEntity replyToUpdate = replyFinder.findReplyById(replyId);
         UserEntity currentUser = replyPermissionService.checkCanModify(replyToUpdate);
         log.info("User ID: {} updating reply ID: {}", currentUser.getId(), replyId);
@@ -84,7 +83,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     @Transactional
-    public void deleteReply(Long replyId) throws MessagingException {
+    public void deleteReply(Long replyId) {
         ReplyEntity replyToDelete = replyFinder.findReplyById(replyId);
         UserEntity currentUser = replyPermissionService.checkCanModify(replyToDelete);
 
@@ -106,7 +105,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     @Transactional
-    public ReplyDTO setCorrectReply(Long replyId) throws MessagingException {
+    public ReplyDTO setCorrectReply(Long replyId) {
         UserEntity currentUser = authenticatedUserProvider.getAuthenticatedUser();
         replyPermissionService.checkElevatedPermissionsForSolution(currentUser, replyId);
 

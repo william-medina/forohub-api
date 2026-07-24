@@ -10,7 +10,6 @@ import com.williammedina.forohub.domain.user.repository.UserRepository;
 import com.williammedina.forohub.domain.user.service.finder.UserFinder;
 import com.williammedina.forohub.domain.user.service.notifier.UserNotifier;
 import com.williammedina.forohub.domain.user.service.validator.UserValidator;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,7 +29,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     @Transactional
-    public UserDTO createAccount(CreateUserDTO request) throws MessagingException {
+    public UserDTO createAccount(CreateUserDTO request) {
         log.info("Creating account for: {}", request.username());
 
         validator.ensurePasswordsMatch(request.password(), request.password_confirmation());
@@ -66,7 +65,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     @Transactional
-    public UserDTO requestConfirmationCode(EmailUserDTO request) throws MessagingException {
+    public UserDTO requestConfirmationCode(EmailUserDTO request) {
         log.info("Requesting confirmation code for email: {}", request.email());
 
         UserEntity user = userFinder.findUserByEmail(request.email());
@@ -82,7 +81,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     @Transactional
-    public UserDTO forgotPassword(EmailUserDTO request) throws MessagingException {
+    public UserDTO forgotPassword(EmailUserDTO request) {
         log.info("Password reset requested for: {}", request.email());
 
         UserEntity user = userFinder.findUserByEmail(request.email());

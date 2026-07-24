@@ -1,11 +1,9 @@
 package com.williammedina.forohub.domain.user.service.transaction;
 
-import com.williammedina.forohub.domain.email.EmailService;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
 import com.williammedina.forohub.domain.user.repository.UserRepository;
 import com.williammedina.forohub.domain.user.service.notifier.UserNotifier;
 import com.williammedina.forohub.infrastructure.exception.AppException;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,7 +26,7 @@ public class UserTransactionServiceImpl implements UserTransactionService {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void handleAccountDisabled(String username) throws MessagingException {
+    public void handleAccountDisabled(String username) {
         UserEntity user = findUserByEmailOrUsername(username);
         user.generateConfirmationToken();
         userRepository.save(user);

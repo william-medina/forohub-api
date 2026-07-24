@@ -4,7 +4,6 @@ import com.williammedina.forohub.domain.email.EmailService;
 import com.williammedina.forohub.domain.notification.service.NotificationService;
 import com.williammedina.forohub.domain.topic.entity.TopicEntity;
 import com.williammedina.forohub.domain.user.entity.UserEntity;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,7 @@ public class TopicNotifierImpl implements TopicNotifier {
     private final EmailService emailService;
 
     @Override
-    public void notifyTopicEdited(TopicEntity topic, UserEntity editor) throws MessagingException {
+    public void notifyTopicEdited(TopicEntity topic, UserEntity editor) {
         if(!editor.equals(topic.getUser())) {
             log.debug("Notifying topic owner ID: {} about update", topic.getId());
             notificationService.notifyTopicEdited(topic);
@@ -27,7 +26,7 @@ public class TopicNotifierImpl implements TopicNotifier {
     }
 
     @Override
-    public void notifyTopicDeleted(TopicEntity topic, UserEntity editor) throws MessagingException {
+    public void notifyTopicDeleted(TopicEntity topic, UserEntity editor) {
         if(!editor.equals(topic.getUser())) {
             log.debug("Notifying topic owner ID: {} about deletion", topic.getId());
             notificationService.notifyTopicDeleted(topic);
